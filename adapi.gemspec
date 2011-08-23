@@ -18,7 +18,9 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  # gemspec.add_dependency "some_gem"
+  s.add_dependency "google-ads-common", "~> 0.5.0"
+  s.add_dependency "google-adwords-api", "~> 0.4.0"
+
   s.add_development_dependency "turn"
   s.add_development_dependency "shoulda"
   s.add_development_dependency "fakeweb"
