@@ -1,5 +1,10 @@
-require "adapi/version"
+
+require 'adwords_api'
+
+require 'adapi/api'
+require 'adapi/campaign'
+require 'adapi/version'
 
 module Adapi
-  # gem code goes here...
+  API_VERSION = :v201101  
 end
