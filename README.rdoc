@@ -1,0 +1,52 @@
+== Adapi
+
+Adapi (shortened AdWords API) is a library for easy and painless work with
+Google Adwords API. Its users shouldn't bother with SOAP and tangle of XML- and
+API-specific objects (like in adwords4r gem), inputs and outputs are plain Ruby
+arrays and hashes.
+
+Adapi is built on new Google Adwords API gems: google-ads-common and
+google-adwords-api.
+
+== Installation
+
+Adapi gem is built by bundler. 
+
+* Install gem:
+       rake install
+
+* Install dependencies:
+       bundle install
+
+* Check if everything it working:
+       rake test
+
+== Authentication
+
+Model Account takes care of authentication. It's not as easy as it seems. Ataxo
+has several main accounts for its large clients (mediatel, etc.) and often we
+have to find specific account, which is not what average AdWords user needs.
+Therefore I decided to put all this functionality into Account model.
+
+== API
+
+There are two ways of working with API. Both examples show adding an ad to
+specific campaign's ad group:
+
+=== Model-centric
+
+       Adapi::AdGroup.create(:campaign_id => id, :ad_group_id => id, :data => ad_group_data)
+
+=== Collection-centric
+
+       $account = Adapi::Account.new
+
+       $account.campaigns[id].ad_groups[id] << ad_group_data
+
+== Examples
+
+Many examples of use are available in /examples directory.
+
+== Author
+
+Lukas Stejskal
