@@ -1,6 +1,7 @@
 
 require 'rubygems'
 require 'adwords_api'
+require 'collection'
 
 require 'adapi/api'
 require 'adapi/campaign'
