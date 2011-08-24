@@ -1,12 +1,14 @@
 
 require 'adapi'
 
-# create factory for campaign and ad_groups, can be used even in development
+# create campaign first
 
 campaign_data = {
   :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  :bidding_strategy => { :xsi_type => 'ManualCPC' },
+  :bidding_strategy => {
+    :xsi_type => 'ManualCPC'
+  },
   :budget => {
     :period => 'DAILY',
     :amount => { :micro_amount => 50000000 },
@@ -19,23 +21,25 @@ campaign_data = {
     :target_search_network => true,
     :target_content_network => false,
     :target_content_contextual => false
-  },
+  }
+}
 
-  :ad_groups => [
-    {
-      :name => "Ataxo AdGroup #%d" % (Time.new.to_f * 1000).to_i,
-      :status => 'ENABLED',
-      :bids => {
-        :xsi_type => 'ManualCPCAdGroupBids',
-        :keyword_max_cpc => {
-          :amount => {
-            :micro_amount => 10000000
-          }
-        }
+campaign = Adapi::Campaign.new(:data => campaign_data).create
+
+# create ad group
+
+ad_group_data = {
+  :name => "Ataxo AdGroup #%d" % (Time.new.to_f * 1000).to_i,
+  :status => 'ENABLED',
+  :campaign_id => campaign[:id],
+  :bids => {
+    :xsi_type => 'ManualCPCAdGroupBids',
+    :keyword_max_cpc => {
+      :amount => {
+        :micro_amount => 10000000
       }
     }
-  ]
-
+  }
 }
  
-p Adapi::Campaign.new(:data => campaign_data).create
+p Adapi::AdGroup.new(:data => ad_group_data).create

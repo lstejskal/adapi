@@ -31,6 +31,8 @@ module Adapi
         ).create
       end
 
+      campaign
+
       # if something goes wrong...
 
       # otherwise return campaign object, id or something what enables user to find campaign
