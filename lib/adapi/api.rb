@@ -41,7 +41,7 @@ will store accounts data and return only tokens to us (not passwords)
 
       # if params[:api_login] in nil, default login data are used
       # from ~/adwords_api.yml
-      @adwords = params[:adwords_api_instance] || AdwordsApi::Api.new(params[:adwords_api])
+      @adwords = params[:adwords_api_instance] || AdwordsApi::Api.new(Adapi::Config.read)
       @version = API_VERSION
       @service = @adwords.service(params[:service_name].to_sym, @version)
       @params = params

@@ -3,7 +3,7 @@ require 'rubygems'
 require 'adwords_api'
 require 'collection'
 
-# FIXME require everything in the directory
+require 'adapi/config'
 require 'adapi/api'
 require 'adapi/campaign'
 require 'adapi/campaign_target'
