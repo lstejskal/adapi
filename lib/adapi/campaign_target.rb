@@ -51,34 +51,29 @@ module Adapi
       targets
     end
   
-    # FIXME doesn't work yet
+    # FIXME doesn't work yet, seems like bug in adwords-api gem
+    # created an issue for it:
+    # http://code.google.com/p/google-api-ads-ruby/issues/detail?id=32
     #
     def self.find(params = {})
       campaign_target_service = CampaignTarget.new
 
-      selector = {
-#        :predicates => [{
-#          :field => 'CampaignId', :operator => 'EQUALS', :values => params[:campaign_id].to_i
-#        }]
-      }
-
+      selector = {} # select all campaign targets by default
+      selector[:campaign_ids] = params[:campaign_ids] if params[:campaign_ids]
+  
       response = campaign_target_service.service.get(selector)
 
+      targets = nil
       if response and response[:entries]
         targets = response[:entries]
         targets.each do |target|
-          next unless (target[:campaign_id].to_i == params[:campaign_id].to_i)
-
           p target
-
-          # puts "Campaign target of type #{target["@xsi:type"]} for campaign " +
-          #     "id #{target[:campaign_id]} was set."
         end
       else
         puts "No campaign targets found."
       end
 
-      # response
+      targets
     end
 
     # transform our own high-level target parameters to google low-level
