@@ -21,6 +21,37 @@ Adapi gem is built by bundler.
 * Check if everything it working:
        rake test
 
+== Configuration
+
+This section explains how to connect to specific account and client. (We assume
+for the moment that we always want to log in with a scope of specific client.)
+
+=== How to set up login data:
+
+* before logging into the Adwords API, you can set global settings through
+  Adapi::Config:
+
+      Adapi::Config.set( {
+        :authentication => {
+          :method => 'ClientLogin',
+          :developer_token => 'DEVELOPER_TOKEN',
+          :auth_token => 'AUTH_TOKEN',
+          :user_agent => 'Adapi Examples',
+          :email => 'EMAIL',
+          :password => 'PASSWORD',
+          :client_email => 'client@email.com'
+        },
+        :service => {
+          :environment => 'SANDBOX' # 'PRODUCTION'
+        }
+      })
+
+      # this will use the custom login data
+      Adapi::Campaign.new(:data => campaign_data).create
+
+* If nothing is specified, login data are loaded the google-adwords-api gem way,
+  from ~/adwords_api.yml
+
 == Authentication
 
 Model Account takes care of authentication. It's not as easy as it seems. Ataxo

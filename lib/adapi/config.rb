@@ -9,5 +9,8 @@ module Adapi
     def self.set(params = {})
       @@data = params
     end
+
+    # TODO Config[key] = value (also read method)
+
   end
 end
