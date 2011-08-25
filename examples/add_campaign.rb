@@ -1,7 +1,8 @@
 
 require 'adapi'
 
-# create factory for campaign and ad_groups, can be used even in development
+# create campaign by single command, with campaing targets, with ad_groups
+# including keywords and ads
 
 campaign_data = {
   :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
@@ -19,6 +20,11 @@ campaign_data = {
     :target_search_network => true,
     :target_content_network => false,
     :target_content_contextual => false
+  },
+
+  :targets => {
+    :language => [ 'en', 'cz' ],
+    :geo => { :province => [ 'CZ-PR', 'CZ-KA' ] }
   },
 
   :ad_groups => [

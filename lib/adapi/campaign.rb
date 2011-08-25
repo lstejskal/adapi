@@ -10,6 +10,7 @@ module Adapi
     def create # or update, if campaign has id
       # prepare for adding campaign
       ad_groups = params[:data].delete(:ad_groups).to_a
+      targets = params[:data].delete(:targets)
       
       operation = { :operator => 'ADD', :operand => params[:data] }
     
@@ -23,11 +24,20 @@ module Adapi
         return nil
       end
 
+      # create targets if they are available
+      if targets
+        Adapi::CampaignTarget.create(
+          :campaign_id => campaign[:id],
+          :targets => targets,
+          :api_adwords_instance => self.adwords
+        )
+      end
+
       # if campaign has ad_groups, create them as well
       ad_groups.each do |ad_group_data|
         Adapi::AdGroup.new(
-          :api_adwords_instance => self.adwords,
-          :data => ad_group_data.merge(:campaign_id => campaign[:id])
+          :data => ad_group_data.merge(:campaign_id => campaign[:id]),
+          :api_adwords_instance => self.adwords
         ).create
       end
 
