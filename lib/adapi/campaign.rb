@@ -6,15 +6,16 @@ module Adapi
       super(params)
    end
 
-    # TODO validation of input data
-    def create # or update, if campaign has id
+    def self.create(params = {})
+      campaign_service = Campaign.new
+
       # prepare for adding campaign
       ad_groups = params[:data].delete(:ad_groups).to_a
       targets = params[:data].delete(:targets)
       
       operation = { :operator => 'ADD', :operand => params[:data] }
     
-      response = @service.mutate([operation])
+      response = campaign_service.service.mutate([operation])
 
       campaign = nil
       if response and response[:value]
@@ -50,7 +51,8 @@ module Adapi
 
     # should be sorted out later, but leave it be for now
     #
-    def find(params = {})
+    def self.find(params = {})
+      campaign_service = Campaign.new
 
       selector = {
         :fields => ['Id', 'Name', 'Status']
@@ -65,7 +67,7 @@ module Adapi
         end
       end
 
-      response = @service.get(selector)
+      response = campaign_service.service.get(selector)
 
       return (response and response[:entries]) ? response[:entries].to_a : []
     
