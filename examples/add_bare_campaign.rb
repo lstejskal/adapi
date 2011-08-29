@@ -3,7 +3,7 @@ require 'adapi'
 
 # add campaign with basic data only
 
-campaign_data = {
+$campaign_data = {
   :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
   :bidding_strategy => { :xsi_type => 'ManualCPC' },
@@ -22,4 +22,6 @@ campaign_data = {
   }
 }
  
-p Adapi::Campaign.new(:data => campaign_data).create
+$campaign = Adapi::Campaign.create(:data => $campaign_data)
+
+p $campaign

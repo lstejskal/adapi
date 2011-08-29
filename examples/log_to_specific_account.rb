@@ -1,27 +1,6 @@
 
 require 'adapi'
 
-# add campaign with basic data only
-
-campaign_data = {
-  :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
-  :status => 'PAUSED',
-  :bidding_strategy => { :xsi_type => 'ManualCPC' },
-  :budget => {
-    :period => 'DAILY',
-    :amount => { :micro_amount => 50000000 },
-    :delivery_method => 'STANDARD'
-  },
-
-  # Set the campaign network options to Search and Search Network.
-  :network_setting => {
-    :target_google_search => true,
-    :target_search_network => true,
-    :target_content_network => false,
-    :target_content_contextual => false
-  }
-}
-
 # use specific config data
 
 Adapi::Config.set( {
@@ -39,4 +18,5 @@ Adapi::Config.set( {
   }
 })
 
-p Adapi::Campaign.new(:data => campaign_data).create
+# create campaign
+require 'add_bare_campaign'

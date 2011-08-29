@@ -1,48 +1,8 @@
 
 require 'adapi'
 
-# create campaign first
-
-campaign_data = {
-  :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
-  :status => 'PAUSED',
-  :bidding_strategy => {
-    :xsi_type => 'ManualCPC'
-  },
-  :budget => {
-    :period => 'DAILY',
-    :amount => { :micro_amount => 50000000 },
-    :delivery_method => 'STANDARD'
-  },
-
-  # Set the campaign network options to Search and Search Network.
-  :network_setting => {
-    :target_google_search => true,
-    :target_search_network => true,
-    :target_content_network => false,
-    :target_content_contextual => false
-  }
-}
-
-campaign = Adapi::Campaign.new(:data => campaign_data).create
-
 # create ad group
-
-ad_group_data = {
-  :name => "Ataxo AdGroup #%d" % (Time.new.to_f * 1000).to_i,
-  :status => 'ENABLED',
-  :campaign_id => campaign[:id],
-  :bids => {
-    :xsi_type => 'ManualCPCAdGroupBids',
-    :keyword_max_cpc => {
-      :amount => {
-        :micro_amount => 10000000
-      }
-    }
-  }
-}
- 
-ad_group = Adapi::AdGroup.create(:data => ad_group_data)
+require 'add_bare_ad_group'
 
 keyword_criterion = {
   :xsi_type => 'BiddableAdGroupCriterion',
@@ -55,6 +15,6 @@ placement_criterion = {
 }
 
 p Adapi::AdGroupCriterion.create(
-  :ad_group_id => ad_group[:id],
+  :ad_group_id => $ad_group[:id],
   :criteria => [keyword_criterion, placement_criterion]
 )

@@ -1,31 +1,13 @@
 
 require 'adapi'
 
-# create factory for campaign and ad_groups, can be used even in development
+# create campaign
+require 'add_bare_campaign'
 
-campaign_data = {
-  :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
-  :status => 'PAUSED',
-  # vetsinou se pouziva automaticky bidding
-  :bidding_strategy => { :xsi_type => 'ManualCPC' },
-  :budget => {
-    :period => 'DAILY',
-    :amount => { :micro_amount => 50000000 },
-    :delivery_method => 'STANDARD'
-  },
-
-  :network_setting => {
-    :target_google_search => true,
-    :target_search_network => true,
-    :target_content_network => false,
-    :target_content_contextual => false
-  }
-}
-
-campaign = Adapi::Campaign.new(:data => campaign_data).create
+# create campaign targets
 
 campaign_target_data = {
-  :campaign_id => campaign[:id],
+  :campaign_id => $campaign[:id],
   :targets => {
     :language => [ 'en', 'cs' ],
     :geo => {
