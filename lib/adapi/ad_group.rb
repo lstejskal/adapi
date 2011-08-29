@@ -8,6 +8,7 @@ module Adapi
 
     def create
       criteria = params[:data].delete(:criteria)
+      ads = params[:data].delete(:ads) || []
 
       # prepare for adding campaign
       operation = { :operator => 'ADD', :operand => params[:data] }
@@ -22,7 +23,13 @@ module Adapi
           :criteria => criteria
         )
       end
-      
+
+      ads.each do |ad_data|
+        Adapi::Ad.create(
+          :data => ad_data.merge(:ad_group_id => ad_group[:id])
+        )
+      end
+
       # puts "Ad group ID %d was successfully added." % ad_group[:id]
       ad_group
     end

@@ -36,8 +36,6 @@ ad_group_data = {
  
 ad_group = Adapi::AdGroup.new(:data => ad_group_data).create
 
-p ad_group
-
 ad_data = {
   :ad_group_id => ad_group[:id],
   :xsi_type => 'TextAd',
@@ -48,5 +46,4 @@ ad_data = {
   :display_url => 'www.example.com'
 }
 
-p "AD:"
 p Adapi::Ad.create(:data => ad_data)
