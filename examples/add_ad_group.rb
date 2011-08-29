@@ -39,7 +39,20 @@ ad_group_data = {
         :micro_amount => 10000000
       }
     }
-  }
+  },
+  :criteria => [
+    # keyword_criterion
+    {
+      :xsi_type => 'BiddableAdGroupCriterion',
+      :criterion => { :xsi_type => 'Keyword', :text => 'ataxo', :match_type => 'BROAD' }
+    },
+    # placement_criterion
+    {
+      :xsi_type => 'BiddableAdGroupCriterion',
+      :criterion => { :xsi_type => 'Placement', :url => 'http://www.ataxo.cz' }
+    }
+  ]
+
 }
  
 p Adapi::AdGroup.new(:data => ad_group_data).create

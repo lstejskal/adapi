@@ -44,20 +44,17 @@ ad_group_data = {
  
 ad_group = Adapi::AdGroup.new(:data => ad_group_data).create
 
-# Create keyword.
 keyword_criterion = {
   :xsi_type => 'BiddableAdGroupCriterion',
-  :ad_group_id => ad_group[:id],
   :criterion => { :xsi_type => 'Keyword', :text => 'ataxo', :match_type => 'BROAD' }
 }
 
 placement_criterion = {
   :xsi_type => 'BiddableAdGroupCriterion',
-  :ad_group_id => ad_group[:id],
   :criterion => { :xsi_type => 'Placement', :url => 'http://www.ataxo.cz' }
 }
 
-p Adapi::AdGroupCriterion.create(:criteria => [keyword_criterion, placement_criterion])
-
-
-
+p Adapi::AdGroupCriterion.create(
+  :ad_group_id => ad_group[:id],
+  :criteria => [keyword_criterion, placement_criterion]
+)

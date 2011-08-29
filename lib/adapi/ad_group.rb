@@ -7,6 +7,8 @@ module Adapi
     end
 
     def create
+      criteria = params[:data].delete(:criteria)
+
       # prepare for adding campaign
       operation = { :operator => 'ADD', :operand => params[:data] }
     
@@ -14,9 +16,15 @@ module Adapi
 
       ad_group = response[:value].first
 
-      return ad_group
-
-      puts "Ad group ID %d was successfully added." % ad_group[:id]
+      if criteria
+        Adapi::AdGroupCriterion.create(
+          :ad_group_id => ad_group[:id],
+          :criteria => criteria
+        )
+      end
+      
+      # puts "Ad group ID %d was successfully added." % ad_group[:id]
+      ad_group
     end
 
     # should be sorted out later, but leave it be for now

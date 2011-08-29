@@ -11,6 +11,12 @@ module Adapi
 
       raise "No criteria available" unless params[:criteria].is_a?(Array)
 
+      # if ad_group_id is supplied as separate parameter, include it into
+      # criteria
+      if params[:ad_group_id]
+        params[:criteria].map! { |c| c.merge(:ad_group_id => params[:ad_group_id].to_i) }
+      end
+
       operation = params[:criteria].map do |criterion|
         { :operator => 'ADD', :operand => criterion }
       end
@@ -23,7 +29,7 @@ module Adapi
         puts "Added #{ad_group_criteria.length} criteria " # "to ad group #{ad_group_id}."
         ad_group_criteria.each do |ad_group_criterion|
           puts "  Criterion id is #{ad_group_criterion[:criterion][:id]} and " +
-              "type is #{ad_group_criterion[:criterion][:xsi_type]}."
+            "type is #{ad_group_criterion[:criterion][:"@xsi:type"]}."
         end
       else
         puts "No criteria were added."
