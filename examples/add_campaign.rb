@@ -23,8 +23,8 @@ campaign_data = {
   },
 
   :targets => {
-    :language => [ 'en', 'cz' ],
-    :geo => { :province => [ 'CZ-PR', 'CZ-KA' ] }
+    :language => [ 'en', 'cs' ],
+    :geo => { :country => 'CZ' }
   },
 
   :ad_groups => [
@@ -38,7 +38,29 @@ campaign_data = {
             :micro_amount => 10000000
           }
         }
-      }
+      },
+    
+      :criteria => [
+        { # keyword_criterion
+          :xsi_type => 'BiddableAdGroupCriterion',
+          :criterion => { :xsi_type => 'Keyword', :text => 'ataxo', :match_type => 'BROAD' }
+        },
+        { # placement_criterion
+          :xsi_type => 'BiddableAdGroupCriterion',
+          :criterion => { :xsi_type => 'Placement', :url => 'http://www.ataxo.cz' }
+        }
+      ],
+    
+      :ads => [
+        {
+          :xsi_type => 'TextAd',
+          :headline => "Ataxo TextAd #%d" % (Time.new.to_f * 1000).to_i,
+          :description1 => 'Visit the Red Planet in style.',
+          :description2 => 'Low-gravity fun for everyone!',
+          :url => 'http://www.example.com',
+          :display_url => 'www.example.com'
+        }
+      ]
     }
   ]
 
