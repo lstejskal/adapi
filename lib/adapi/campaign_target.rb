@@ -37,14 +37,11 @@ module Adapi
         }
       end
 
-      return operations
+      response = campaign_target_service.service.mutate(operations)
 
-      response = @service.mutate(operations)
-
-      targets = response
-
+      targets = response[:value] || []
       targets.each do |target|
-        puts "Campaign target of type #{target[:xsi_type]} for campaign id " +
+        puts "Campaign target of type #{target[:"@xsi:type"]} for campaign id " +
           "#{target[:campaign_id]} was set."
       end
 

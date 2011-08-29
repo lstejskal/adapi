@@ -27,10 +27,10 @@ campaign = Adapi::Campaign.new(:data => campaign_data).create
 campaign_target_data = {
   :campaign_id => campaign[:id],
   :targets => {
-    :language => [ 'en', 'cz' ],
+    :language => [ 'en', 'cs' ],
     :geo => {
-      # :country => 'CZ',
-      :province => [ 'CZ-PR', 'CZ-KA' ]
+      :country => 'CZ'
+      # :province => [ 'CZ-PR', 'CZ-KA' ]
       # :proximity => { :geo_point => '',
     }
   }
