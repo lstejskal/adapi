@@ -67,4 +67,4 @@ ad_group_data = {
 
 }
  
-p Adapi::AdGroup.new(:data => ad_group_data).create
+p Adapi::AdGroup.create(:data => ad_group_data)

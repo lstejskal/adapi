@@ -34,7 +34,7 @@ ad_group_data = {
   }
 }
  
-ad_group = Adapi::AdGroup.new(:data => ad_group_data).create
+ad_group = Adapi::AdGroup.create(:data => ad_group_data)
 
 ad_data = {
   :ad_group_id => ad_group[:id],

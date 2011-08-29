@@ -6,14 +6,16 @@ module Adapi
       super(params)
     end
 
-    def create
+    def self.create(params = {})
+      ad_group_service = AdGroup.new
+
       criteria = params[:data].delete(:criteria)
       ads = params[:data].delete(:ads) || []
 
       # prepare for adding campaign
       operation = { :operator => 'ADD', :operand => params[:data] }
     
-      response = @service.mutate([operation])
+      response = ad_group_service.service.mutate([operation])
 
       ad_group = response[:value].first
 
@@ -36,7 +38,9 @@ module Adapi
 
     # should be sorted out later, but leave it be for now
     #
-    def find(params = {})
+    def self.find(params = {})
+      ad_group_service = AdGroup.new
+
       raise "No Campaign ID" unless params[:campaign_id]
       campaign_id = params[:campaign_id]
 
@@ -48,7 +52,7 @@ module Adapi
         }]
       }
 
-      response = @service.get(selector)
+      response = ad_group_service.service.get(selector)
 
       if response and response[:entries]
         ad_groups = response[:entries]

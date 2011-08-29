@@ -35,10 +35,10 @@ module Adapi
 
       # if campaign has ad_groups, create them as well
       ad_groups.each do |ad_group_data|
-        Adapi::AdGroup.new(
+        Adapi::AdGroup.create(
           :data => ad_group_data.merge(:campaign_id => campaign[:id]),
           :api_adwords_instance => self.adwords
-        ).create
+        )
       end
 
       campaign

@@ -42,7 +42,7 @@ ad_group_data = {
   }
 }
  
-ad_group = Adapi::AdGroup.new(:data => ad_group_data).create
+ad_group = Adapi::AdGroup.create(:data => ad_group_data)
 
 keyword_criterion = {
   :xsi_type => 'BiddableAdGroupCriterion',
