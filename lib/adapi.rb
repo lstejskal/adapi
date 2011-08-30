@@ -2,6 +2,7 @@
 require 'rubygems'
 require 'adwords_api'
 require 'collection'
+require 'yaml'
 
 require 'adapi/config'
 require 'adapi/api'

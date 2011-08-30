@@ -25,13 +25,6 @@ However, you can set custom login data in :adword_api param. Example:
   }
 }
 
-TODO should support aliases. :adwords_api => { :alias => 'mediatel' }
-# should find specific authentication data. but where to store them?
-# set location for YAML file?
-
-TODO eventually we should create some authentication service which
-will store accounts data and return only tokens to us (not passwords)
-
 =end
 
     def initialize(params = {})

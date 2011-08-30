@@ -2,7 +2,7 @@
 
 Adapi (shortened AdWords API) is a library for easy and painless work with
 Google Adwords API. Its users shouldn't bother with SOAP and tangle of XML- and
-API-specific objects (like in adwords4r gem), inputs and outputs are plain Ruby
+API-specific objects (remember adwords4r gem?), inputs and outputs are plain Ruby
 arrays and hashes.
 
 Adapi is built on new Google Adwords API gems: google-ads-common and
@@ -10,26 +10,70 @@ google-adwords-api.
 
 == Installation
 
-Adapi gem is built by bundler. 
+* Install dependencies:
+       bundle install
 
 * Install gem:
        rake install
 
-* Install dependencies:
-       bundle install
+== Configuration of AdWords Account(s)
 
-* Check if everything it working:
-       rake test
+This section explains how to connect to specific account and client.
 
-== Configuration
+In general, you can set many AdWords account to connect to (similarly as you can
+set up several databases in Rails, for example).
 
-This section explains how to connect to specific account and client. (We assume
-for the moment that we always want to log in with a scope of specific client.)
+=== Authentication workflow
 
-=== How to set up login data:
+* load configuration from ~/adapi.yml
+* load configuration from ~/adwords.yml (default configuration for AdWords gems
+  from Google)
+* set configuration directly to Adapi::Config (overrides previous settings)
+* if no configuration is available, throw an exception when connecting AdWords API
 
-* before logging into the Adwords API, you can set global settings through
-  Adapi::Config:
+=== Configuration of multiple accounts
+
+Stored in ~/adapi.yml. Supports multiple accounts, which are identifed by
+aliases. Example:
+
+      default:
+        authentication:
+          method: ClientLogin
+          email: user@email.com
+          password: password
+          developer_token: asdas4wdDsaas
+          client_customer_id: 123-456-7890
+          user_agent: Adapi Test
+        service:
+          environment: PRODUCTION
+      
+      my_account:
+        authentication:
+          method: ClientLogin
+          email: another_user@email.com
+          password: password
+          developer_token: another_asdas4wdDsaas
+          client_customer_id: 098-765-4321
+          user_agent: Adapi Test
+        service:
+          environment: SANDBOX
+
+You tell adapi which account to use by setting an alias:
+
+      Adapi::Config.set(:my_account)
+
+:default account is, as name implies, used by default - when you run adapi
+without setting under which specific account to run.
+
+=== Configuration from google-adwords-api
+
+If you already have google-adwords-api gem configured and using just one
+account, the same configuration will also work for adapi: ~/adwords_api.yml
+
+=== Configuration directly in code
+
+Before logging into the Adwords API, you can set global settings through
+Adapi::Config:
 
       Adapi::Config.set( {
         :authentication => {
@@ -47,17 +91,11 @@ for the moment that we always want to log in with a scope of specific client.)
       })
 
       # this will use the custom login data
-      Adapi::Campaign.new(:data => campaign_data).create
+      Adapi::Campaign.create(campaign_data)
 
-* If nothing is specified, login data are loaded the google-adwords-api gem way,
-  from ~/adwords_api.yml
-
-== Authentication
-
-Model Account takes care of authentication. It's not as easy as it seems. Ataxo
-has several main accounts for its large clients (mediatel, etc.) and often we
-have to find specific account, which is not what average AdWords user needs.
-Therefore I decided to put all this functionality into Account model.
+This will override any previous configuration and the account as :default. You
+can also enter more accounts, but note that one of them has to be named
+:default.
 
 == API
 
@@ -68,7 +106,7 @@ specific campaign's ad group:
 
        Adapi::AdGroup.create(:campaign_id => id, :ad_group_id => id, :data => ad_group_data)
 
-=== Collection-centric
+=== TODO Collection-centric 
 
        $account = Adapi::Account.new
 
