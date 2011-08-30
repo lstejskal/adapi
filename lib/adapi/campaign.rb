@@ -30,7 +30,7 @@ module Adapi
         Adapi::CampaignTarget.create(
           :campaign_id => campaign[:id],
           :targets => targets,
-          :api_adwords_instance => self.adwords
+          :api_adwords_instance => campaign_service.adwords
         )
       end
 
@@ -38,7 +38,7 @@ module Adapi
       ad_groups.each do |ad_group_data|
         Adapi::AdGroup.create(
           :data => ad_group_data.merge(:campaign_id => campaign[:id]),
-          :api_adwords_instance => self.adwords
+          :api_adwords_instance => campaign_service.adwords
         )
       end
 
