@@ -35,7 +35,7 @@ ad_group_data = {
   :ads => [
     {
       :xsi_type => 'TextAd',
-      :headline => "Ataxo TextAd #%d" % (Time.new.to_f * 1000).to_i,
+      :headline => "Fly to Mars %d" % (Time.new.to_f * 1000).to_i,
       :description1 => 'Visit the Red Planet in style.',
       :description2 => 'Low-gravity fun for everyone!',
       :url => 'http://www.example.com',

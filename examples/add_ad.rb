@@ -7,7 +7,7 @@ require 'add_bare_ad_group'
 ad_data = {
   :ad_group_id => $ad_group[:id],
   :xsi_type => 'TextAd',
-  :headline => "Ataxo TextAd #%d" % (Time.new.to_f * 1000).to_i,
+  :headline => "Fly to Mars %d" % (Time.new.to_f * 1000).to_i,
   :description1 => 'Visit the Red Planet in style.',
   :description2 => 'Low-gravity fun for everyone!',
   :url => 'http://www.example.com',
