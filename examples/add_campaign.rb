@@ -66,4 +66,4 @@ campaign_data = {
 
 }
  
-p Adapi::Campaign.create(:data => campaign_data)
+p Adapi::Campaign.create(campaign_data)

@@ -6,8 +6,16 @@ module Adapi
       super(params)
    end
 
+    # campaign data can be passed either as single hash:
+    # Campaign.create(:name => 'Campaign 123', :status => 'ENABLED')
+    # or as hash in a :data key:
+    # Campaign.create(:data => { :name => 'Campaign 123', :status => 'ENABLED' })
+    #
     def self.create(params = {})
       campaign_service = Campaign.new
+
+      # give users options to shorten input params
+      params = { :data => params } unless params.has_key?(:data)
 
       # prepare for adding campaign
       ad_groups = params[:data].delete(:ad_groups).to_a
