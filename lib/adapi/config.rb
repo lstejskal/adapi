@@ -6,13 +6,18 @@
 
 module Adapi
   class Config
-    # all settings
-    @@settings = {}
-    # actual settings
-    @@data = nil
 
-    def self.read
-      @@data ||= Config.load_settings[:default]
+    # display hash of all account settings
+    #
+    def self.settings
+      @settings ||= self.load_settings
+    end
+
+    # display actual account settings
+    # if it's not available, set to :default account settings
+    #
+    def self.read # = @data
+      @data ||= self.settings[:default]
     end
 
     # TODO described in README, but should be documented here as well
@@ -20,10 +25,10 @@ module Adapi
     def self.set(params = {})
       # hash of params - default
       if params.is_a?(Hash)
-        @@data = params
+        @data = params
       # set alias from adapi.yml
       elsif params.is_a?(Symbol)
-        @@data = @@settings[params] || Config.load_settings[params]
+        @data = @settings[params]
       end
     end
 
@@ -39,12 +44,12 @@ module Adapi
       adwords_api_path = File.join(ENV['HOME'], 'adwords_api.yml')
 
       if File.exists?(adapi_path)
-        @@settings = YAML::load(File.read(adapi_path)) rescue {}
+        @settings = YAML::load(File.read(adapi_path)) rescue {}
       elsif File.exists?(adwords_api_path)
-        @@settings = { :default => YAML::load(File.read(adwords_api_path)) } rescue {}
+        @settings = { :default => YAML::load(File.read(adwords_api_path)) } rescue {}
       end
 
-      @@settings
+      @settings
     end
 
   end

@@ -1,20 +1,9 @@
 
 require 'adapi'
 
-Adapi::Config.load_settings(
-  :path => File.expand_path(File.dirname(__FILE__)),
-  :filename => 'custom_settings.yml'
-)
-
-Adapi::Config.set(:sandbox)
-
-require 'pp'
-pp Adapi::Config.read
-
-=begin
 # use specific config data
 
-Adapi::Config.set( {
+Adapi::Config.set({
   :authentication => {
     :method => 'ClientLogin',
     :developer_token => 'DEVELOPER_TOKEN',
@@ -28,7 +17,6 @@ Adapi::Config.set( {
     :environment => 'SANDBOX' # 'PRODUCTION'
   }
 })
-=end
 
 # create campaign
 require 'add_bare_campaign'
