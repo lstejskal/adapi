@@ -1,6 +1,9 @@
 module Adapi
   class Campaign < Api
 
+    # PS: if we're going to implement instance mehtods, let's put all
+    # campaing-related data in :data hash. Don't create attributes yet
+
     def initialize(params = {})
       params[:service_name] = :CampaignService
       super(params)
@@ -84,6 +87,27 @@ module Adapi
 
       return campaign
     end
+
+    def self.set_status(params = {})
+      params[:id] ||= (params[:data] || params[:data][:id]) || nil
+      return nil unless params[:id]
+      return nil unless %w{ ACTIVE PAUSED DELETED }.include?(params[:status])
+
+      self.update(:id => params[:id], :status => params[:status])
+    end
+
+    def self.activate(params = {})
+      self.set_status params.merge(:status => 'ACTIVE')
+    end
+
+    def self.pause(params = {})
+      self.set_status params.merge(:status => 'PAUSED')
+    end
+
+    def self.delete(params = {})
+      self.set_status params.merge(:status => 'DELETED')
+    end
+
 
     # should be sorted out later, but leave it be for now
     #
