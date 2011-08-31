@@ -60,6 +60,9 @@ aliases. Example:
 
 You tell adapi which account to use by setting an alias:
 
+      Adapi::Config.load_settings(:path => '~/')
+      # PS: ENV['HOME'] is the default path
+
       Adapi::Config.set(:my_account)
 
 :default account is, as name implies, used by default - when you run adapi
@@ -104,13 +107,15 @@ specific campaign's ad group:
 
 === Model-centric
 
-       Adapi::AdGroup.create(:campaign_id => id, :ad_group_id => id, :data => ad_group_data)
+       Adapi::Campaign.create(:data => campaign_data)
 
 === TODO Collection-centric 
 
-       $account = Adapi::Account.new
+       account = Adapi::Account.new(:account_alias)
 
-       $account.campaigns[id].ad_groups[id] << ad_group_data
+       campaign = account.campaigns.create(campaign_data)
+
+       account.campaigns[ campaign[:id] ].ad_groups << ad_group_data
 
 == Examples
 

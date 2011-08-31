@@ -1,3 +1,9 @@
+
+# TODO get rid of class variables
+
+# what about this config setting?
+# Campaign.create(:data => campaign_data, :account => :my_account_alias)
+
 module Adapi
   class Config
     # all settings
@@ -17,15 +23,20 @@ module Adapi
         @@data = params
       # set alias from adapi.yml
       elsif params.is_a?(Symbol)
-        @@data = Config.load_settings[params]
+        @@data = @@settings[params] || Config.load_settings[params]
       end
     end
 
-    # TODO Config[key] = value (also read method)
+    # params:
+    # * path - default: user's home directory
+    # * filename - default: adapi.yml
+    # TODO: set to HOME/adwords_api as default
+    def self.load_settings(params = {})
+      params[:path] ||= ENV['HOME']
+      params[:filename] ||= 'adapi.yml'
 
-    def self.load_settings
-      adapi_path = File.join(ENV['HOME'],'adapi.yml')
-      adwords_api_path = File.join(ENV['HOME'],'adwords_api.yml')
+      adapi_path = File.join(params[:path], params[:filename])
+      adwords_api_path = File.join(ENV['HOME'], 'adwords_api.yml')
 
       if File.exists?(adapi_path)
         @@settings = YAML::load(File.read(adapi_path)) rescue {}
