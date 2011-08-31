@@ -57,6 +57,34 @@ module Adapi
       # otherwise return campaign object, id or something what enables user to find campaign
     end
 
+    # general method for changing campaign data
+    # TODO enable updating of all campaign parts at once,  same as for Campaign#create method
+    # 
+    def self.update(params = {})
+      campaign_service = Campaign.new
+
+      # give users options to shorten input params
+      params = { :data => params } unless params.has_key?(:data)
+
+      campaign_id = params[:id] || params[:data][:id] || nil
+      return nil unless campaign_id
+      
+      operation = { :operator => 'SET',
+        :operand => params[:data].merge(:id => campaign_id.to_i)
+      }
+    
+      response = campaign_service.service.mutate([operation])
+
+      if response and response[:value]
+        campaign = response[:value].first
+        puts 'Campaign id %d successfully updated.' % campaign[:id]
+      else
+        puts 'No campaigns were updated.'
+      end
+
+      return campaign
+    end
+
     # should be sorted out later, but leave it be for now
     #
     def self.find(params = {})
