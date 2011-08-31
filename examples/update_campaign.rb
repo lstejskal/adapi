@@ -1,8 +1,6 @@
 
 require 'adapi'
 
-p Adapi::Config.read[:service][:environment]
-
 # create campaign
 require 'add_bare_campaign'
 

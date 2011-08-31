@@ -108,6 +108,12 @@ module Adapi
       self.set_status params.merge(:status => 'DELETED')
     end
 
+    def self.rename(params = {})
+      params[:id] ||= (params[:data] || params[:data][:id]) || nil
+      return nil unless (params[:id] && params[:name])
+
+      self.update(:id => params[:id], :name => params[:name])
+    end
 
     # should be sorted out later, but leave it be for now
     #
