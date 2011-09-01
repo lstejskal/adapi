@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.name        = "adapi"
   s.version     = Adapi::VERSION
   s.authors     = ["Lukas Stejskal"]
-  s.email       = ["lukas.stejskal@ataxo.com"]
+  s.email       = ["lucastej@gmail.com"]
   s.homepage    = ""
   s.summary     = %q{User-friendly interface to Google Adwords API}
   s.description = %q{This gem provides user-friendly interface to Google Adwords API.}
