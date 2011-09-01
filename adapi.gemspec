@@ -21,8 +21,8 @@ Gem::Specification.new do |s|
   s.add_dependency "google-ads-common", "~> 0.5.1"
   s.add_dependency "google-adwords-api", "~> 0.4.1"
 
-  s.add_development_dependency "turn", "~> 0.8"
-  s.add_development_dependency "shoulda", "~> 2.11"
-  s.add_development_dependency "fakeweb", "~> 1.3"
-  s.add_development_dependency "factory_girl", "~> 2.0"
+  s.add_development_dependency "turn"
+  s.add_development_dependency "shoulda"
+  s.add_development_dependency "fakeweb"
+  s.add_development_dependency "factory_girl"
 end
