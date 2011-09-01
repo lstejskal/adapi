@@ -1,104 +1,103 @@
 == Adapi
 
-Adapi (shortened AdWords API) is a library for easy and painless work with
+Adapi (shortened "AdWords API") is a library for easy and painless work with
 Google Adwords API. Its users shouldn't bother with SOAP and tangle of XML- and
-API-specific objects (remember adwords4r gem?), inputs and outputs are plain Ruby
-arrays and hashes.
+API-specific objects (remember adwords4r gem?), inputs and outputs are plain
+Ruby arrays and hashes.
 
 Adapi is built on new Google Adwords API gems: google-ads-common and
-google-adwords-api.
+google-adwords-api. Arrays and hashes instead of objects come from there, but
+adapi takes it several steps further. AdWords services are represented by models
+with relations, so among other things it's possible to create whole campaign in
+single method call: Adapi::Campaign.create(campaign_data). Various convenience
+methods are added to the models, for example: campaign.pause! (pauses
+campaign). Adapi enables multiple AdWords accounts to be used at the same time.
+
+Adapi is STILL IN DEVELOPMENT, not nearly done yet! Version 0.1.0 should have
+all planned functionality.
 
 == Installation
 
-* Install dependencies:
-       bundle install
+       gem install adapi
 
-* Install gem:
+=== from git repository
+
+       bundle install
        rake install
 
 == Configuration of AdWords Account(s)
 
 This section explains how to connect to specific account and client.
 
-In general, you can set many AdWords account to connect to (similarly as you can
-set up several databases in Rails, for example).
+In general, you can set many AdWords accounts to connect to (similarly as you
+can set up several databases in Rails, for example).
 
 === Authentication workflow
 
 * load configuration from ~/adapi.yml
-* load configuration from ~/adwords.yml (default configuration for AdWords gems
+* load configuration from ~/adwords_api.yml (default configuration for AdWords gems
   from Google)
 * set configuration directly to Adapi::Config (overrides previous settings)
-* if no configuration is available, throw an exception when connecting AdWords API
 
-=== Configuration of multiple accounts
+=== Configuration by adapi.yml
 
 Stored in ~/adapi.yml. Supports multiple accounts, which are identifed by
 aliases. Example:
 
-      default:
-        authentication:
-          method: ClientLogin
-          email: user@email.com
-          password: password
-          developer_token: asdas4wdDsaas
-          client_customer_id: 123-456-7890
-          user_agent: Adapi Test
-        service:
-          environment: PRODUCTION
+      :default:
+        :authentication:
+          :method: ClientLogin
+          :email: default_email@gmail.com
+          :password: default_password
+          :developer_token: default_token
+          :client_email: default_client_email@gmail.com
+          :user_agent: My Adwords API Client
+        :service:
+          :environment: PRODUCTION
       
-      my_account:
-        authentication:
-          method: ClientLogin
-          email: another_user@email.com
-          password: password
-          developer_token: another_asdas4wdDsaas
-          client_customer_id: 098-765-4321
-          user_agent: Adapi Test
-        service:
-          environment: SANDBOX
+      :sandbox:
+        :authentication:
+          :method: ClientLogin
+          :email: sandbox_email@gmail.com
+          :password: sandbox_password
+          :developer_token: sandbox_token
+          :client_email: sandbox_client_email@gmail.com
+          :user_agent: Adwords API Test
+        :service:
+          :environment: SANDBOX
 
 You tell adapi which account to use by setting an alias:
 
-      Adapi::Config.load_settings(:path => '~/')
-      # PS: ENV['HOME'] is the default path
+      Adapi::Config.set(:sandbox)
 
-      Adapi::Config.set(:my_account)
+:default account is, as name implies, used by default. You must either set an
+alias to Adapi::Config or have account with :default alias available.
 
-:default account is, as name implies, used by default - when you run adapi
-without setting under which specific account to run.
+=== Configuration by adwords_api.yml
 
-=== Configuration from google-adwords-api
-
-If you already have google-adwords-api gem configured and using just one
-account, the same configuration will also work for adapi: ~/adwords_api.yml
+If you already have google-adwords-api gem configured and use just one account,
+the same configuration will also work for adapi: ~/adwords_api.yml
 
 === Configuration directly in code
 
 Before logging into the Adwords API, you can set global settings through
 Adapi::Config:
 
-      Adapi::Config.set( {
-        :authentication => {
-          :method => 'ClientLogin',
-          :developer_token => 'DEVELOPER_TOKEN',
-          :auth_token => 'AUTH_TOKEN',
-          :user_agent => 'Adapi Examples',
-          :email => 'EMAIL',
-          :password => 'PASSWORD',
-          :client_email => 'client@email.com'
-        },
-        :service => {
-          :environment => 'SANDBOX' # 'PRODUCTION'
-        }
+      Adapi::Config.set({
+        :authentication:
+          :method: ClientLogin
+          :email: sandbox_email@gmail.com
+          :password: sandbox_password
+          :developer_token: sandbox_token
+          :client_email: sandbox_client_email@gmail.com
+          :user_agent: Adwords API Test
+        :service:
+          :environment: SANDBOX
       })
 
-      # this will use the custom login data
-      Adapi::Campaign.create(campaign_data)
-
-This will override any previous configuration and the account as :default. You
-can also enter more accounts, but note that one of them has to be named
-:default.
+This will override any previous configuration and set the account as :default.
+You can specify more accounts this way, with aliases, in the same way as in
+~/adapi.yml.
 
 == API
 
@@ -107,7 +106,7 @@ specific campaign's ad group:
 
 === Model-centric
 
-       Adapi::Campaign.create(:data => campaign_data)
+       Adapi::Campaign.create(campaign_data)
 
 === TODO Collection-centric 
 
@@ -119,7 +118,7 @@ specific campaign's ad group:
 
 == Examples
 
-Many examples of use are available in /examples directory.
+Available in /examples directory.
 
 == Author
 
