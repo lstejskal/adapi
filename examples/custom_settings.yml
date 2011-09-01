@@ -1,0 +1,22 @@
+
+:default:
+  :authentication:
+    :method: ClientLogin
+    :email: default_email@gmail.com
+    :password: default_password
+    :developer_token: default_token
+    :client_email: default_client_email@gmail.com
+    :user_agent: My Adwords API Client
+  :service:
+    :environment: PRODUCTION
+
+:sandbox:
+  :authentication:
+    :method: ClientLogin
+    :email: sandbox_email@gmail.com
+    :password: sandbox_password
+    :developer_token: sandbox_token
+    :client_email: sandbox_client_email@gmail.com
+    :user_agent: Adwords API Test
+  :service:
+    :environment: SANDBOX
