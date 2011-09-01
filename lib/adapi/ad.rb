@@ -1,5 +1,7 @@
 module Adapi
+
   # TODO add synonym for actual service name: AdGroupAd
+  #
   class Ad < Api
 
     def initialize(params = {})
@@ -29,8 +31,6 @@ module Adapi
       ad
     end
 
-    # should be sorted out later, but leave it be for now
-    #
     def self.find(params = {})
       ad_service = Ad.new
 

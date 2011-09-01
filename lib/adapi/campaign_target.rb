@@ -1,14 +1,8 @@
 module Adapi
-  # http://code.google.com/apis/adwords/docs/reference/latest/CampaignTargetService.html
-  # PS: not a separate class yet!
-  class CampaignTarget < Api
 
-    # Targetting types: 
-    # Campaign.set_targetting!([:target_type => "", :data => {}], ...)
-    # c.set_targetting! [
-    #   { :target => :language, :data => [{:language_code => 'fr'}, {:language_code => 'ja'}] },
-    #   { :target => :geo, :data => { :xsi_type => 'CountryTarget', :excluded => false, :country_code => 'CZ' } }
-    # ]
+  # http://code.google.com/apis/adwords/docs/reference/latest/CampaignTargetService.html
+  #
+  class CampaignTarget < Api
 
     def initialize(params = {})
       params[:service_name] = :CampaignTargetService
@@ -48,10 +42,6 @@ module Adapi
       targets
     end
   
-    # FIXME doesn't work yet, seems like bug in adwords-api gem
-    # created an issue for it:
-    # http://code.google.com/p/google-api-ads-ruby/issues/detail?id=32
-    #
     def self.find(params = {})
       campaign_target_service = CampaignTarget.new
 
@@ -74,7 +64,6 @@ module Adapi
     end
 
     # transform our own high-level target parameters to google low-level
-    # PS: we'll be using only these target types: country, province and proximity
     #
     def self.create_targets(target_type, target_data)
       case target_type

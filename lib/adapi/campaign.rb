@@ -1,9 +1,6 @@
 module Adapi
   class Campaign < Api
 
-    # PS: if we're going to implement instance mehtods, let's put all
-    # campaing-related data in :data hash. Don't create attributes yet
-
     def initialize(params = {})
       params[:service_name] = :CampaignService
       super(params)
@@ -54,14 +51,10 @@ module Adapi
       end
 
       campaign
-
-      # if something goes wrong...
-
-      # otherwise return campaign object, id or something what enables user to find campaign
     end
 
     # general method for changing campaign data
-    # TODO enable updating of all campaign parts at once,  same as for Campaign#create method
+    # TODO enable updating of all campaign parts at once, same as for Campaign#create method
     # 
     def self.update(params = {})
       campaign_service = Campaign.new
@@ -115,8 +108,6 @@ module Adapi
       self.update(:id => params[:id], :name => params[:name])
     end
 
-    # should be sorted out later, but leave it be for now
-    #
     def self.find(params = {})
       campaign_service = Campaign.new
 

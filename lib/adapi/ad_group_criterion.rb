@@ -38,8 +38,6 @@ module Adapi
       ad_group_criteria 
     end
 
-    # should be sorted out later, but leave it be for now
-    #
     def find(params = {})
       raise "No Campaign ID" unless params[:campaign_id]
       campaign_id = params[:campaign_id]
