@@ -5,7 +5,7 @@ require 'adapi'
 # including keywords and ads
 
 campaign_data = {
-  :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
+  :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
   :bidding_strategy => { :xsi_type => 'ManualCPC' },
   :budget => {
@@ -14,7 +14,6 @@ campaign_data = {
     :delivery_method => 'STANDARD'
   },
 
-  # Set the campaign network options to Search and Search Network.
   :network_setting => {
     :target_google_search => true,
     :target_search_network => true,
@@ -29,7 +28,7 @@ campaign_data = {
 
   :ad_groups => [
     {
-      :name => "Ataxo AdGroup #%d" % (Time.new.to_f * 1000).to_i,
+      :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
       :status => 'ENABLED',
       :bids => {
         :xsi_type => 'ManualCPCAdGroupBids',
@@ -43,22 +42,22 @@ campaign_data = {
       :criteria => [
         { # keyword_criterion
           :xsi_type => 'BiddableAdGroupCriterion',
-          :criterion => { :xsi_type => 'Keyword', :text => 'ataxo', :match_type => 'BROAD' }
+          :criterion => { :xsi_type => 'Keyword', :text => 'codez', :match_type => 'BROAD' }
         },
         { # placement_criterion
           :xsi_type => 'BiddableAdGroupCriterion',
-          :criterion => { :xsi_type => 'Placement', :url => 'http://www.ataxo.cz' }
+          :criterion => { :xsi_type => 'Placement', :url => 'http://www.blogger.com' }
         }
       ],
     
       :ads => [
         {
           :xsi_type => 'TextAd',
-          :headline => "Fly to Mars %d" % (Time.new.to_f * 1000).to_i,
-          :description1 => 'Visit the Red Planet in style.',
-          :description2 => 'Low-gravity fun for everyone!',
-          :url => 'http://www.ataxo.cz',
-          :display_url => 'www.ataxo.cz'
+          :headline => "Code like Neo",
+          :description1 => 'Need mad coding skills?',
+          :description2 => 'Check out my new blog!',
+          :url => 'http://www.demcodez.com',
+          :display_url => 'http://www.demcodez.com'
         }
       ]
     }

@@ -2,9 +2,10 @@
 require 'adapi'
 
 # add campaign with basic data only
+# this script is used as an include in other scripts
 
 $campaign_data = {
-  :name => "Ataxo Campaign #%d" % (Time.new.to_f * 1000).to_i,
+  :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
   :bidding_strategy => { :xsi_type => 'ManualCPC' },
   :budget => {
@@ -13,7 +14,6 @@ $campaign_data = {
     :delivery_method => 'STANDARD'
   },
 
-  # Set the campaign network options to Search and Search Network.
   :network_setting => {
     :target_google_search => true,
     :target_search_network => true,
@@ -22,6 +22,6 @@ $campaign_data = {
   }
 }
  
-$campaign = Adapi::Campaign.create(:data => $campaign_data)
+$campaign = Adapi::Campaign.create($campaign_data)
 
 p $campaign

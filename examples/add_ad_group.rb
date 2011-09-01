@@ -7,7 +7,7 @@ require 'add_bare_campaign'
 # create ad group
 
 ad_group_data = {
-  :name => "Ataxo AdGroup #%d" % (Time.new.to_f * 1000).to_i,
+  :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'ENABLED',
   :campaign_id => $campaign[:id],
   :bids => {
@@ -20,26 +20,24 @@ ad_group_data = {
   },
 
   :criteria => [
-    # keyword_criterion
-    {
+    { # keyword_criterion
       :xsi_type => 'BiddableAdGroupCriterion',
-      :criterion => { :xsi_type => 'Keyword', :text => 'ataxo', :match_type => 'BROAD' }
+      :criterion => { :xsi_type => 'Keyword', :text => 'codez', :match_type => 'BROAD' }
     },
-    # placement_criterion
-    {
+    { # placement_criterion
       :xsi_type => 'BiddableAdGroupCriterion',
-      :criterion => { :xsi_type => 'Placement', :url => 'http://www.ataxo.cz' }
+      :criterion => { :xsi_type => 'Placement', :url => 'http://www.blogger.com' }
     }
   ],
 
   :ads => [
     {
       :xsi_type => 'TextAd',
-      :headline => "Fly to Mars %d" % (Time.new.to_f * 1000).to_i,
-      :description1 => 'Visit the Red Planet in style.',
-      :description2 => 'Low-gravity fun for everyone!',
-      :url => 'http://www.example.com',
-      :display_url => 'www.example.com'
+      :headline => "Code like Neo",
+      :description1 => 'Need mad coding skills?',
+      :description2 => 'Check out my new blog!',
+      :url => 'http://www.demcodez.com',
+      :display_url => 'http://www.demcodez.com'
     }
   ]
 

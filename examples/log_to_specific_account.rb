@@ -2,19 +2,17 @@
 require 'adapi'
 
 # use specific config data
-
 Adapi::Config.set({
   :authentication => {
     :method => 'ClientLogin',
-    :developer_token => 'DEVELOPER_TOKEN',
-    :auth_token => 'AUTH_TOKEN',
-    :user_agent => 'Adapi Examples',
-    :email => 'EMAIL',
-    :password => 'PASSWORD',
-    :client_email => 'client@email.com'
+    :email => 'sandbox_email@gmail.com',
+    :password => 'sandbox_password',
+    :developer_token => 'sandbox_developer_token',
+    :client_email => 'sandbox_client_email@gmail.com',
+    :user_agent => 'Adwords API Test'
   },
   :service => {
-    :environment => 'SANDBOX' # 'PRODUCTION'
+    :environment => 'SANDBOX'
   }
 })
 

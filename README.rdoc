@@ -118,7 +118,9 @@ specific campaign's ad group:
 
 == Examples
 
-Available in /examples directory.
+Example are available in /examples directory. For now, they are mostly just dumb
+rewrites of examples from google-adwords-api gem, but that's going to change
+when proper UI to AdWords models will be implemented.
 
 == Author
 

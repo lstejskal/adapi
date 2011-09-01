@@ -5,9 +5,10 @@ require 'adapi'
 require 'add_bare_campaign'
 
 # create ad group with basic data only
+# this script is used as an include in other scripts
 
 $ad_group_data = {
-  :name => "Ataxo AdGroup #%d" % (Time.new.to_f * 1000).to_i,
+  :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'ENABLED',
   :campaign_id => $campaign[:id],
   :bids => {
