@@ -6,7 +6,7 @@ module Adapi
     attr_reader :approval_status, :disapproval_reasons, :trademark_disapproved,
       :xsi_type
 
-    attr_accessor :id, :url, :display_url, :ad_group_id
+    attr_accessor :id, :ad_group_id, :url, :display_url
 
     # define_attribute_methods [ :url, :display_url ]
 
@@ -19,7 +19,7 @@ module Adapi
     def initialize(params = {})
       params[:service_name] = :AdGroupAdService
 
-      %w{ ad_group_id url display_url }.each do |param_name|
+      %w{ id ad_group_id url display_url }.each do |param_name|
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
