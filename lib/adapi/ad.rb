@@ -12,6 +12,8 @@ module Adapi
 
     validates_presence_of :ad_group_id
 
+    # PS: create won't work with id and ad_group_id
+    # 'id' => id, 'ad_group_id' => ad_group_id, 
     def attributes
       { 'xsi_type' => xsi_type, 'url' => url, 'display_url' => display_url }
     end

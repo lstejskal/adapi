@@ -69,6 +69,10 @@ module Adapi
 
       response = (response and response[:entries]) ? response[:entries] : []
 
+      response.map! do |data|
+        TextAd.new(data[:ad].merge(:ad_group_id => params[:ad_group_id]))
+      end
+
       # TODO convert to TextAd instances
       # PS: we already have ad_group_id parameter
       first_only ? response.first : response
