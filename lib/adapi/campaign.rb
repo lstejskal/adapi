@@ -1,11 +1,26 @@
 module Adapi
   class Campaign < Api
 
+    # http://code.google.com/apis/adwords/docs/reference/latest/CampaignService.Campaign.html
+    #
+    attr_accessor :id, :name, :status, :serving_status, :start_date, :end_date,
+      :bidding_strategy, :budget, :network_setting
+
+    validates_presence_of :name, :status
+    validates_inclusion_of :status, :in => %w{ ACTIVE DELETED PAUSED }
+
     def initialize(params = {})
       params[:service_name] = :CampaignService
+
+      %w{ name status start_date end_date }.each do |param_name|
+        self.send "#{param_name}=", params[param_name.to_sym]
+      end
+
       super(params)
    end
 
+    # create campaign with ad_groups and ads
+    #
     # campaign data can be passed either as single hash:
     # Campaign.create(:name => 'Campaign 123', :status => 'ENABLED')
     # or as hash in a :data key:
