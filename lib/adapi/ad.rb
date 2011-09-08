@@ -3,12 +3,17 @@ module Adapi
   # Ad == AdGroupAd
   class Ad < Api
 
-    attr_accessor :ad_group_id, :url, :display_url
+    attr_reader :approval_status, :disapproval_reasons, :trademark_disapproved,
+      :xsi_type
+
+    attr_accessor :id, :url, :display_url, :ad_group_id
+
+    # define_attribute_methods [ :url, :display_url ]
 
     validates_presence_of :ad_group_id
 
     def attributes
-      { 'ad_group_id' => ad_group_id, 'url' => url, 'display_url' => display_url }
+      { 'xsi_type' => xsi_type, 'url' => url, 'display_url' => display_url }
     end
 
     def initialize(params = {})

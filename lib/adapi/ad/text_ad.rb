@@ -1,8 +1,13 @@
 module Adapi
   # Ad::TextAd == AdGroupAd::TextAd
+  #
+  # http://code.google.com/apis/adwords/docs/reference/latest/AdGroupAdService.TextAd.html
+  #
   class Ad::TextAd < Ad
 
     attr_accessor :headline, :description1, :description2
+
+    # define_attribute_methods [ :headline, :description1, :description2 ]
 
     def attributes
       super.merge('headline' => headline, 'description1' => description1, 'description2' => description2)
@@ -11,12 +16,26 @@ module Adapi
     def initialize(params = {})
       params[:service_name] = :AdGroupAdService
 
+      @xsi_type = 'TextAd'
+
       %w{ headline description1 description2 }.each do |param_name|
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
       super(params)
     end
+    
+    def create
+      operation = { :operator => 'ADD', 
+        :operand => { :ad_group_id => @ad_group_id, :ad => self.data }
+      } 
+    
+      response = @service.mutate([operation])
+
+      (response and response[:value]) ? response[:value].first : nil
+      # puts "  Ad ID is #{ad[:ad][:id]}, type is '#{ad[:ad][:xsi_type]}' and status is '#{ad[:status]}'."
+    end
+
 
     def self.create(params = {})
       ad_service = Ad.new
@@ -28,8 +47,6 @@ module Adapi
       } 
     
       response = ad_service.service.mutate([operation])
-
-      ad_group = response[:value].first
 
       ad = nil
       if response and response[:value]

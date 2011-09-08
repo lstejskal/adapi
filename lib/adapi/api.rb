@@ -27,5 +27,10 @@ module Adapi
       false
     end
 
+    # TODO implement method which passes filtered data to AdWords API
+    def data # or to_hash
+      self.serializable_hash.symbolize_keys
+    end
+
   end
 end
