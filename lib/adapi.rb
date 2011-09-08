@@ -15,6 +15,11 @@ require 'adapi/ad_group_criterion'
 require 'adapi/ad'
 require 'adapi/ad/text_ad'
 
+# load factories
+# TODO for development environment only
+require 'factory_girl'
+Dir[ File.join(File.dirname(__FILE__), '../test/factories/*.rb') ].each { |f| require f }
+
 module Adapi
   API_VERSION = :v201101  
 end
