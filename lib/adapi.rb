@@ -1,9 +1,12 @@
 
 require 'rubygems'
 require 'adwords_api'
-require 'active_model'
 require 'collection'
 require 'yaml'
+
+require 'active_model'
+# require only ActiveSupport parts that we actually use
+require 'active_support/all'
 
 require 'adapi/version'
 require 'adapi/config'
