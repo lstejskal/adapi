@@ -1,11 +1,23 @@
 module Adapi
 
-  # TODO add synonym for actual service name: AdGroupAd
-  #
+  # Ad == AdGroupAd
   class Ad < Api
+
+    attr_accessor :ad_group_id, :url, :display_url
+
+    validates_presence_of :ad_group_id
+
+    def attributes
+      { 'ad_group_id' => ad_group_id, 'url' => url, 'display_url' => display_url }
+    end
 
     def initialize(params = {})
       params[:service_name] = :AdGroupAdService
+
+      %w{ ad_group_id url display_url }.each do |param_name|
+        self.send "#{param_name}=", params[param_name.to_sym]
+      end
+
       super(params)
     end
 
