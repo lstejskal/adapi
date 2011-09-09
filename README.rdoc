@@ -83,17 +83,19 @@ the same configuration will also work for adapi: ~/adwords_api.yml
 Before logging into the Adwords API, you can set global settings through
 Adapi::Config:
 
-      Adapi::Config.set({
-        :authentication:
-          :method: ClientLogin
-          :email: sandbox_email@gmail.com
-          :password: sandbox_password
-          :developer_token: sandbox_token
-          :client_email: sandbox_client_email@gmail.com
-          :user_agent: Adwords API Test
-        :service:
-          :environment: SANDBOX
-      })
+      Adapi::Config.set(
+        :authentication => {
+          :method           => "ClientLogin"
+          :email            => "sandbox_email@gmail.com",
+          :password         => "sandbox_password",
+          :developer_token  => "sandbox_token",
+          :client_email     => "sandbox_client_email@gmail.com",
+          :user_agent       => "Adwords API Test"
+        },
+        :service => {
+          :environment      => "SANDBOX"
+        }
+      )
 
 This will override any previous configuration and set the account as :default.
 You can specify more accounts this way, with aliases, in the same way as in
