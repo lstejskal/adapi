@@ -18,9 +18,13 @@ module Adapi
       @data ||= self.settings[:default]
     end
 
-    # TODO described in README, but should be documented here as well
+    # account_alias - alias of an account set in settings
+    # authentication_params - ...which we want to override
     #
-    def self.set(params = {})
+    def self.set(account_alias = :default, authentication_params = {})
+      @data = @settings[account_alias.to_sym].merge(authentication_params)
+
+=begin original method, to be merged into the new one
       # hash of params - default
       if params.is_a?(Hash)
         @data = params
@@ -28,6 +32,7 @@ module Adapi
       elsif params.is_a?(Symbol)
         @data = @settings[params]
       end
+=end
     end
 
     # params:
@@ -37,6 +42,13 @@ module Adapi
     def self.load_settings(params = {})
       params[:path] ||= ENV['HOME']
       params[:filename] ||= 'adapi.yml'
+      params[:in_hash] ||= nil
+
+      # HOTFIX enable load by hash
+      if params[:in_hash]
+        @settings = params[:in_hash]
+        return @settings
+      end
 
       adapi_path = File.join(params[:path], params[:filename])
       adwords_api_path = File.join(ENV['HOME'], 'adwords_api.yml')
