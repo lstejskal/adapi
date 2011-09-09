@@ -13,7 +13,7 @@ single method call: Adapi::Campaign.create(campaign_data). Various convenience
 methods are added to the models, for example: campaign.pause! (pauses
 campaign). Adapi enables multiple AdWords accounts to be used at the same time.
 
-Adapi is STILL IN DEVELOPMENT, not nearly done yet! Version 0.1.0 should have
+Adapi is STILL IN DEVELOPMENT and not nearly done yet! Version 1.0.0 should have
 all planned functionality.
 
 == Installation
@@ -25,12 +25,50 @@ all planned functionality.
        bundle install
        rake install
 
-== Configuration of AdWords Account(s)
+== Configuration
 
-This section explains how to connect to specific account and client.
+This section explains how to connect to specific AdWords account and client.
 
-In general, you can set many AdWords accounts to connect to (similarly as you
-can set up several databases in Rails, for example).
+You can set many AdWords accounts to connect to and switch between while running
+the application. You can even update single values of the settings on-the-fly.
+
+       # load the settings
+       Adapi::Config.load_settings(:in_hash => {
+         :coca_cola => {
+           :authentication => {
+             :method => 'ClientLogin',
+             :email => 'coca_cola_email@gmail.com',
+             :password => 'coca_cola_password',
+             :developer_token => 'coca_cola_developer_token',
+             :user_agent => 'Coca-Cola Adwords API Test'
+           },
+           :service => {
+             :environment => 'SANDBOX'
+           }
+         },
+        :pepsi => {
+           :authentication => {
+             :method => 'ClientLogin',
+             :email => 'pepsi_email@gmail.com',
+             :password => 'pepsi_password',
+             :developer_token => 'pepsi_developer_token',
+             :user_agent => 'Pepsi Adwords API Test'
+           },
+           :service => {
+             :environment => 'SANDBOX'
+           }
+         }
+       })
+
+       # set to pepsi and specific client       
+       Adapi::Config.set(:pepsi, :client_customer_id => '555-666-7777')
+       
+       # do some stuff here...
+       
+       # set to coca-cola and another client       
+       Adapi::Config.set(:coca_cola, :client_customer_id => '777-666-5555')
+
+       # do some stuff here...
 
 === Authentication workflow
 
@@ -83,7 +121,9 @@ the same configuration will also work for adapi: ~/adwords_api.yml
 Before logging into the Adwords API, you can set global settings through
 Adapi::Config:
 
-      Adapi::Config.set(
+  # load the settings
+  Adapi::Config.load_settings(:in_hash => {
+    :sandbox => {   
         :authentication => {
           :method           => "ClientLogin"
           :email            => "sandbox_email@gmail.com",
@@ -95,28 +135,21 @@ Adapi::Config:
         :service => {
           :environment      => "SANDBOX"
         }
-      )
+    }
+  })
+  
+  Adapi::Config.set(:sandbox)
 
-This will override any previous configuration and set the account as :default.
-You can specify more accounts this way, with aliases, in the same way as in
-~/adapi.yml.
+== TODO API
 
-== API
+AdWords Services are implemented as models, similar to ActiveRecord models of
+database tables. They are built on ActiveModel.
 
-There are two ways of working with API. Both examples show adding an ad to
-specific campaign's ad group:
+== API Version Support
 
-=== Model-centric
-
-       Adapi::Campaign.create(campaign_data)
-
-=== TODO Collection-centric 
-
-       account = Adapi::Account.new(:account_alias)
-
-       campaign = account.campaigns.create(campaign_data)
-
-       account.campaigns[ campaign[:id] ].ad_groups << ad_group_data
+Adapi supports only the latest version of Google AdWords API: v201101. Older
+versions will not be supported. v201101 and newer versions will still be
+supported when new versions are released.
 
 == Examples
 
