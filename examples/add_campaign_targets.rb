@@ -2,7 +2,7 @@
 require 'adapi'
 
 # create campaign
-require 'add_bare_campaign'
+require File.join(File.dirname(__FILE__), 'add_bare_campaign')
 
 # create campaign targets
 campaign_target_data = {

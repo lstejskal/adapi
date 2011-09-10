@@ -2,7 +2,7 @@
 require 'adapi'
 
 # create ad group
-require 'add_bare_ad_group'
+require File.join(File.dirname(__FILE__), 'add_bare_ad_group')
 
 ad_data = {
   :ad_group_id => $ad_group[:id],
