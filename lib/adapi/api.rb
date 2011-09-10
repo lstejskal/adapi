@@ -27,13 +27,37 @@ module Adapi
       false
     end
 
-    # TODO implement method which passes filtered data to AdWords API
-    def data # or to_hash
-      self.serializable_hash.symbolize_keys
+    # return parameters in hash
+    # filtered for API calls by default: without :id and :status parameters
+    # PS: attributes method always returns all specified attributes
+    #
+    def data(filtered = true)
+      data_hash = self.serializable_hash.symbolize_keys
+      
+      if filtered
+        data_hash.delete(:id)
+        data_hash.delete(:status)
+      end
+      
+      data_hash
     end
 
-    # wrap AdWords actions: add/update/destroy and deals with errors
+    # alias to instance method: data
+    # 
+    alias :to_hash :data
+
+    # detects whether the instance has been saved already
+    #
+    def new?
+      self.id.blank?
+    end
+
+    # wrap AdWords add/update/destroy actions and deals with errors
+    #
     def mutate(operation)
+      # fix to save space during specifyng operations
+      operation[:operand].delete(:status) if operation[:operand][:status].nil?
+      
       operation = [operation] unless operation.is_a?(Array)
       
       begin    
@@ -42,7 +66,7 @@ module Adapi
       rescue AdsCommon::Errors::HttpError => e
         self.errors.add(:base, e.message)
 
-      # traps any exceptions raise by AdWords API
+      # traps any exceptions raised by AdWords API
       rescue AdwordsApi::Errors::ApiException => e
         self.errors.add(:base, e.message)
       end

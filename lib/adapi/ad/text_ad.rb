@@ -24,20 +24,62 @@ module Adapi
 
       super(params)
     end
-    
-    def create
-      operation = { :operator => 'ADD', 
-        :operand => { :ad_group_id => @ad_group_id, :ad => self.data }
-      } 
-    
-      response = mutate(operation)
 
-      # (response and response[:value]) ? response[:value].first : nil
-      (response and response[:value])
+    def save
+      self.new? ? self.create : self.update
+    end
+ 
+    def create
+      response = self.mutate(
+        :operator => 'ADD', 
+        :operand => {
+          :ad_group_id => @ad_group_id,
+          :ad => self.data,
+          :status => @status
+        }
+      )
+
+      return false unless (response and response[:value])
+
+      # TODO object should be persistent, we should be able to do:
+      # ad.create; ad.description = 'new description'; ad.save
+
+      self.id = response[:value].first[:ad][:id] rescue nil
+
+      true
     end
 
+    # params - specify hash of params and values to update
+    # PS: I think it's possible to edit only status, but not headline,
+    # descriptions... instead you should delete existing ad and create a new one
+    #
+    def update(params = {})
+      # set params (:status param makes it a little complicated)
+      #
+      updated_params = (params || self.attributes).symbolize_keys
+      updated_status = updated_params.delete(:status)
+      
+      response = self.mutate(
+        :operator => 'SET', 
+        :operand => {
+          :ad_group_id => self.ad_group_id,
+          :ad => updated_params.merge(:id => self.id),
+          :status => updated_status
+        }
+      )
+
+      (response and response[:value]) ? true : false
+    end
+
+    # TODO move to Api class, make it general for all classes
     def self.create(params = {})
-      TextAd.new(params).create
+      ad = TextAd.new(params)
+      ad.create
+      ad
+    end
+
+    def find # == refresh
+      TextAd.find(:first, :ad_group_id => self.ad_group_id, :id => self.id)
     end
 
     def self.find(amount = :all, params = {})
@@ -71,7 +113,7 @@ module Adapi
       response = (response and response[:entries]) ? response[:entries] : []
 
       response.map! do |data|
-        TextAd.new(data[:ad].merge(:ad_group_id => params[:ad_group_id]))
+        TextAd.new(data[:ad].merge(:ad_group_id => data[:ad_group_id], :status => data[:status]))
       end
 
       # TODO convert to TextAd instances

@@ -10,7 +10,8 @@ ad = Adapi::Ad::TextAd.new(
   :description1 => 'Need mad coding skills?',
   :description2 => 'Check out my new blog!',
   :url => 'http://www.demcodez.com',
-  :display_url => 'http://www.demcodez.com'
+  :display_url => 'http://www.demcodez.com',
+  :status => 'PAUSED'
 )
 
 if ad.create
