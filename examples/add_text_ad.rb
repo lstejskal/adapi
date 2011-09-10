@@ -13,6 +13,10 @@ ad = Adapi::Ad::TextAd.new(
   :display_url => 'http://www.demcodez.com'
 )
 
-ad.create
-
-p ad.data
+if ad.create
+  p "OK"
+  p ad.data
+else
+  p "ERROR"
+  p ad.errors.messages
+end

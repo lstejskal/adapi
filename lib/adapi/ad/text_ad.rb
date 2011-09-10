@@ -30,9 +30,10 @@ module Adapi
         :operand => { :ad_group_id => @ad_group_id, :ad => self.data }
       } 
     
-      response = @service.mutate([operation])
+      response = mutate(operation)
 
-      (response and response[:value]) ? response[:value].first : nil
+      # (response and response[:value]) ? response[:value].first : nil
+      (response and response[:value])
     end
 
     def self.create(params = {})

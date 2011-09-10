@@ -32,5 +32,23 @@ module Adapi
       self.serializable_hash.symbolize_keys
     end
 
+    # wrap AdWords actions: add/update/destroy and deals with errors
+    def mutate(operation)
+      operation = [operation] unless operation.is_a?(Array)
+      
+      begin    
+        response = @service.mutate(operation)
+    
+      rescue AdsCommon::Errors::HttpError => e
+        self.errors.add(:base, e.message)
+
+      # traps any exceptions raise by AdWords API
+      rescue AdwordsApi::Errors::ApiException => e
+        self.errors.add(:base, e.message)
+      end
+      
+      response
+    end
+
   end
 end
