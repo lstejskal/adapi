@@ -52,6 +52,13 @@ module Adapi
       self.id.blank?
     end
 
+    def self.create(params = {})
+      p self.name + "!!!\n\n"
+      api_instance = self.new(params)
+      api_instance.create
+      api_instance
+    end
+
     # wrap AdWords add/update/destroy actions and deals with errors
     #
     def mutate(operation)      

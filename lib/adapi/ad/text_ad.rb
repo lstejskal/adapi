@@ -71,13 +71,6 @@ module Adapi
       (response and response[:value]) ? true : false
     end
 
-    # TODO move to Api class, make it general for all classes
-    def self.create(params = {})
-      ad = TextAd.new(params)
-      ad.create
-      ad
-    end
-
     def find # == refresh
       TextAd.find(:first, :ad_group_id => self.ad_group_id, :id => self.id)
     end

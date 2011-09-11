@@ -4,7 +4,7 @@ require 'adapi'
 # create ad group
 require File.join(File.dirname(__FILE__), 'add_bare_ad_group')
 
-ad = Adapi::Ad::TextAd.new(
+ad = Adapi::Ad::TextAd.create(
   :ad_group_id => $ad_group[:id],
   :headline => "Code like Neo",
   :description1 => 'Need mad coding skills?',
@@ -14,7 +14,7 @@ ad = Adapi::Ad::TextAd.new(
   :status => 'PAUSED'
 )
 
-if ad.create
+if ad
   p "OK"
   p ad.data
 else
