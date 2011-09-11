@@ -22,7 +22,7 @@ module Adapi
           p @text_ad.data
 
           assert @text_ad.data.is_a?(Hash)
-          assert_equal @text_ad.headline, @text_ad.data['headline']
+          assert_equal @text_ad.headline, @text_ad.data[:headline]
         end
       end
 

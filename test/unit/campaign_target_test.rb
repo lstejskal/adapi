@@ -10,9 +10,24 @@ module Adapi
           [{:language_code => 'en'}, {:language_code => 'cs'}]
       end
 
-      should "parse :geo / :country targets" do
-        assert_equal CampaignTarget.create_targets(:geo, {:country => 'CZ'}),
-          [{:xsi_type => 'CountryTarget', :excluded => false, :country_code => 'CZ'}]
+      should "parse :geo / :country and :province targets" do
+        assert_equal CampaignTarget.create_targets(:geo, {:country => 'CZ', :province => 'CZ-PR'}),
+          [
+            {:xsi_type => 'CountryTarget', :excluded => false, :country_code => 'CZ'},
+            {:xsi_type => 'ProvinceTarget', :excluded => false, :province_code => 'CZ-PR'}
+          ]
+      end
+
+      should_eventually "parse :geo / :proximity targets" do
+        assert_equal CampaignTarget.create_targets(:geo,
+          {:proximity => {:geo_point => '38.89859,-77.035971', :radius => '10 km'}}),
+          [{ :xsi_type => 'ProximityTarget', :excluded => false,
+            :radius_in_units => 10, :radius_distance_units => 'KILOMETERS',
+            :geo_point => {
+              :longitude_in_micro_degrees => 38898590,
+              :latitude_in_micro_degrees => -77035971
+            }
+          }]
       end
 
     end

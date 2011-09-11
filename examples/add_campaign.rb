@@ -23,7 +23,11 @@ campaign_data = {
 
   :targets => {
     :language => [ 'en', 'cs' ],
-    :geo => { :country => 'CZ' }
+    :geo => {
+      :country => 'CZ',
+      :province => 'CZ-PR',
+      :proximity => { :geo_point => '38.89859,-77.035971', :radius => '10 km' }
+    }
   },
 
   :ad_groups => [
