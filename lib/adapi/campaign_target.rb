@@ -74,10 +74,18 @@ module Adapi
           target_data.map do |geo_type, geo_values|
             case geo_type
               when :proximity
+                radius_in_units, radius_units = parse_radius(geo_values[:radius])
+                long, lat = parse_geodata(geo_values[:geo_point])
+
                 {
                   :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                  :excluded => false
-                  
+                  :excluded => false,
+                  :radius_in_units => radius_in_units,
+                  :radius_distance_units => radius_units,
+                  :geo_point => {
+                    :longitude_in_micro_degrees => long,
+                    :latitude_in_micro_degrees => lat
+                  }                  
                 }
               # TODO add support for more geo_values
               else # default, used for :country and :province
@@ -92,18 +100,26 @@ module Adapi
       end
     end
 
+    def self.parse_radius(radius)
+      radius_in_units, radius_units = radius.split(' ', 2)
+      [
+        radius_in_units.to_i,
+        (radius_units == 'm') ? 'MILES' : 'KILOMETERS'
+      ]
+    end
+
     # parse longitude and lattitude from string in this format:
     # "longitude,lattitude" to [int,int] in Google microdegrees
     # for example: "38.89859,-77.035971" -> [38898590, -77035971]
     #
-    def parse_geodata(long_lat)
+    def self.parse_geodata(long_lat)
       long_lat.split(',', 2).map { |x| to_microdegrees(x) }
     end
 
     # convert latitude or longitude data to microdegrees,
     # a format with AdWords API accepts
     #
-    def to_microdegrees(x)
+    def self.to_microdegrees(x)
       (x.to_f * 1e6).to_i
     end
 

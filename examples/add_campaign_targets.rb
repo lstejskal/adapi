@@ -8,8 +8,10 @@ require File.join(File.dirname(__FILE__), 'add_bare_campaign')
 campaign_target_data = {
   :campaign_id => $campaign[:id],
   :targets => {
-    :language => [ 'en', 'cs' ],
-    :geo => { :country => 'CZ' }
+    :language => [ 'en' ],
+    # :geo => { :country => 'US' },
+    # :geo => { :province => 'US-NE' } # czech provinces don't work, it seems
+    :geo => { :proximity => {:geo_point => '38.89859,-77.035971', :radius => '10 km'} }
   }
 }
 

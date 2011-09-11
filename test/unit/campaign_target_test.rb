@@ -18,7 +18,7 @@ module Adapi
           ]
       end
 
-      should_eventually "parse :geo / :proximity targets" do
+      should "parse :geo / :proximity targets" do
         assert_equal CampaignTarget.create_targets(:geo,
           {:proximity => {:geo_point => '38.89859,-77.035971', :radius => '10 km'}}),
           [{ :xsi_type => 'ProximityTarget', :excluded => false,
