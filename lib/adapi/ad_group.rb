@@ -43,14 +43,17 @@ module Adapi
       self.id = response[:value].first[:id] rescue nil
       
       if @keywords.size > 0
-        Adapi::AdGroupCriterion.create(
+        keyword = Adapi::Keyword.create(
           :ad_group_id => @id,
-          :criteria => @keywords
+          :keywords => @keywords
         )
+        
+        p keyword.errors.full_messages if (keyword.errors.size > 0)
       end
 
       @ads.each do |ad_data|
         ad = Adapi::Ad::TextAd.create( ad_data.merge(:ad_group_id => @id) )
+        
         p ad.errors.full_messages if (ad.errors.size > 0)
       end
 

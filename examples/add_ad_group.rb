@@ -19,15 +19,10 @@ ad_group_data = {
     }
   },
 
-  :criteria => [
-    { # keyword_criterion
-      :xsi_type => 'BiddableAdGroupCriterion',
-      :criterion => { :xsi_type => 'Keyword', :text => 'codez', :match_type => 'BROAD' }
-    },
-    { # placement_criterion
-      :xsi_type => 'BiddableAdGroupCriterion',
-      :criterion => { :xsi_type => 'Placement', :url => 'http://www.blogger.com' }
-    }
+  :keywords => [
+    { :text => 'dem codez', :match_type => 'BROAD', :negative => false },
+    { :text => 'top coder', :match_type => 'PHRASE', :negative => false },
+    { :text => 'code', :match_type => 'EXACT', :negative => true }
   ],
 
   :ads => [
