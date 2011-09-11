@@ -21,6 +21,6 @@ $ad_group_data = {
   }
 }
  
-$ad_group = Adapi::AdGroup.create(:data => $ad_group_data)
+$ad_group = Adapi::AdGroup.create($ad_group_data)
 
 p $ad_group
