@@ -50,41 +50,40 @@ module Adapi
       end
 
       @ads.each do |ad_data|
-        ad = Adapi::Ad.create( ad_data.merge(:ad_group_id => @id) )
+        ad = Adapi::Ad::TextAd.create( ad_data.merge(:ad_group_id => @id) )
         p ad.errors.full_messages if (ad.errors.size > 0)
       end
 
       true
     end
+ 
+    def self.find(amount = :all, params = {})
+      params.symbolize_keys!
+      first_only = (amount.to_sym == :first)
 
-    # should be sorted out later, but leave it be for now
-    #
-    def self.find(params = {})
-      ad_group_service = AdGroup.new
+      raise "No Campaign ID is required" unless params[:campaign_id]
 
-      raise "No Campaign ID" unless params[:campaign_id]
-      campaign_id = params[:campaign_id]
+      predicates = [ :campaign_id, :id ].map do |param_name|
+        if params[param_name]
+          {:field => param_name.to_s.camelcase, :operator => 'EQUALS', :values => params[param_name] }
+        end
+      end.compact
 
       selector = {
-        :fields => ['Id', 'Name'],
-        # :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
-        :predicates => [{
-          :field => 'CampaignId', :operator => 'EQUALS', :values => campaign_id
-        }]
+        :fields => ['Id', 'Name', 'Status'],
+        :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
+        :predicates => predicates
       }
 
-      response = ad_group_service.service.get(selector)
+      response = AdGroup.new.service.get(selector)
 
-      if response and response[:entries]
-        ad_groups = response[:entries]
-        puts "Campaign ##{campaign_id} has #{ad_groups.length} ad group(s)."
-        ad_groups.each do |ad_group|
-          puts "  Ad group name is \"#{ad_group[:name]}\" and id is #{ad_group[:id]}."
-        end
-     else
-       puts "No ad groups found for campaign ##{campaign_id}."
-     end
+      response = (response and response[:entries]) ? response[:entries] : []
 
+      #response.map! do |data|
+      #  TextAd.new(data[:ad].merge(:ad_group_id => data[:ad_group_id], :status => data[:status]))
+      #end
+
+      first_only ? response.first : response
     end
 
   end
