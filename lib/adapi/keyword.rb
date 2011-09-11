@@ -1,7 +1,7 @@
 module Adapi
   class Keyword < AdGroupCriterion
 
-    attr_accessor :keywords, :match_type
+    attr_accessor :keywords
 
     def attributes
       super.merge('keywords' => keywords)
@@ -44,30 +44,36 @@ module Adapi
       true
     end
 
-    def find(params = {})
-      raise "No Campaign ID" unless params[:campaign_id]
-      campaign_id = params[:campaign_id]
+    def self.find(amount = :all, params = {})
+      params.symbolize_keys!
+      # this has no effect, it's here just to have the same interface everywhere
+      first_only = (amount.to_sym == :first)
 
+      # we need ad_group_id
+      raise ArgumentError, "AdGroup ID is required" unless params[:ad_group_id]
+ 
+      # supported condition parameters: ad_group_id and id
+      predicates = [ :ad_group_id ].map do |param_name|
+        if params[param_name]
+          {:field => param_name.to_s.camelcase, :operator => 'EQUALS', :values => params[param_name] }
+        end
+      end.compact
+
+      # Get all the criteria for this ad group.
       selector = {
-        :fields => ['Id', 'Name'],
-        # :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
-        :predicates => [{
-          :field => 'CampaignId', :operator => 'EQUALS', :values => campaign_id
-        }]
+        :fields => ['Id'],
+        :ordering => [{ :field => 'AdGroupId', :sort_order => 'ASCENDING' }],
+        :predicates => predicates
       }
 
-      response = @service.get(selector)
+      response = Keyword.new.service.get(selector)
 
-      if response and response[:entries]
-        ad_groups = response[:entries]
-        puts "Campaign ##{campaign_id} has #{ad_groups.length} ad group(s)."
-        ad_groups.each do |ad_group|
-          puts "  Ad group name is \"#{ad_group[:name]}\" and id is #{ad_group[:id]}."
-        end
-     else
-       puts "No ad groups found for campaign ##{campaign_id}."
-     end
+      response = (response and response[:entries]) ? response[:entries] : []
 
+      Keyword.new(
+        :ad_group_id => params[:ad_group_id],
+        :keywords => response.map { |keyword| keyword[:criterion] }
+      )
     end
 
   end

@@ -81,8 +81,6 @@ module Adapi
       # params for now
       params = params[:conditions] if params[:conditions]
 
-      ad_service = Ad.new
-
       # we need ad_group_id
       raise ArgumentError, "AdGroup ID is required" unless params[:ad_group_id]
  
@@ -99,7 +97,7 @@ module Adapi
         :predicates => predicates
       }
 
-      response = ad_service.service.get(selector)
+      response = TextAd.new.service.get(selector)
 
       response = (response and response[:entries]) ? response[:entries] : []
 
