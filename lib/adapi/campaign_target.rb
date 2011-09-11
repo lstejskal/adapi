@@ -8,12 +8,10 @@ module Adapi
 
     validates_presence_of :campaign_id
 
-    # TODO validate if target are in correct format
+    # TODO validate if targets are in correct format
 
-    # PS: create won't work with id and ad_group_id
-    # 'id' => id, 'ad_group_id' => ad_group_id, 
     def attributes
-      { 'targets' => targets }
+      super.merge( 'campaign_id' => campaign_id, 'targets' => targets )
     end
 
     def initialize(params = {})

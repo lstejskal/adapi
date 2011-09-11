@@ -6,7 +6,12 @@ module Adapi
     include ActiveModel::Conversion
     # TODO include ActiveModel::Dirty
 
-    attr_accessor :adwords, :service, :version, :params
+    attr_accessor :adwords, :service, :version, :params,
+      :id, :status, :xsi_type
+
+    def attributes
+      { 'status' => status, 'xsi_type' => xsi_type }
+    end
 
     def initialize(params = {})
       params.symbolize_keys!
@@ -53,7 +58,6 @@ module Adapi
     end
 
     def self.create(params = {})
-      p self.name + "!!!\n\n"
       api_instance = self.new(params)
       api_instance.create
       api_instance

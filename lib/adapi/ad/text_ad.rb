@@ -7,8 +7,6 @@ module Adapi
 
     attr_accessor :headline, :description1, :description2
 
-    # define_attribute_methods [ :headline, :description1, :description2 ]
-
     def attributes
       super.merge('headline' => headline, 'description1' => description1, 'description2' => description2)
     end
