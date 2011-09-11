@@ -8,6 +8,7 @@ $campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
   :bidding_strategy => { :xsi_type => 'ManualCPC' },
+
   :budget => {
     :period => 'DAILY',
     :amount => { :micro_amount => 50000000 },

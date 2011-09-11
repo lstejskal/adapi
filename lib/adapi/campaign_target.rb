@@ -41,9 +41,6 @@ module Adapi
         }
       end
 
-      require 'pp'
-      pp operations
-
       response = self.mutate(operations)
 
       targets = response[:value] || []

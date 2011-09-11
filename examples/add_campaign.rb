@@ -8,6 +8,7 @@ campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
   :bidding_strategy => { :xsi_type => 'ManualCPC' },
+
   :budget => {
     :period => 'DAILY',
     :amount => { :micro_amount => 50000000 },
@@ -23,11 +24,7 @@ campaign_data = {
 
   :targets => {
     :language => [ 'en', 'cs' ],
-    :geo => {
-      :country => 'CZ',
-      :province => 'CZ-PR',
-      :proximity => { :geo_point => '38.89859,-77.035971', :radius => '10 km' }
-    }
+    :geo => { :proximity => { :geo_point => '38.89859,-77.035971', :radius => '10 km' } }
   },
 
   :ad_groups => [
@@ -43,20 +40,14 @@ campaign_data = {
         }
       },
     
-      :criteria => [
-        { # keyword_criterion
-          :xsi_type => 'BiddableAdGroupCriterion',
-          :criterion => { :xsi_type => 'Keyword', :text => 'codez', :match_type => 'BROAD' }
-        },
-        { # placement_criterion
-          :xsi_type => 'BiddableAdGroupCriterion',
-          :criterion => { :xsi_type => 'Placement', :url => 'http://www.blogger.com' }
-        }
+      :keywords => [
+        { :text => 'dem codez', :match_type => 'BROAD', :negative => false },
+        { :text => 'top coder', :match_type => 'PHRASE', :negative => false },
+        { :text => 'code', :match_type => 'EXACT', :negative => true }
       ],
     
       :ads => [
         {
-          :xsi_type => 'TextAd',
           :headline => "Code like Neo",
           :description1 => 'Need mad coding skills?',
           :description2 => 'Check out my new blog!',
@@ -69,4 +60,6 @@ campaign_data = {
 
 }
  
-p Adapi::Campaign.create(campaign_data)
+$campaign = Adapi::Campaign.create(campaign_data)
+
+p $campaign 

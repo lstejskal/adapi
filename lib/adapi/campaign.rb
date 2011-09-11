@@ -3,69 +3,72 @@ module Adapi
 
     # http://code.google.com/apis/adwords/docs/reference/latest/CampaignService.Campaign.html
     #
-    attr_accessor :id, :name, :status, :serving_status, :start_date, :end_date,
-      :bidding_strategy, :budget, :network_setting
+    attr_accessor :name, :serving_status, :start_date, :end_date, :budget,
+      :bidding_strategy, :network_setting, :targets, :ad_groups
+
+    def attributes
+      super.merge('name' => name, 'start_date' => start_date, 'end_date' => end_date,
+        'budget' => budget, 'bidding_strategy' => bidding_strategy,
+        'network_setting' => network_setting, 'targets' => targets,
+        'ad_groups' => ad_groups)
+    end
 
     validates_presence_of :name, :status
     validates_inclusion_of :status, :in => %w{ ACTIVE DELETED PAUSED }
 
     def initialize(params = {})
       params[:service_name] = :CampaignService
+      
+      @xsi_type = 'Campaign'
 
-      %w{ name status start_date end_date }.each do |param_name|
+      %w{ name status start_date end_date budget bidding_strategy
+      network_setting targets ad_groups}.each do |param_name|
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
+      @targets ||= []
+      @ad_groups ||= []
+
       super(params)
-   end
+    end
 
     # create campaign with ad_groups and ads
     #
-    # campaign data can be passed either as single hash:
-    # Campaign.create(:name => 'Campaign 123', :status => 'ENABLED')
-    # or as hash in a :data key:
-    # Campaign.create(:data => { :name => 'Campaign 123', :status => 'ENABLED' })
-    #
-    def self.create(params = {})
-      campaign_service = Campaign.new
+    def create
+      response = self.mutate(
+        :operator => 'ADD', 
+        :operand => {
+          :name => @name,
+          :status => @status,
+          # start_date
+          # end_date
+          :budget => @budget,
+          :bidding_strategy => @bidding_strategy,
+          :network_setting => @network_setting,
+        }
+      )
 
-      # give users options to shorten input params
-      params = { :data => params } unless params.has_key?(:data)
-
-      # prepare for adding campaign
-      ad_groups = params[:data].delete(:ad_groups).to_a
-      targets = params[:data].delete(:targets)
+      return false unless (response and response[:value])
       
-      operation = { :operator => 'ADD', :operand => params[:data] }
-    
-      response = campaign_service.service.mutate([operation])
-
-      campaign = nil
-      if response and response[:value]
-        campaign = response[:value].first
-        puts "Campaign with name '%s' and ID %d was added." % [campaign[:name], campaign[:id]]
-      else
-        return nil
-      end
-
+      self.id = response[:value].first[:id] rescue nil
+      
       # create targets if they are available
       if targets
-        Adapi::CampaignTarget.create(
-          :campaign_id => campaign[:id],
-          :targets => targets,
-          :api_adwords_instance => campaign_service.adwords
+        target = Adapi::CampaignTarget.create(
+          :campaign_id => @id,
+          :targets => targets
         )
+        p target.errors.full_messages if (target.errors.size > 0)
       end
 
-      # if campaign has ad_groups, create them as well
       ad_groups.each do |ad_group_data|
-        Adapi::AdGroup.create(
-          :data => ad_group_data.merge(:campaign_id => campaign[:id]),
-          :api_adwords_instance => campaign_service.adwords
+        ad_group = Adapi::AdGroup.create(
+          ad_group_data.merge(:campaign_id => @id)
         )
+        p ad_group.errors.full_messages if (ad_group.errors.size > 0)
       end
 
-      campaign
+      return true
     end
 
     # general method for changing campaign data

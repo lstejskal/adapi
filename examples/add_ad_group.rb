@@ -27,7 +27,6 @@ ad_group_data = {
 
   :ads => [
     {
-      :xsi_type => 'TextAd',
       :headline => "Code like Neo",
       :description1 => 'Need mad coding skills?',
       :description2 => 'Check out my new blog!',

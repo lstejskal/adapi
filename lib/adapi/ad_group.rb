@@ -25,8 +25,6 @@ module Adapi
     end
 
     def create
-      p self.attributes
-      
       response = self.mutate(
         :operator => 'ADD', 
         :operand => {
