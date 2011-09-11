@@ -4,34 +4,49 @@ module Adapi
   #
   class CampaignTarget < Api
 
+    attr_accessor :campaign_id, :targets
+
+    validates_presence_of :campaign_id
+
+    # TODO validate if target are in correct format
+
+    # PS: create won't work with id and ad_group_id
+    # 'id' => id, 'ad_group_id' => ad_group_id, 
+    def attributes
+      { 'targets' => targets }
+    end
+
     def initialize(params = {})
       params[:service_name] = :CampaignTargetService
+
+      @xsi_type = 'CampaignTarget'
+
+      %w{ campaign_id targets }.each do |param_name|
+        self.send "#{param_name}=", params[param_name.to_sym]
+      end
+
       super(params)
     end
 
-    # FIXME params should be the same as in other services, for example ad_group 
-    # 
-    def self.create(params = {})
-      campaign_target_service = CampaignTarget.new
-
-      raise "No Campaign ID" unless params[:campaign_id]
-      campaign_id = params[:campaign_id].to_i
-
+    def set
       # transform our own high-level target parameters to google low-level
       # target parameters
       operations = []
 
-      params[:targets].each_pair do |targetting_type, targetting_settings|
+      @targets.each_pair do |targetting_type, targetting_settings|
         operations << { :operator => 'SET',
           :operand => {
             :xsi_type => "#{targetting_type.to_s.capitalize}TargetList",
-            :campaign_id => campaign_id,
-            :targets => self.create_targets(targetting_type, targetting_settings)
+            :campaign_id => @campaign_id,
+            :targets => CampaignTarget::create_targets(targetting_type, targetting_settings)
           }
         }
       end
 
-      response = campaign_target_service.service.mutate(operations)
+      require 'pp'
+      pp operations
+
+      response = self.mutate(operations)
 
       targets = response[:value] || []
       targets.each do |target|
@@ -39,8 +54,10 @@ module Adapi
           "#{target[:campaign_id]} was set."
       end
 
-      targets
+      (response and response[:value]) ? true : false
     end
+  
+    alias :create :set
   
     def self.find(params = {})
       campaign_target_service = CampaignTarget.new

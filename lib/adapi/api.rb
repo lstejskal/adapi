@@ -54,11 +54,14 @@ module Adapi
 
     # wrap AdWords add/update/destroy actions and deals with errors
     #
-    def mutate(operation)
-      # fix to save space during specifyng operations
-      operation[:operand].delete(:status) if operation[:operand][:status].nil?
-      
+    def mutate(operation)      
       operation = [operation] unless operation.is_a?(Array)
+      
+      # fix to save space during specifyng operations
+      operation = operation.map do |op|
+        op[:operand].delete(:status) if op[:operand][:status].nil?
+        op
+      end
       
       begin    
         response = @service.mutate(operation)
