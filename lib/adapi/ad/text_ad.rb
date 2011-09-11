@@ -93,7 +93,7 @@ module Adapi
       ad_service = Ad.new
 
       # we need ad_group_id
-      rause ArgumentError, "AdGroup ID is required" unless params[:ad_group_id]
+      raise ArgumentError, "AdGroup ID is required" unless params[:ad_group_id]
  
       # supported condition parameters: ad_group_id and id
       predicates = [ :ad_group_id, :id ].map do |param_name|

@@ -58,26 +58,23 @@ module Adapi
     end
   
     alias :create :set
+
+    # FIXME doesn't display everything, check the issues in google-adwords-api
+    #
+    def self.find(amount = :all, params = {})
+      params.symbolize_keys!
+      params = params[:conditions] if params[:conditions]
+      first_only = (amount.to_sym == :first)
+
+      raise ArgumentError, "Campaing ID is required" unless params[:campaign_id]
   
-    def self.find(params = {})
-      campaign_target_service = CampaignTarget.new
-
-      selector = {} # select all campaign targets by default
-      selector[:campaign_ids] = params[:campaign_ids] if params[:campaign_ids]
+      selector = { :campaign_ids => [ params[:campaign_id].to_i ] }
   
-      response = campaign_target_service.service.get(selector)
+      response = CampaignTarget.new.service.get(selector)
 
-      targets = nil
-      if response and response[:entries]
-        targets = response[:entries]
-        targets.each do |target|
-          p target
-        end
-      else
-        puts "No campaign targets found."
-      end
+      response = (response and response[:entries]) ? response[:entries] : []
 
-      targets
+      first_only ? response.first : response
     end
 
     # transform our own high-level target parameters to google low-level
