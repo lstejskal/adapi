@@ -25,13 +25,15 @@ module Adapi
     end
 
     def create
+      operand = Hash[
+        [:campaign_id, :name, :bids].map do |k|
+          [ k.to_sym, self.send(k) ] if self.send(k)
+        end.compact
+      ]
+
       response = self.mutate(
         :operator => 'ADD', 
-        :operand => {
-          :campaign_id => @campaign_id,
-          :name => @name,
-          :bids => @bids
-        }
+        :operand => operand
       )
 
       ad_group = response[:value].first

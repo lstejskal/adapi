@@ -28,19 +28,6 @@ campaign_data = {
     {
       :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
       :status => 'ENABLED',
-      # PS: this must match the Campaign.bidding_strategy
-      # so we don't have to enter it
-      # TODO
-      :bids => {
-        :xsi_type => 'ManualCPCAdGroupBids',
-        :keyword_max_cpc => {
-          :amount => {
-            :micro_amount => 10000000
-          }
-        # REPLACE WITH
-        # :keyword_max_cpc => 10
-        }
-      },
 
       :keywords => [ 'dem codez', '"top coder"', "[-code]" ],
 
