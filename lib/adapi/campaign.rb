@@ -122,6 +122,19 @@ module Adapi
 
     def rename(new_name); update(:name => new_name); end
 
+    # when Campaign#create fails, "delete" campaign
+    def rollback
+      if (@status == 'DELETED')
+        self.errors.add(:base, 'Campaign is already deleted.')
+        return false
+      end
+
+      update(
+        :name => "#{@name}_DELETED_#{Time.now.to_f}",
+        :status => 'DELETED'
+      )
+    end
+
     def find # == refresh
       Campaign.find(:first, :id => @id)
     end
