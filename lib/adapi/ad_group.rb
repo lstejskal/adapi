@@ -3,7 +3,8 @@ module Adapi
   
     attr_accessor :campaign_id, :name, :bids, :keywords, :ads
 
-    validates_presence_of :campaign_id, :name
+    validates_presence_of :campaign_id, :name, :status
+    validates_inclusion_of :status, :in => %w{ ENABLED PAUSED DELETED }
 
     def attributes
       super.merge('campaign_id' => campaign_id, 'name' => name, 'bids' => bids)
@@ -14,7 +15,7 @@ module Adapi
 
       @xsi_type = 'AdGroup'
 
-      %w{ campaign_id name bids keywords ads }.each do |param_name|
+      %w{ campaign_id name status bids keywords ads }.each do |param_name|
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
@@ -25,8 +26,10 @@ module Adapi
     end
 
     def create
+      return false unless self.valid?
+      
       operand = Hash[
-        [:campaign_id, :name, :bids].map do |k|
+        [:campaign_id, :name, :status, :bids].map do |k|
           [ k.to_sym, self.send(k) ] if self.send(k)
         end.compact
       ]
@@ -50,7 +53,6 @@ module Adapi
           self.errors.add("[keyword]", keyword.errors.to_a)
           return false 
         end
-
       end
 
       @ads.each do |ad_data|

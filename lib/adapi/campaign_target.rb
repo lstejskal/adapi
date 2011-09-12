@@ -43,12 +43,6 @@ module Adapi
 
       response = self.mutate(operations)
 
-      targets = response[:value] || []
-      targets.each do |target|
-        puts "Campaign target of type #{target[:"@xsi:type"]} for campaign id " +
-          "#{target[:campaign_id]} was set."
-      end
-
       (response and response[:value]) ? true : false
     end
   

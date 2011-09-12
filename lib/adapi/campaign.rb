@@ -59,19 +59,20 @@ module Adapi
     # create campaign with ad_groups and ads
     #
     def create
+      return false unless self.valid?      
+      
+      operand = Hash[
+        [ :name, :status, :start_date, :end_date,
+          :budget, :bidding_strategy, :network_setting ].map do |k|
+          [ k.to_sym, self.send(k) ] if self.send(k)
+        end.compact
+      ]
+
       response = self.mutate(
         :operator => 'ADD', 
-        :operand => {
-          :name => @name,
-          :status => @status,
-          # start_date
-          # end_date
-          :budget => @budget,
-          :bidding_strategy => @bidding_strategy,
-          :network_setting => @network_setting,
-        }
+        :operand => operand
       )
-
+      
       return false unless (response and response[:value])
       
       self.id = response[:value].first[:id] rescue nil
@@ -82,14 +83,22 @@ module Adapi
           :campaign_id => @id,
           :targets => targets
         )
-        p target.errors.full_messages if (target.errors.size > 0)
+        
+        if (target.errors.size > 0)
+          self.errors.add("[campaign target]", target.errors.to_a)
+          return false 
+        end
       end
 
       ad_groups.each do |ad_group_data|
         ad_group = Adapi::AdGroup.create(
           ad_group_data.merge(:campaign_id => @id)
         )
-        p ad_group.errors.full_messages if (ad_group.errors.size > 0)
+
+        if (ad_group.errors.size > 0)
+          self.errors.add("[ad group] \"#{ad_group.name}\"", ad_group.errors.to_a)
+          return false 
+        end
       end
 
       return true
@@ -130,7 +139,7 @@ module Adapi
       end
 
       update(
-        :name => "#{@name}_DELETED_#{Time.now.to_f}",
+        :name => "#{@name}_DELETED_#{(Time.now.to_f * 1000).to_i}",
         :status => 'DELETED'
       )
     end
