@@ -34,6 +34,12 @@ module Adapi
         @bidding_strategy = { :xsi_type => @bidding_strategy }
       end
 
+      if @bidding_strategy[:bid_ceiling]
+        @bidding_strategy[:bid_ceiling] = {
+          :micro_amount => Api.to_micro_units(@bidding_strategy[:bid_ceiling])
+        }
+      end
+
       # convert budget to GoogleApi
       # TODO validations for budget
       #
@@ -133,7 +139,7 @@ module Adapi
       end.compact
 
       selector = {
-        :fields => ['Id', 'Name', 'Status'],
+        :fields => ['Id', 'Name', 'Status', 'BiddingStrategy' ],
         :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }

@@ -7,8 +7,8 @@ require 'adapi'
 campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  # TODO add support for Automatic CPC
-  :bidding_strategy => 'ManualCPC', 
+  # Automatic CPC: BudgetOptimizer or ManualCPC
+  :bidding_strategy => { :xsi_type => 'BudgetOptimizer', :bid_ceiling => 100 },
   :budget => { :amount => 50, :delivery_method => 'STANDARD' },
 
   :network_setting => {
