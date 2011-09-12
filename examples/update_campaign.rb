@@ -1,23 +1,16 @@
-
 require 'adapi'
 
 # create campaign
 require File.join(File.dirname(__FILE__), 'add_bare_campaign')
 
-p 'original status: %s' % $campaign[:status]
+p "ORIGINAL CAMPAIGN:"
+pp $campaign.attributes
 
-campaign_updates = {
+$updated_campaign = Adapi::Campaign.update(
   :id => $campaign[:id],
-  :status => 'ACTIVE'
-}
-
-$campaign = Adapi::Campaign.update(:data => campaign_updates)
-
-p 'updated status: %s' % $campaign[:status]
-
-$campaign = Adapi::Campaign.update(
-  :id => $campaign[:id],
-  :data => {:status => 'DELETED'}
+  :status => 'ACTIVE',
+  :name => "UPDATED_#{$campaign[:name]}"
 )
 
-p 'updated status (again): %s' % $campaign[:status]
+p "UPDATED CAMPAIGN:"
+pp $updated_campaign.attributes

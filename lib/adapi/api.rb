@@ -72,6 +72,21 @@ module Adapi
       api_instance
     end
 
+    # done mostly for campaign, probably won't work pretty much anywhere else
+    # which can be easily fixed creating by self.update method for specific
+    # class
+    #
+    def self.update(params = {})
+      # PS: updating campaign without finding it is much faster
+      api_instance = self.new()
+      api_instance.id = params.delete(:id)
+      api_instance.errors.add('id', 'is missing') unless api_instance.id
+      
+      api_instance.update(params)
+      api_instance
+    end
+
+
     # wrap AdWords add/update/destroy actions and deals with errors
     #
     def mutate(operation)      
