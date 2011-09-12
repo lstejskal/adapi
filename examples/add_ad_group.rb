@@ -10,14 +10,6 @@ ad_group_data = {
   :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'ENABLED',
   :campaign_id => $campaign[:id],
-  :bids => {
-    :xsi_type => 'ManualCPCAdGroupBids',
-    :keyword_max_cpc => {
-      :amount => {
-        :micro_amount => 10000000
-      }
-    }
-  },
 
   :keywords => [ 'dem codez', '"top coder"', '[-code]' ],
 
