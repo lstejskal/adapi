@@ -22,7 +22,9 @@ module Adapi
     # authentication_params - ...which we want to override
     #
     def self.set(account_alias = :default, authentication_params = {})
-      @data = @settings[account_alias.to_sym].merge(authentication_params)
+      custom_settings = @settings[account_alias.to_sym]
+      custom_settings[:authentication] = custom_settings[:authentication].merge(authentication_params)
+      @data = custom_settings
 
 =begin original method, to be merged into the new one
       # hash of params - default
