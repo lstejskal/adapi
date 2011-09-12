@@ -26,4 +26,6 @@ $ad_group_data = {
  
 $ad_group = Adapi::AdGroup.create($ad_group_data)
 
-p $ad_group
+
+p "Created ad_group ID #{$ad_group.id} for campaign ID #{$ad_group.campaign_id}"
+p $ad_group.attributes

@@ -47,4 +47,5 @@ campaign_data = {
  
 $campaign = Adapi::Campaign.create(campaign_data)
 
-p $campaign 
+p "Created campaign ID #{$campaign.id}"
+p $campaign.attributes
