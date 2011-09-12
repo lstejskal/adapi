@@ -86,6 +86,7 @@ module Adapi
         
         if (target.errors.size > 0)
           self.errors.add("[campaign target]", target.errors.to_a)
+          self.rollback
           return false 
         end
       end
@@ -97,6 +98,7 @@ module Adapi
 
         if (ad_group.errors.size > 0)
           self.errors.add("[ad group] \"#{ad_group.name}\"", ad_group.errors.to_a)
+          self.rollback
           return false 
         end
       end
