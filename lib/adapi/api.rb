@@ -88,5 +88,11 @@ module Adapi
       response
     end
 
+    # convert number to micro units (unit * one million)
+    #
+    def self.to_micro_units(x)
+      (x.to_f * 1e6).to_i
+    end
+
   end
 end

@@ -7,13 +7,10 @@ require 'adapi'
 campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
+  # TODO
   :bidding_strategy => { :xsi_type => 'ManualCPC' },
 
-  :budget => {
-    :period => 'DAILY',
-    :amount => { :micro_amount => 50000000 },
-    :delivery_method => 'STANDARD'
-  },
+  :budget => { :amount => 50, :delivery_method => 'STANDARD' },
 
   :network_setting => {
     :target_google_search => true,
@@ -24,6 +21,7 @@ campaign_data = {
 
   :targets => {
     :language => [ 'en', 'cs' ],
+    # TODO test together with city target
     :geo => { :proximity => { :geo_point => '38.89859,-77.035971', :radius => '10 km' } }
   },
 
@@ -31,6 +29,7 @@ campaign_data = {
     {
       :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
       :status => 'ENABLED',
+      # TODO 
       :bids => {
         :xsi_type => 'ManualCPCAdGroupBids',
         :keyword_max_cpc => {
@@ -39,13 +38,15 @@ campaign_data = {
           }
         }
       },
-    
+
+      # TODO to shortened format
+      # :keywords => [ 'dem codez', '"top coder"', "[-code]" ]
       :keywords => [
-        { :text => 'dem codez', :match_type => 'BROAD', :negative => false },
-        { :text => 'top coder', :match_type => 'PHRASE', :negative => false },
+        { :text => 'dem codez', :match_type => 'BROAD' },
+        { :text => 'top coder', :match_type => 'PHRASE' ),
         { :text => 'code', :match_type => 'EXACT', :negative => true }
       ],
-    
+
       :ads => [
         {
           :headline => "Code like Neo",

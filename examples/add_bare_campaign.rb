@@ -9,11 +9,7 @@ $campaign_data = {
   :status => 'PAUSED',
   :bidding_strategy => { :xsi_type => 'ManualCPC' },
 
-  :budget => {
-    :period => 'DAILY',
-    :amount => { :micro_amount => 50000000 },
-    :delivery_method => 'STANDARD'
-  },
+  :budget => { :amount => 50, :delivery_method => 'STANDARD' },
 
   :network_setting => {
     :target_google_search => true,

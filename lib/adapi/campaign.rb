@@ -26,6 +26,13 @@ module Adapi
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
+      # convert budget to GoogleApi
+      # TODO validations for budget
+      # 
+      @budget[:period] ||= 'DAILY'
+      @budget[:amount] = { :micro_amount => Api.to_micro_units(@budget[:amount]) }
+      # @budget[:delivery_method] ||= 'STANDARD'
+
       @targets ||= []
       @ad_groups ||= []
 

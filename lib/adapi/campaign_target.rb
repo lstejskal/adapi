@@ -128,8 +128,10 @@ module Adapi
     # convert latitude or longitude data to microdegrees,
     # a format with AdWords API accepts
     #
+    # TODO alias :to_microdegrees :to_micro_units
+    #
     def self.to_microdegrees(x)
-      (x.to_f * 1e6).to_i
+      Api.to_micro_units(x)
     end
 
   end

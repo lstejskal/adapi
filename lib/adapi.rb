@@ -3,6 +3,7 @@ require 'rubygems'
 require 'adwords_api'
 require 'collection'
 require 'yaml'
+require 'pp'
 
 require 'active_model'
 # require only ActiveSupport parts that we actually use
