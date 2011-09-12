@@ -7,7 +7,8 @@ require 'adapi'
 campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  :bidding_strategy => 'ManualCPC',
+  # TODO add support for Automatic CPC
+  :bidding_strategy => 'ManualCPC', 
   :budget => { :amount => 50, :delivery_method => 'STANDARD' },
 
   :network_setting => {
@@ -27,23 +28,21 @@ campaign_data = {
     {
       :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
       :status => 'ENABLED',
-      # TODO 
+      # PS: this must match the Campaign.bidding_strategy
+      # so we don't have to enter it
+      # TODO
       :bids => {
         :xsi_type => 'ManualCPCAdGroupBids',
         :keyword_max_cpc => {
           :amount => {
             :micro_amount => 10000000
           }
+        # REPLACE WITH
+        # :keyword_max_cpc => 10
         }
       },
 
-      # TODO to shortened format
-      # :keywords => [ 'dem codez', '"top coder"', "[-code]" ]
-      :keywords => [
-        { :text => 'dem codez', :match_type => 'BROAD' },
-        { :text => 'top coder', :match_type => 'PHRASE' },
-        { :text => 'code', :match_type => 'EXACT', :negative => true }
-      ],
+      :keywords => [ 'dem codez', '"top coder"', "[-code]" ],
 
       :ads => [
         {

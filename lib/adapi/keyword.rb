@@ -16,7 +16,35 @@ module Adapi
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
+      keywords.map! { |k| Keyword.keyword_attributes(k) }
+
       super(params)
+    end
+
+    # TODO include formatting in create method
+    #
+    def self.keyword_attributes(keyword)
+      # detect match type
+      match_type = case keyword[0]
+        when '"'
+          keyword = keyword.slice(1, (keyword.size - 2))
+          'PHRASE'
+        when '['
+          keyword = keyword.slice(1, (keyword.size - 2))
+          'EXACT'
+        else
+          'BROAD'
+      end
+
+      # detect if keyword is negative
+      negative = if (keyword =~ /^\-/)
+        keyword.slice!(0, 1)
+        true
+      else
+        false
+      end
+
+      { :text => keyword, :match_type => match_type, :negative => negative }
     end
 
     def create

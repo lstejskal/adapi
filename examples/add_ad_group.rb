@@ -19,11 +19,7 @@ ad_group_data = {
     }
   },
 
-  :keywords => [
-    { :text => 'dem codez', :match_type => 'BROAD', :negative => false },
-    { :text => 'top coder', :match_type => 'PHRASE', :negative => false },
-    { :text => 'code', :match_type => 'EXACT', :negative => true }
-  ],
+  :keywords => [ 'dem codez', '"top coder"', '[-code]' ],
 
   :ads => [
     {
@@ -34,9 +30,8 @@ ad_group_data = {
       :display_url => 'http://www.demcodez.com'
     }
   ]
-
 }
  
 $ad_group = Adapi::AdGroup.create(ad_group_data)
 
-p $ad_group
+p $ad_group.data
