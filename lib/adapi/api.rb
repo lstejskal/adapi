@@ -32,6 +32,15 @@ module Adapi
       false
     end
 
+    # FIXME hotfix, should be able to sort it out better through ActiveModel
+    def [](k)
+      self.send(k)
+    end
+
+    def []=(k,v)
+      self.send("#{k}=", v)
+    end
+
     # return parameters in hash
     # filtered for API calls by default: without :id and :status parameters
     # PS: attributes method always returns all specified attributes
