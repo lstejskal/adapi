@@ -53,7 +53,7 @@ module Adapi
       self.id = response[:value].first[:id] rescue nil
       
       # create targets if they are available
-      if targets
+      if targets.size > 0
         target = Adapi::CampaignTarget.create(
           :campaign_id => @id,
           :targets => targets
