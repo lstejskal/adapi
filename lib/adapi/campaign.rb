@@ -126,34 +126,29 @@ module Adapi
       self.update(:id => params[:id], :name => params[:name])
     end
 
-    def self.find(params = {})
-      campaign_service = Campaign.new
+    def self.find(amount = :all, params = {})
+      params.symbolize_keys!
+      first_only = (amount.to_sym == :first)
+
+      raise "Campaign ID (:id param) is required" unless params[:id]
+
+      predicates = [ :id ].map do |param_name|
+        if params[param_name]
+          {:field => param_name.to_s.camelcase, :operator => 'EQUALS', :values => params[param_name] }
+        end
+      end.compact
 
       selector = {
-        :fields => ['Id', 'Name', 'Status']
-        # :predicates => [{ :field => 'Id', :operator => 'EQUALS', :values => '334315' }]
-        # :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}]
+        :fields => ['Id', 'Name', 'Status'],
+        :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
+        :predicates => predicates
       }
 
-      # set filtering conditions: find by id, status etc.
-      if params[:conditions]
-        selector[:predicates] = params[:conditions].map do |c|
-          { :field => c[0].to_s.capitalize, :operator => 'EQUALS', :values => c[1] }
-        end
-      end
+      response = Campaign.new.service.get(selector)
 
-      response = campaign_service.service.get(selector)
+      response = (response and response[:entries]) ? response[:entries] : []
 
-      return (response and response[:entries]) ? response[:entries].to_a : []
-    
-      if response
-        response[:entries].to_a.each do |campaign|
-          puts "Campaign name is \"#{campaign[:name]}\", id is #{campaign[:id]} " +
-              "and status is \"#{campaign[:status]}\"."
-        end
-      else
-        puts "No campaigns were found."
-      end
+      return response
     end
 
   end
