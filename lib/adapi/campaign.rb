@@ -73,57 +73,33 @@ module Adapi
 
     # general method for changing campaign data
     # TODO enable updating of all campaign parts at once, same as for Campaign#create method
+    #
+    # TODO implement class method
     # 
-    def self.update(params = {})
-      campaign_service = Campaign.new
+    def update(params = {})
+      # TODO validation or refuse to update
 
-      # give users options to shorten input params
-      params = { :data => params } unless params.has_key?(:data)
+      response = self.mutate(
+        :operator => 'SET', 
+        :operand => params.merge(:id => @id)
+      )
 
-      campaign_id = params[:id] || params[:data][:id] || nil
-      return nil unless campaign_id
-      
-      operation = { :operator => 'SET',
-        :operand => params[:data].merge(:id => campaign_id.to_i)
-      }
-    
-      response = campaign_service.service.mutate([operation])
+      return false unless (response and response[:value])
 
-      if response and response[:value]
-        campaign = response[:value].first
-        puts 'Campaign id %d successfully updated.' % campaign[:id]
-      else
-        puts 'No campaigns were updated.'
-      end
+      # faster than self.find
+      params.each_pair { |k,v| self.send("#{k}=", v) }
 
-      return campaign
+      true      
     end
 
-    def self.set_status(params = {})
-      params[:id] ||= (params[:data] || params[:data][:id]) || nil
-      return nil unless params[:id]
-      return nil unless %w{ ACTIVE PAUSED DELETED }.include?(params[:status])
+    def activate; update(:status => 'ACTIVE'); end
+    def pause; update(:status => 'PAUSED'); end
+    def delete; update(:status => 'DELETED'); end
 
-      self.update(:id => params[:id], :status => params[:status])
-    end
+    def rename(new_name); update(:name => new_name); end
 
-    def self.activate(params = {})
-      self.set_status params.merge(:status => 'ACTIVE')
-    end
-
-    def self.pause(params = {})
-      self.set_status params.merge(:status => 'PAUSED')
-    end
-
-    def self.delete(params = {})
-      self.set_status params.merge(:status => 'DELETED')
-    end
-
-    def self.rename(params = {})
-      params[:id] ||= (params[:data] || params[:data][:id]) || nil
-      return nil unless (params[:id] && params[:name])
-
-      self.update(:id => params[:id], :name => params[:name])
+    def find # == refresh
+      Campaign.find(:first, :id => @id)
     end
 
     def self.find(amount = :all, params = {})
@@ -148,7 +124,14 @@ module Adapi
 
       response = (response and response[:entries]) ? response[:entries] : []
 
-      return response
+      response.map! do |campaign_data|
+        campaign = Campaign.new(campaign_data)
+        # TODO allow mass assignment of :id
+        campaign.id = campaign_data[:id]
+        campaign
+      end
+
+      first_only ? response.first : response
     end
 
   end
