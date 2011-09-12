@@ -7,9 +7,7 @@ require 'adapi'
 campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  # TODO
-  :bidding_strategy => { :xsi_type => 'ManualCPC' },
-
+  :bidding_strategy => 'ManualCPC',
   :budget => { :amount => 50, :delivery_method => 'STANDARD' },
 
   :network_setting => {
@@ -43,7 +41,7 @@ campaign_data = {
       # :keywords => [ 'dem codez', '"top coder"', "[-code]" ]
       :keywords => [
         { :text => 'dem codez', :match_type => 'BROAD' },
-        { :text => 'top coder', :match_type => 'PHRASE' ),
+        { :text => 'top coder', :match_type => 'PHRASE' },
         { :text => 'code', :match_type => 'EXACT', :negative => true }
       ],
 

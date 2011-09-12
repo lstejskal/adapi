@@ -7,8 +7,7 @@ require 'adapi'
 $campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  :bidding_strategy => { :xsi_type => 'ManualCPC' },
-
+  :bidding_strategy => 'ManualCPC',
   :budget => { :amount => 50, :delivery_method => 'STANDARD' },
 
   :network_setting => {

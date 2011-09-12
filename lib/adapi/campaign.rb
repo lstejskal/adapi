@@ -26,6 +26,14 @@ module Adapi
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
+      # convert bidding_strategy to GoogleApi
+      # can be either string (just xsi_type) or hash (xsi_type with params)
+      # TODO validations for xsi_type
+      # 
+      if @bidding_strategy.is_a?(String)
+        @bidding_strategy = { :xsi_type => @bidding_strategy }
+      end
+
       # convert budget to GoogleApi
       # TODO validations for budget
       # 
