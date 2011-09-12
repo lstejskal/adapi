@@ -17,4 +17,6 @@ $campaign_target = Adapi::CampaignTarget.new(
   }
 )
 
-p $campaign_target.create
+$campaign_target.create
+
+p $campaign_target.attributes

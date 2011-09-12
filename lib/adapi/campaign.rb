@@ -160,6 +160,8 @@ module Adapi
         end
       end.compact
 
+      # TODO display the rest of the data
+      # TODO get NetworkSetting - setting as in fields doesn't work
       selector = {
         :fields => ['Id', 'Name', 'Status', 'BiddingStrategy' ],
         :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
