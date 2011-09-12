@@ -91,7 +91,9 @@ module Adapi
 
       # traps any exceptions raised by AdWords API
       rescue AdwordsApi::Errors::ApiException => e
-        self.errors.add(:base, e.message)
+        error_key = "[#{self.xsi_type.underscore}]"
+  
+        self.errors.add(error_key, e.message)
       end
       
       response

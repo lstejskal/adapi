@@ -36,8 +36,6 @@ module Adapi
         :operand => operand
       )
 
-      ad_group = response[:value].first
-
       return false unless (response and response[:value])
       
       self.id = response[:value].first[:id] rescue nil
@@ -48,13 +46,20 @@ module Adapi
           :keywords => @keywords
         )
         
-        p keyword.errors.full_messages if (keyword.errors.size > 0)
+        if (keyword.errors.size > 0)
+          self.errors.add("[keyword]", keyword.errors.to_a)
+          return false 
+        end
+
       end
 
       @ads.each do |ad_data|
         ad = Adapi::Ad::TextAd.create( ad_data.merge(:ad_group_id => @id) )
-        
-        p ad.errors.full_messages if (ad.errors.size > 0)
+
+        if (ad.errors.size > 0)
+          self.errors.add("[ad] \"#{ad.headline}\"", ad.errors.to_a)
+          return false 
+        end
       end
 
       true
