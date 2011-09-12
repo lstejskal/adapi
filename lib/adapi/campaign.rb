@@ -30,16 +30,19 @@ module Adapi
       # can be either string (just xsi_type) or hash (xsi_type with params)
       # TODO validations for xsi_type
       # 
-      if @bidding_strategy.is_a?(String)
+      unless @bidding_strategy.is_a?(Hash)
         @bidding_strategy = { :xsi_type => @bidding_strategy }
       end
 
       # convert budget to GoogleApi
       # TODO validations for budget
-      # 
+      #
+      # budget can be integer (amount) or hash
+      @budget = { :amount => @budget } unless @budget.is_a?(Hash)
       @budget[:period] ||= 'DAILY'
       @budget[:amount] = { :micro_amount => Api.to_micro_units(@budget[:amount]) }
-      # @budget[:delivery_method] ||= 'STANDARD'
+      # PS: not sure if this should be a default. maybe we don't even need it
+      @budget[:delivery_method] ||= 'STANDARD'
 
       @targets ||= []
       @ad_groups ||= []
