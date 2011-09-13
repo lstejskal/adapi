@@ -88,10 +88,16 @@ module Adapi
                   :geo_point => {
                     :longitude_in_micro_degrees => long,
                     :latitude_in_micro_degrees => lat
-                  }                  
+                  }
                 }
-              # TODO add support for more geo_values
-              else # default, used for :country and :province
+
+              when :city
+                geo_values.merge(
+                  :xsi_type => "#{geo_type.to_s.capitalize}Target",
+                  :excluded => false
+                )
+
+              else # :country, :province
                 {
                   :xsi_type => "#{geo_type.to_s.capitalize}Target",
                   :excluded => false,

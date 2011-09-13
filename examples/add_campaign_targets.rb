@@ -11,9 +11,12 @@ $campaign_target = Adapi::CampaignTarget.new(
   :campaign_id => $campaign[:id],
   :targets => {
     :language => [ 'en' ],
-    # :geo => { :country => 'US' },
-    # :geo => { :province => 'US-NE' } # PS: czech provinces don't work, it seems
-    :geo => { :proximity => {:geo_point => '38.89859,-77.035971', :radius => '10 km'} }
+    :geo => {
+      # :country => 'CZ'
+      # :province => 'CZ-PR'
+      # :city => { :city_name => 'Prague', :province_code => 'CZ-PR', :country_code => 'CZ' }
+      :proximity => { :geo_point => '50.083333,14.366667', :radius => '50 km' }
+    }
   }
 )
 
