@@ -28,22 +28,34 @@ module Adapi
     end
  
     def create
-      response = self.mutate(
-        :operator => 'ADD', 
+      operation = {
+        :operator => 'ADD',
         :operand => {
           :ad_group_id => @ad_group_id,
-          :ad => self.data,
-          :status => @status
+          :status => @status,
+          :ad => self.data
         }
-      )
+      }
+
+      response = self.mutate(operation)
+ 
+      # check for PolicyViolationError(s)
+      # PS: check google-adwords-api/examples/handle_policy_violation_error.rb
+      if (self.errors['PolicyViolationError'].size > 0)
+        # set exemptions and try again
+        operation[:exemption_requests] = errors['PolicyViolationError'].map do |error|
+          { :key => error }
+        end
+
+        self.errors.clear
+
+        response = self.mutate(operation)  
+      end
 
       return false unless (response and response[:value])
-
-      # TODO object should be persistent, we should be able to do:
-      # ad.create; ad.description = 'new description'; ad.save
-
+  
       self.id = response[:value].first[:ad][:id] rescue nil
-
+  
       true
     end
 

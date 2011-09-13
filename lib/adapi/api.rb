@@ -88,6 +88,8 @@ module Adapi
 
 
     # wrap AdWords add/update/destroy actions and deals with errors
+    # PS: Keyword and Ad models have their own wrappers because of
+    # PolicyViolations
     #
     def mutate(operation)      
       operation = [operation] unless operation.is_a?(Array)

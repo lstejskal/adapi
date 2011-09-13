@@ -39,5 +39,39 @@ module Adapi
       (response and response[:value]) ? true : false
     end
 
+
+    # ad-specific mutate wrapper, deals with PolicyViolations for ads
+    #
+    def mutate(operation)
+      operation = [operation] unless operation.is_a?(Array)
+      
+      # fix to save space during specifyng operations
+      operation = operation.map do |op|
+        op[:operand].delete(:status) if op[:operand][:status].nil?
+        op
+      end
+      
+      begin    
+        response = @service.mutate(operation)
+    
+      rescue AdsCommon::Errors::HttpError => e
+        self.errors.add(:base, e.message)
+
+      # traps any exceptions raised by AdWords API
+      rescue AdwordsApi::Errors::ApiException => e
+        # return PolicyViolations so they can be sent again
+        e.errors.each do |error|
+          if (error[:api_error_type] == 'PolicyViolationError') && error[:is_exemptable]
+            self.errors.add(error[:api_error_type], error[:key])
+          else 
+            # otherwise, just report the errors
+            self.errors.add( "[#{self.xsi_type.underscore}]", "#{error[:error_string]} @ #{error[:field_path]}")
+          end
+        end
+      end
+      
+      response
+    end
+
   end
 end
