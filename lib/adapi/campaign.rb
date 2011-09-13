@@ -184,5 +184,9 @@ module Adapi
       first_only ? response.first : response
     end
 
+    def find_ad_groups(first_only = true)
+      AdGroup.find( (first_only ? :first : :all), :campaign_id => self.id )
+    end
+
   end
 end
