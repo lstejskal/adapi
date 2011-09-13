@@ -96,5 +96,13 @@ module Adapi
       first_only ? response.first : response
     end
 
+    def find_keywords(first_only = false)
+      Keyword.find( (first_only ? :first : :all), :ad_group_id => self.id )
+    end
+
+    def find_ads(first_only = false)
+      Ad::TextAd.find( (first_only ? :first : :all), :ad_group_id => self.id )
+    end
+
   end
 end
