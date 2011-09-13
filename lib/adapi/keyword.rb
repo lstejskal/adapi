@@ -16,8 +16,8 @@ module Adapi
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
-      keywords ||= []
-      keywords.map! { |k| Keyword.keyword_attributes(k) }
+      self.keywords ||= []
+      self.keywords.map! { |k| Keyword.keyword_attributes(k) }
 
       super(params)
     end
