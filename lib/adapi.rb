@@ -20,6 +20,9 @@ require 'adapi/keyword'
 require 'adapi/ad'
 require 'adapi/ad/text_ad'
 
+# monkeypatch HTTPI
+require 'httpi_request_monkeypatch'
+
 HTTPI.adapter = :curb
 # supress HTTPI output
 # HTTPI.log = false
