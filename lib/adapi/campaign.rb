@@ -154,8 +154,6 @@ module Adapi
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
 
-      raise "Campaign ID (:id param) is required" unless params[:id]
-
       predicates = [ :id ].map do |param_name|
         if params[param_name]
           {:field => param_name.to_s.camelcase, :operator => 'EQUALS', :values => params[param_name] }
