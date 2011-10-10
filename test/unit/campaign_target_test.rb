@@ -23,6 +23,14 @@ module Adapi
           ]
       end
 
+      should "automatically convert :geo / :country and :province targets to uppercase" do
+        assert_equal CampaignTarget.create_targets(:geo, {:country => 'cz', :province => 'cz-pr'}),
+          [
+            {:xsi_type => 'CountryTarget', :excluded => false, :country_code => 'CZ'},
+            {:xsi_type => 'ProvinceTarget', :excluded => false, :province_code => 'CZ-PR'}
+          ]
+      end
+
       should "parse :geo / :proximity targets" do
         assert_equal CampaignTarget.create_targets(:geo,
           {:proximity => {:geo_point => '38.89859,-77.035971', :radius => '10 km'}}),

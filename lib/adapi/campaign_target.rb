@@ -101,7 +101,7 @@ module Adapi
                 {
                   :xsi_type => "#{geo_type.to_s.capitalize}Target",
                   :excluded => false,
-                  "#{geo_type}_code".to_sym => geo_values
+                  "#{geo_type}_code".to_sym => to_uppercase(geo_values)
                 }
             end
           end
@@ -132,6 +132,16 @@ module Adapi
     #
     def self.to_microdegrees(x)
       Api.to_micro_units(x)
+    end
+
+    # convert either single value or array of value to uppercase
+    # 
+    def self.to_uppercase(values)
+      if values.is_a?(Array)
+        values.map { |value| value.to_s.upcase }
+      else
+        values.to_s.upcase
+      end
     end
 
   end
