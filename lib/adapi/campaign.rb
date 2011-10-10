@@ -34,7 +34,7 @@ module Adapi
         @bidding_strategy = { :xsi_type => @bidding_strategy }
       end
 
-      if @bidding_strategy[:bid_ceiling]
+      if @bidding_strategy[:bid_ceiling] and not @bidding_strategy[:bid_ceiling].is_a?(Hash)
         @bidding_strategy[:bid_ceiling] = {
           :micro_amount => Api.to_micro_units(@bidding_strategy[:bid_ceiling])
         }
@@ -46,7 +46,9 @@ module Adapi
       # budget can be integer (amount) or hash
       @budget = { :amount => @budget } unless @budget.is_a?(Hash)
       @budget[:period] ||= 'DAILY'
-      @budget[:amount] = { :micro_amount => Api.to_micro_units(@budget[:amount]) }
+      if @budget[:amount] and not @budget[:amount].is_a?(Hash)
+        @budget[:amount] = { :micro_amount => Api.to_micro_units(@budget[:amount]) }
+      end
       # PS: not sure if this should be a default. maybe we don't even need it
       @budget[:delivery_method] ||= 'STANDARD'
 
