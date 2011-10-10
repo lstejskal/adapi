@@ -10,6 +10,11 @@ module Adapi
           [{:language_code => 'en'}, {:language_code => 'cs'}]
       end
 
+      should "automatically convert :language targets to lowercase" do
+        assert_equal CampaignTarget.create_targets(:language, ['EN', 'CS']),
+          [{:language_code => 'en'}, {:language_code => 'cs'}]
+      end
+
       should "parse :geo / :country and :province targets" do
         assert_equal CampaignTarget.create_targets(:geo, {:country => 'CZ', :province => 'CZ-PR'}),
           [

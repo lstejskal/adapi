@@ -71,7 +71,7 @@ module Adapi
     def self.create_targets(target_type, target_data)
       case target_type
         when :language
-          target_data.map { |language| { :language_code => language } }       
+          target_data.map { |language| { :language_code => language.to_s.downcase } }       
           # example: ['cz','sk'] => [{:language_code => 'cz'}, {:language_code => 'sk'}]
         when :geo
           target_data.map do |geo_type, geo_values|
