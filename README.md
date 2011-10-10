@@ -6,13 +6,16 @@ Adapi (ADwords API) is a Ruby library for easy and painless work with Google
 Adwords API. Its users shouldn't bother with SOAP and tangle of XML- and
 API-specific objects, inputs and outputs are plain Ruby arrays and hashes. 
 
-Adapi is built on +google-adwords-api+ gem. Arrays and hashes instead of objects
+Adapi is built on `google-adwords-api` gem. Arrays and hashes instead of objects
 come from there, but adapi takes it several steps further:
+
 * AdWords services are represented by ActiveModel-compatible models with
   relations. Among other things it's possible to create whole campaign in
-  single method call: +Adapi::Campaign.create(campaign_data)+.
+  single method call: `Adapi::Campaign.create(campaign_data)`.
+
 * Various convenience methods are added to the models, for example:
-  +campaign.pause!+ (pauses campaign).
+  `campaign.pause!` (pauses campaign).
+
 * Adapi enables you to easily work with multiple AdWords accounts at the same time.
 
 Adapi is *still in development* and not nearly done yet! Version 1.0.0 should
@@ -82,14 +85,14 @@ Adapi::Config.set(:coca_cola, :client_customer_id => '777-666-5555')
 
 ### Authentication workflow ###
 
-* load configuration from +~/adapi.yml+
-* load configuration from +~/adwords_api.yml+ (default configuration for AdWords gems
+* load configuration from `~/adapi.yml`
+* load configuration from `~/adwords_api.yml` (default configuration for AdWords gems
   from Google)
-* set configuration directly to +Adapi::Config+ (overrides previous settings)
+* set configuration directly to `Adapi::Config` (overrides previous settings)
 
-### Configuration by +adapi.yml+ ###
+### Configuration by `adapi.yml` ###
 
-Stored in +~/adapi.yml+. Supports multiple accounts, which are identifed by
+Stored in `~/adapi.yml`. Supports multiple accounts, which are identifed by
 aliases. Example:
 
 ```
@@ -122,18 +125,18 @@ You tell adapi which account to use by setting an alias:
 Adapi::Config.set(:sandbox)
 ```
 
-+:default+ account is, as name implies, used by default. You must either set an
-alias to +Adapi::Config+ or have account with +:default+ alias available.
+`:default` account is, as name implies, used by default. You must either set an
+alias to `Adapi::Config` or have account with `:default` alias available.
 
 ### Configuration by adwords_api.yml ###
 
-If you already have +google-adwords-api+ gem configured and use just one account,
-the same configuration will also work for adapi: +~/adwords_api.yml+
+If you already have `google-adwords-api` gem configured and use just one account,
+the same configuration will also work for adapi: `~/adwords_api.yml`
 
 ### Configuration directly in code ###
 
 Before logging into the Adwords API, you can set global settings through
-+Adapi::Config+:
+`Adapi::Config`:
 
 ```ruby
 # load the settings
@@ -158,14 +161,14 @@ Adapi::Config.set(:sandbox)
 
 ## API Version Support ##
 
-Adapi supports only the latest version of Google AdWords API: +v201101+. Older
-versions will not be supported. +v201101+ and newer versions will still be
+Adapi supports only the latest version of Google AdWords API: `v201101`. Older
+versions will not be supported. `v201101` and newer versions will still be
 supported when new versions are released.
 
 ## Examples ##
 
 Example are available in [examples directory](./master/examples/). For now, they
-are mostly just uninspired rewrites of examples from +google-adwords-api+ gem,
+are mostly just uninspired rewrites of examples from `google-adwords-api` gem,
 but that's going to change when proper UI to AdWords models will be implemented.
 
 ## Author ##
