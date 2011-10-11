@@ -2,7 +2,6 @@
 
 require 'rubygems'
 require 'adwords_api'
-require 'collection'
 require 'yaml'
 require 'pp'
 
@@ -27,10 +26,6 @@ require 'httpi_request_monkeypatch'
 HTTPI.adapter = :curb
 # supress HTTPI output
 # HTTPI.log = false
-
-# load factories for development environment
-# require 'factory_girl'
-# Dir[ File.join(File.dirname(__FILE__), '../test/factories/*.rb') ].each { |f| require f }
 
 module Adapi
   API_VERSION = :v201101  
