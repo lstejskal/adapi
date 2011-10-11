@@ -1,3 +1,4 @@
+# encoding: utf-8
 
 Factory.define :ad_group, :class => Adapi::AdGroup do |f|
   f.sequence(:campaign_id)    { |n| n }

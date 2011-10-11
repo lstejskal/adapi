@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'adapi'
 
 # this example shows how to load custom settings

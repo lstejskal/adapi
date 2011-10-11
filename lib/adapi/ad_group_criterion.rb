@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Adapi
 
   # http://code.google.com/apis/adwords/docs/reference/latest/AdGroupCriterionService.html

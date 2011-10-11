@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Adapi
   class Api
     extend ActiveModel::Naming

@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 module Adapi
   VERSION = "0.0.3"
 

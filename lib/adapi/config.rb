@@ -1,3 +1,4 @@
+# encoding: utf-8
 
 # PS: what about this config setting?
 # Campaign.create(:data => campaign_data, :account => :my_account_alias)
