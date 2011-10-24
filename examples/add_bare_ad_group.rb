@@ -16,12 +16,7 @@ $ad_group_data = {
   :bids => {
     # this should be set automatically, it's dependent on Campaign.bids
     :xsi_type => 'BudgetOptimizerAdGroupBids',
-    # :keyword_max_cpc => 10
-    :proxy_keyword_max_cpc => {
-      :amount => {
-        :micro_amount => 10000000
-      }
-    }
+    :proxy_keyword_max_cpc => 10
   }
 }
  

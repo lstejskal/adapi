@@ -19,8 +19,12 @@ module Adapi
         assert @ad_group.valid?
       end
 
-      should "parse :keywords correctly" do
-        
+      should "parse :bids correctly" do
+        assert_equal @ad_group.bids,
+          {
+            :xsi_type => 'ManualCPCAdGroupBids',
+            :keyword_max_cpc => { :amount => { :micro_amount => 10000000 } }
+          }
       end
 
       context " / data method" do
