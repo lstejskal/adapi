@@ -102,7 +102,7 @@ aliases. Example:
     :email: default_email@gmail.com
     :password: default_password
     :developer_token: default_token
-    :client_email: default_client_email@gmail.com
+    :client_customer_id: 777-666-5555
     :user_agent: My Adwords API Client
   :service:
     :environment: PRODUCTION
@@ -113,7 +113,7 @@ aliases. Example:
     :email: sandbox_email@gmail.com
     :password: sandbox_password
     :developer_token: sandbox_token
-    :client_email: sandbox_client_email@gmail.com
+    :client_customer_id: 555-666-7777
     :user_agent: Adwords API Test
   :service:
     :environment: SANDBOX
@@ -143,15 +143,15 @@ Before logging into the Adwords API, you can set global settings through
 Adapi::Config.load_settings(:in_hash => {
   :sandbox => {   
       :authentication => {
-        :method           => "ClientLogin"
-        :email            => "sandbox_email@gmail.com",
-        :password         => "sandbox_password",
-        :developer_token  => "sandbox_token",
-        :client_email     => "sandbox_client_email@gmail.com",
-        :user_agent       => "Adwords API Test"
+        :method               => "ClientLogin"
+        :email                => "sandbox_email@gmail.com",
+        :password             => "sandbox_password",
+        :developer_token      => "sandbox_token",
+        :client_customer_id   => "555-666-7777",
+        :user_agent           => "Adwords API Test"
       },
       :service => {
-        :environment      => "SANDBOX"
+        :environment          => "SANDBOX"
       }
   }
 })

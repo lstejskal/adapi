@@ -5,7 +5,7 @@
     :email: default_email@gmail.com
     :password: default_password
     :developer_token: default_token
-    :client_email: default_client_email@gmail.com
+    :client_customer_id: 555-666-7777
     :user_agent: My Adwords API Client
   :service:
     :environment: PRODUCTION
@@ -16,7 +16,7 @@
     :email: sandbox_email@gmail.com
     :password: sandbox_password
     :developer_token: sandbox_token
-    :client_email: sandbox_client_email@gmail.com
+    :client_customer_id: 555-666-7777
     :user_agent: Adwords API Test
   :service:
     :environment: SANDBOX
