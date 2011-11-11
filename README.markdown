@@ -181,13 +181,9 @@ Adapi::Config.set(:sandbox)
 
 ## API Version Support ##
 
-Adapi currently supports only `v201101`. However, it *will* support only the
-latest version of AdWords API: `v201109`. Older versions (including `v201101`)
-will not be supported.
-
-Note on development: implementation of `v201109` is in progress in `v201109`
-branch. Obvious ETA is the end of February, when `v201101` is going to be
-deprecated, but it should be ready sooner.
+Adapi supports only the latest version of Google AdWords API: `v201109`. Older
+versions will not be supported (well, maybe `v201101`). `v201109` and newer
+versions will still be supported when new versions are released.
 
 ## Examples ##
 
@@ -197,4 +193,4 @@ but that's going to change when proper UI to AdWords models will be implemented.
 
 ## Author ##
 
-Lukas Stejskal
+2011 Lukas Stejskal
