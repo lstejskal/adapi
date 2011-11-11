@@ -28,7 +28,7 @@ HTTPI.adapter = :curb
 # HTTPI.log = false
 
 module Adapi
-  API_VERSION = :v201101  
+  API_VERSION = :v201109  
 end
 
 # check ruby version, should be 1.9
