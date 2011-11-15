@@ -30,3 +30,10 @@ HTTPI.adapter = :curb
 module Adapi
   API_VERSION = :v201101  
 end
+
+# check ruby version, should be 1.9
+# FIXME there's gotta be more elegant way to do this
+`ruby -v`.to_s =~ /^ruby (\d\.\d)\./
+if $1.to_f < 1.9
+  puts "WARNING: please use ruby 1.9, adapi gem won't work properly in 1.8 and earlier versions"
+end
