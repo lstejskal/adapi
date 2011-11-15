@@ -21,6 +21,25 @@ module Adapi
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
+      # convert bids to GoogleApi format
+      #
+      # can be either string (just xsi_type) or hash (xsi_type with params)
+      # althogh I'm not sure if just string makes sense in this case
+      #
+      if @bids
+        unless @bids.is_a?(Hash)
+          @bids = { :xsi_type => @bids }
+        end
+  
+        if @bids[:keyword_max_cpc] and not @bids[:keyword_max_cpc].is_a?(Hash)
+          @bids[:keyword_max_cpc] = {
+            :amount => {
+              :micro_amount => Api.to_micro_units(@bids[:keyword_max_cpc])
+            }
+          }
+        end
+      end
+
       @keywords ||= []
       @ads ||= []
 
