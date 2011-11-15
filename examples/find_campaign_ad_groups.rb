@@ -7,7 +7,7 @@ require File.join(File.dirname(__FILE__), 'add_bare_ad_group')
 
 # find all ad_groups for campaign
  
-$ad_groups = Adapi::AdGroup.find :all, :campaign_id => $campaign[:id]
+$ad_groups = Adapi::AdGroup.find :all, :campaign_id => $campaign.to_param
 
 p "Found %s ad groups." % $ad_groups.size
 

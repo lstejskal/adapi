@@ -30,6 +30,10 @@ module Adapi
       @params = params
     end
 
+    def to_param
+      self[:id]
+    end
+
     def persisted?
       false
     end
