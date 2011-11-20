@@ -154,7 +154,17 @@ module Adapi
       Campaign.find(:first, :id => @id)
     end
 
+
+    # if nothing else than single number or string at the input, assume it's an
+    # id and we want to find campaign by id
+    #
     def self.find(amount = :all, params = {})
+      # find campaign by id - related syntactic sugar
+      if params.empty? and not amount.is_a?(Symbol)
+        params[:id] = amount.to_i
+        amount = :first
+      end
+
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
 
