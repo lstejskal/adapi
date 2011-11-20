@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'rubygems'
+gem 'minitest'
 require 'test/unit'
 require 'turn'
 require 'shoulda'
@@ -17,5 +18,6 @@ Dir[ File.join(File.dirname(__FILE__), 'factories', '*.rb') ].each { |f| require
 class Test::Unit::TestCase
   
   FakeWeb.allow_net_connect = false
+
 
 end
