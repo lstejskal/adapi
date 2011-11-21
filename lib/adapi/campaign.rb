@@ -219,6 +219,7 @@ module Adapi
         :id => self[:id],
         :name => self[:name],
         :status => self[:status],
+        :budget => self[:budget],
         :bidding_strategy => {
           :xsi_type => self[:bidding_strategy][:xsi_type]
         }
