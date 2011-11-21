@@ -108,21 +108,39 @@ module Adapi
 
       response = AdGroup.new.service.get(selector)
 
-      response = (response and response[:entries]) ? response[:entries] : []
+      ad_groups = (response and response[:entries]) ? response[:entries] : []
 
-      #response.map! do |data|
-      #  TextAd.new(data[:ad].merge(:ad_group_id => data[:ad_group_id], :status => data[:status]))
-      #end
+      ad_groups = ad_groups.slice(0,1) if first_only
 
-      first_only ? response.first : response
+      # find keywords and ads
+      ad_groups.map! do |ad_group|
+        ad_group.merge(
+          :keywords => Keyword.find(:all, :ad_group_id => ad_group[:id]).to_array
+          # :ads => ad_group.find_ads
+        )
+      end
+
+      first_only ? ad_groups.first : ad_groups
     end
 
     def find_keywords(first_only = false)
       Keyword.find( (first_only ? :first : :all), :ad_group_id => self.id )
     end
 
+    # TODO find all types of ads
     def find_ads(first_only = false)
       Ad::TextAd.find( (first_only ? :first : :all), :ad_group_id => self.id )
+    end
+
+    # Converts ad group data to hash - of the same structure which is used when
+    # creating an ad group.
+    #
+    def to_hash
+      ad_group_hash = {
+        :id => self[:id],
+        :name => self[:name],
+        :status => self[:status]
+      }
     end
 
   end

@@ -29,14 +29,14 @@ module Adapi
     def self.keyword_attributes(keyword)
       # detect match type
       match_type = case keyword[0]
-        when '"'
-          keyword = keyword.slice(1, (keyword.size - 2))
-          'PHRASE'
-        when '['
-          keyword = keyword.slice(1, (keyword.size - 2))
-          'EXACT'
-        else
-          'BROAD'
+      when '"'
+        keyword = keyword.slice(1, (keyword.size - 2))
+        'PHRASE'
+      when '['
+        keyword = keyword.slice(1, (keyword.size - 2))
+        'EXACT'
+      else
+        'BROAD'
       end
 
       # detect if keyword is negative
@@ -105,6 +105,23 @@ module Adapi
         :ad_group_id => params[:ad_group_id],
         :keywords => response.map { |keyword| keyword[:criterion] }
       )
+    end
+
+    # Returns only array of keywords, as it's entered in Campaign#create
+    # 
+    def to_array
+      self.keywords.map do |keyword|
+        keyword = keyword[:text]
+
+        case keyword[:match_type]
+        when 'PHRASE'
+          "\"%s\"" % keyword[:text]
+        when 'EXACT'
+          "[%s]" % keyword[:text]
+        else # 'BROAD'
+          keyword[:text]
+        end
+      end
     end
 
   end

@@ -13,4 +13,5 @@ p "Found %s ad groups." % $ad_groups.size
 
 $ad_groups.each do |ad_group|
   p "ID: %s, NAME %s, STATUS %s" % [ ad_group[:id], ad_group[:name], ad_group[:status] ]
+  p "KEYWORDS: %s" % ad_group[:keywords].join(", ")
 end
