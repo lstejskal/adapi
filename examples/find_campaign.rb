@@ -7,19 +7,24 @@ require File.join(File.dirname(__FILE__), 'add_campaign')
 
 $campaign = Adapi::Campaign.find_complete($campaign.id)
 
-p "Campaign id: %s" % $campaign[:id]
-p "Name: %s" % $campaign[:name]
-p "Status: %s" % $campaign[:status]
+puts "Campaign id: %s" % $campaign[:id]
+puts "Name: %s" % $campaign[:name]
+puts "Status: %s" % $campaign[:status]
 
-p "Budget delivery method: %s" % $campaign[:budget][:delivery_method]
-p "Budget period: %s" % $campaign[:budget][:period]
+puts "\nBudget delivery method: %s" % $campaign[:budget][:delivery_method]
+puts "Budget period: %s" % $campaign[:budget][:period]
 # TODO budget.amount
 
-p "Bidding strategy type: %s" % $campaign[:bidding_strategy][:xsi_type]
+puts "\nBidding strategy type: %s" % $campaign[:bidding_strategy][:xsi_type]
 # TODO bidding_strategy.bid_ceiling
 
-p "Targets:"
+puts "\nTargets:"
 $campaign[:targets].each do |target|
   p target[:xsi_type]
   p target
+end
+
+puts "\nAd groups:"
+$campaign[:ad_groups].each do |ad_group|
+  puts "\nAd group Id: %s, Name: %s, Status: %s" % [ ad_group[:id], ad_group[:name], ad_group[:status] ]
 end

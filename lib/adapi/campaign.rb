@@ -206,8 +206,10 @@ module Adapi
     def self.find_complete(campaign_id)
       campaign = self.find(campaign_id)
       
-      campaign[:targets] = CampaignTarget.find(:campaign_id => campaign[:id])
-      
+      campaign[:targets] = CampaignTarget.find(:campaign_id => campaign.to_param)
+
+      campaign[:ad_groups] = AdGroup.find(:all, :campaign_id => campaign.to_param)
+
       campaign
     end
 
