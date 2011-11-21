@@ -50,12 +50,15 @@ module Adapi
   
     alias :create :set
 
-    # FIXME doesn't display everything, check the issues in google-adwords-api
-    #
-    def self.find(amount = :all, params = {})
+    def self.find(params = {})
       params.symbolize_keys!
-      params = params[:conditions] if params[:conditions]
-      first_only = (amount.to_sym == :first)
+
+      # by default, return skip target types that have no target data
+      params[:skip_empty_target_types] ||= true
+      
+      if params[:conditions]
+        params[:campaign_id] = params[:campaign_id] || params[:conditions][:campaign_id]
+      end
 
       raise ArgumentError, "Campaing ID is required" unless params[:campaign_id]
   
@@ -65,7 +68,18 @@ module Adapi
 
       response = (response and response[:entries]) ? response[:entries] : []
 
-      first_only ? response.first : response
+      # return everything or only 
+      if params[:skip_empty_target_types]
+        response.select! { |target_type| target_type.has_key?(:targets) }
+      end
+
+      # TODO optionally return just certain target type(s)
+      # easy, just add condition (single type or array), filter and set
+      # :skip_empty_target_types option to false
+      
+      # TODO optionally convert to original input shortcuts
+
+      response
     end
 
     # transform our own high-level target parameters to google low-level
