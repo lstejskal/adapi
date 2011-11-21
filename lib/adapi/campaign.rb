@@ -177,7 +177,7 @@ module Adapi
       # TODO display the rest of the data
       # TODO get NetworkSetting - setting as in fields doesn't work
       selector = {
-        :fields => ['Id', 'Name', 'Status', 'BiddingStrategy' ],
+        :fields => ['Id', 'Name', 'Status', 'BiddingStrategy'],
         :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }
@@ -198,6 +198,17 @@ module Adapi
 
     def find_ad_groups(first_only = true)
       AdGroup.find( (first_only ? :first : :all), :campaign_id => self.id )
+    end
+
+    # Returns complete campaign data: targets, ad groups, keywords and ads.
+    # Basically everything what you can set when creating a campaign.
+    #
+    def self.find_complete(campaign_id)
+      campaign = self.find(campaign_id)
+      
+      campaign[:targets] = CampaignTarget.find(:campaign_id => campaign[:id])
+      
+      campaign
     end
 
   end
