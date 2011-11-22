@@ -5,7 +5,7 @@ require 'adapi'
 # create campaign
 require File.join(File.dirname(__FILE__), 'add_campaign')
 
-$campaign = Adapi::Campaign.find_complete($campaign.id)
+$campaign = Adapi::Campaign.find_complete($campaign.id).to_hash
 
 puts "Campaign id: %s" % $campaign[:id]
 puts "Name: %s" % $campaign[:name]

@@ -216,15 +216,18 @@ module Adapi
     # Converts campaign data to hash - of the same structure which is used when
     # creating a campaign.
     #
+    # PS: could be implemented more succintly, but let's leave it like this for
+    # now, code can change and this is more readable
+    #
     def to_hash
-      campaign_hash = {
+      {
         :id => self[:id],
         :name => self[:name],
         :status => self[:status],
         :budget => self[:budget],
-        :bidding_strategy => {
-          :xsi_type => self[:bidding_strategy][:xsi_type]
-        }
+        :bidding_strategy => self[:bidding_strategy],
+        :targets => self[:targets],
+        :ad_groups => self[:ad_groups]
       }
     end
 
