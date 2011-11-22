@@ -116,7 +116,7 @@ module Adapi
       ad_groups.map! do |ad_group|
         ad_group.merge(
           :keywords => Keyword.find(:all, :ad_group_id => ad_group[:id]).to_array,
-          :ads => Ad::TextAd.find(:all, :ad_group_id => ad_group[:id])
+          :ads => Ad::TextAd.find(:all, :ad_group_id => ad_group[:id]).map(&:to_hash) 
         )
       end
 
