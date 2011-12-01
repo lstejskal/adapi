@@ -124,5 +124,18 @@ module Adapi
       first_only ? response.first : response
     end
 
+    # Converts text ad data to hash - of the same structure which is used when
+    # creating a complete campaign.
+    #
+    def to_hash
+      {
+        :headline => self[:headline],
+        :description1 => self[:description1],
+        :description2 => self[:description2],
+        :url => self[:url],
+        :display_url => self[:display_url]
+      }
+    end
+
   end
 end

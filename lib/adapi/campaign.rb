@@ -154,7 +154,17 @@ module Adapi
       Campaign.find(:first, :id => @id)
     end
 
+
+    # if nothing else than single number or string at the input, assume it's an
+    # id and we want to find campaign by id
+    #
     def self.find(amount = :all, params = {})
+      # find campaign by id - related syntactic sugar
+      if params.empty? and not amount.is_a?(Symbol)
+        params[:id] = amount.to_i
+        amount = :first
+      end
+
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
 
@@ -167,7 +177,7 @@ module Adapi
       # TODO display the rest of the data
       # TODO get NetworkSetting - setting as in fields doesn't work
       selector = {
-        :fields => ['Id', 'Name', 'Status', 'BiddingStrategy' ],
+        :fields => ['Id', 'Name', 'Status', 'BiddingStrategy'],
         :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }
@@ -188,6 +198,37 @@ module Adapi
 
     def find_ad_groups(first_only = true)
       AdGroup.find( (first_only ? :first : :all), :campaign_id => self.id )
+    end
+
+    # Returns complete campaign data: targets, ad groups, keywords and ads.
+    # Basically everything what you can set when creating a campaign.
+    #
+    def self.find_complete(campaign_id)
+      campaign = self.find(campaign_id)
+      
+      campaign[:targets] = CampaignTarget.find(:campaign_id => campaign.to_param)
+
+      campaign[:ad_groups] = AdGroup.find(:all, :campaign_id => campaign.to_param)
+
+      campaign
+    end
+
+    # Converts campaign data to hash - of the same structure which is used when
+    # creating a campaign.
+    #
+    # PS: could be implemented more succintly, but let's leave it like this for
+    # now, code can change and this is more readable
+    #
+    def to_hash
+      {
+        :id => self[:id],
+        :name => self[:name],
+        :status => self[:status],
+        :budget => self[:budget],
+        :bidding_strategy => self[:bidding_strategy],
+        :targets => self[:targets],
+        :ad_groups => self[:ad_groups]
+      }
     end
 
   end

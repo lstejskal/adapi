@@ -50,12 +50,15 @@ module Adapi
   
     alias :create :set
 
-    # FIXME doesn't display everything, check the issues in google-adwords-api
-    #
-    def self.find(amount = :all, params = {})
+    def self.find(params = {})
       params.symbolize_keys!
-      params = params[:conditions] if params[:conditions]
-      first_only = (amount.to_sym == :first)
+
+      # by default, return skip target types that have no target data
+      params[:skip_empty_target_types] ||= true
+      
+      if params[:conditions]
+        params[:campaign_id] = params[:campaign_id] || params[:conditions][:campaign_id]
+      end
 
       raise ArgumentError, "Campaing ID is required" unless params[:campaign_id]
   
@@ -65,10 +68,54 @@ module Adapi
 
       response = (response and response[:entries]) ? response[:entries] : []
 
-      first_only ? response.first : response
+      # return everything or only 
+      if params[:skip_empty_target_types]
+        response.select! { |target_type| target_type.has_key?(:targets) }
+      end
+
+      # TODO optionally return just certain target type(s)
+      # easy, just add condition (single type or array), filter and set
+      # :skip_empty_target_types option to false
+      
+      # optionally convert to original input shortcuts specified by Adapi DSL
+      # TODO on second thought, no need to do that now. it's simpler to make
+      # CampaignTarget.new accept original AdWords data
+      # if params[:format] == :adapi_dsl
+      #   response = Hash[ response.map { |t| CampaignTarget.parse_dsl(t) } ]
+      # end
+
+      response
     end
 
+=begin TODO
+    def self.parse_dsl(target)
+      case target[:target_list_type]
+      when "LanguageTargetList"
+        [ :language, target[:targets].map { |t| t[:language_code] } ]
+      when "GeoTargetList"
+        targets = Hash[ target[:targets].map do |t|
+          target_type = t[:target_type].gsub(/Target$/, '')
+
+          case target_type
+          when :proximity
+            [ target_type, { :geo_point => '', :radius => '' } ]
+          when :city
+          else
+            [ target_type, t ]
+          end          
+        end ]
+
+        [ :geo, targets ]
+      else
+        warn "Unsupported target type! %s" % target.inspect
+        [ target[:target_list_type], target[:targets] ] 
+      end
+    end
+=end
+
     # transform our own high-level target parameters to google low-level
+    # 
+    # TODO allow to enter AdWords parameters in original format
     #
     def self.create_targets(target_type, target_data)
       case target_type
