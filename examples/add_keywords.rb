@@ -12,4 +12,6 @@ $keywords = Adapi::Keyword.new(
 
 $r = $keywords.create
 
-p $keywords
+$r = Adapi::Keyword.find(:all, :ad_group_id => $ad_group[:id])
+
+pp $r.keywords

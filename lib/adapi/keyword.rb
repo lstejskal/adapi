@@ -100,19 +100,21 @@ module Adapi
       response = Keyword.new.service.get(selector)
 
       response = (response and response[:entries]) ? response[:entries] : []
-
+      
       Keyword.new(
         :ad_group_id => params[:ad_group_id],
-        :keywords => response.map { |keyword| keyword[:criterion] }
+        :keywords => Keyword.shortened(response)
       )
     end
 
     # Returns only array of keywords, as it's entered in Campaign#create
-    # 
+    #
+    # FIXME isn't this obsolete now, with 'shortened" method? check and possibly delete
+    #
     def to_array
       self.keywords.map do |keyword|
         keyword = keyword[:text]
-
+        
         case keyword[:match_type]
         when 'PHRASE'
           "\"%s\"" % keyword[:text]
@@ -120,6 +122,27 @@ module Adapi
           "[%s]" % keyword[:text]
         else # 'BROAD'
           keyword[:text]
+        end
+      end
+    end
+
+    # Converts Google response to shortened form
+    # 
+    # TODO don't display deleted keywords
+    # 
+    def self.shortened(google_keywords = [])
+      google_keywords.map do |keyword|
+        keyword_text = keyword[:criterion][:text]
+        
+        keyword_text = "-%s" % keyword_text if (keyword[:xsi_type] == "NegativeAdGroupCriterion")
+        
+        case keyword[:criterion][:match_type]
+        when 'PHRASE'
+          "\"%s\"" % keyword_text
+        when 'EXACT'
+          "[%s]" % keyword_text
+        else # 'BROAD'
+          keyword_text
         end
       end
     end
