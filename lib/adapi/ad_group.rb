@@ -92,7 +92,7 @@ module Adapi
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
 
-      raise "No Campaign ID is required" unless params[:campaign_id]
+      raise "Campaign ID is required" unless params[:campaign_id]
 
       predicates = [ :campaign_id, :id ].map do |param_name|
         if params[param_name]
@@ -115,7 +115,7 @@ module Adapi
       # find keywords and ads
       ad_groups.map! do |ad_group|
         ad_group.merge(
-          :keywords => Keyword.find(:all, :ad_group_id => ad_group[:id]).to_array,
+          :keywords => Keyword.shortened(Keyword.find(:all, :ad_group_id => ad_group[:id]).keywords),
           :ads => Ad::TextAd.find(:all, :ad_group_id => ad_group[:id]).map(&:to_hash) 
         )
       end

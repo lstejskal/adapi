@@ -1,5 +1,20 @@
 # encoding: utf-8
 
+# TODO user should be able to delete keywords
+# TODO user should not see deleted keywords by default
+#
+# TODO program should be able to detect keywords in shortened or Google form
+# automatically on input (outsource into separate method?)
+#
+# TODO user should be able to enter keywords in both shortened, parameterized and Google form
+# 
+# FIXME broken Keyword.negative param 
+
+# Currently the Keyword DSL is a mess. There are basically three forms:
+# * ultra short form on input: keyword example
+# * shortened form: {:text=>"keyword example", :match_type=>"BROAD", :negative=>false} 
+# * google form
+
 module Adapi
   class Keyword < AdGroupCriterion
 
@@ -24,7 +39,7 @@ module Adapi
       super(params)
     end
 
-    # TODO include formatting in create method
+    # Converts keyword specification from shortened form to Google format
     #
     def self.keyword_attributes(keyword)
       # detect match type
@@ -39,7 +54,7 @@ module Adapi
         'BROAD'
       end
 
-      # detect if keyword is negative
+      # sets whether keyword is negative or not
       negative = if (keyword =~ /^\-/)
         keyword.slice!(0, 1)
         true
@@ -76,6 +91,8 @@ module Adapi
     end
 
     def self.find(amount = :all, params = {})
+      params[:format] ||= :google # default, don't do anything with the data from google
+      
       params.symbolize_keys!
       # this has no effect, it's here just to have the same interface everywhere
       first_only = (amount.to_sym == :first)
@@ -100,20 +117,34 @@ module Adapi
       response = Keyword.new.service.get(selector)
 
       response = (response and response[:entries]) ? response[:entries] : []
-      
+
+# for now, always return keywords in :google format
+=begin
+      response = case params[:format].to_sym
+      when :short
+        Keyword.shortened(response)
+      when :params
+        Keyword.parameterized(response)
+      else
+        response
+      end
+=end
+
       Keyword.new(
         :ad_group_id => params[:ad_group_id],
-        :keywords => Keyword.shortened(response)
+        :keywords => response
       )
     end
 
-    # Returns only array of keywords, as it's entered in Campaign#create
+    # PS: create a better UI for this?
+    # Keyword.convert(:to => :params, :source => $google_keywords)
+    # and Keyword.parametrized($google_keywords) just calling that?
+
+    # Converts list of keywords from Google format to short format
     #
-    # FIXME isn't this obsolete now, with 'shortened" method? check and possibly delete
-    #
-    def to_array
-      self.keywords.map do |keyword|
-        keyword = keyword[:text]
+    def self.shortened(google_keywords = [])
+      self.parameterized(google_keywords).map do |keyword|
+        keyword[:text] = "-%s" % keyword[:text] if keyword[:negative]
         
         case keyword[:match_type]
         when 'PHRASE'
@@ -126,24 +157,18 @@ module Adapi
       end
     end
 
-    # Converts Google response to shortened form
+    # Converts list of keywords from Google format to params format
+    # (the way it can be entered into Keywords model)
     # 
-    # TODO don't display deleted keywords
-    # 
-    def self.shortened(google_keywords = [])
-      google_keywords.map do |keyword|
-        keyword_text = keyword[:criterion][:text]
+    def self.parameterized(google_keywords = [])
+      google_keywords.map do |keyword|        
+        kw = keyword[:text][:criterion]
         
-        keyword_text = "-%s" % keyword_text if (keyword[:xsi_type] == "NegativeAdGroupCriterion")
-        
-        case keyword[:criterion][:match_type]
-        when 'PHRASE'
-          "\"%s\"" % keyword_text
-        when 'EXACT'
-          "[%s]" % keyword_text
-        else # 'BROAD'
-          keyword_text
-        end
+        {
+          :text => kw[:text],
+          :match_type => kw[:match_type],
+          :negative => (keyword[:text][:xsi_type] == "NegativeAdGroupCriterion")
+        }
       end
     end
 
