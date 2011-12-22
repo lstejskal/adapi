@@ -24,5 +24,17 @@ module Adapi
       super(params)
     end
 
+    def delete(criterion_id)
+      response = self.mutate(
+        :operator => 'REMOVE',
+        :operand => {
+          :ad_group_id => self.ad_group_id,
+          :criterion => { :id => criterion_id.to_i }
+        }
+      )
+
+      (response and response[:value])
+    end
+
   end
 end
