@@ -1,9 +1,15 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.0.3"
+  VERSION = "0.0.4"
 
   # CHANGELOG:
+  #
+  # 0.0.4
+  # changed README to markdown format
+  # updated DSL for creating campaign and campaign target
+  # implemented find methods for campaigns and ad groups
+  # implemented getting complete campaigns (in one hash with targets, ad groups, keywords and ads)
   #
   # 0.0.3
   # converted to ActiveModel
