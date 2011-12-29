@@ -3,7 +3,7 @@
 require 'adapi'
 
 # create campaign
-require File.join(File.dirname(__FILE__), 'add_bare_ad_group')
+require_relative 'add_bare_ad_group'
 
 # find all ad_groups for campaign
  

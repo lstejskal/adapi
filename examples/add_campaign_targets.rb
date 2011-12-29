@@ -3,7 +3,7 @@
 require 'adapi'
 
 # create campaign
-require File.join(File.dirname(__FILE__), 'add_bare_campaign')
+require_relative 'add_bare_campaign'
 
 # TODO we should be able call it from campaign instance, for example:
 # $campaign.set_targets(:language => [ 'en' ], ...)
