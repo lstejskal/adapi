@@ -2,8 +2,8 @@
 
 require 'adapi'
 
-# create campaign by single command, with campaing targets, with ad_groups
-# including keywords and ads
+# attempt to create complete campaign and gracefully fail, because ad is
+# intentionally left without url
 
 campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
@@ -19,9 +19,8 @@ campaign_data = {
     :target_content_contextual => false
   },
 
-  :targets => {
+  :criteria => {
     :language => [ 'en', 'cs' ],
-    # TODO test together with city target
     :geo => { :proximity => { :geo_point => '38.89859,-77.035971', :radius => '10 km' } }
   },
 
@@ -37,7 +36,7 @@ campaign_data = {
           :headline => "Code like Neo",
           :description1 => 'Need mad coding skills?',
           :description2 => 'Check out my new blog!',
-          :url => '', # THIS FAILS
+          :url => '', # THIS SHOULD FAIL
           :display_url => 'http://www.demcodez.com'
         }
       ]
@@ -54,4 +53,3 @@ pp $campaign.attributes
 
 p "with errors:"
 pp $campaign.errors.to_a
-

@@ -18,10 +18,10 @@ puts "Budget period: %s" % $campaign[:budget][:period]
 puts "\nBidding strategy type: %s" % $campaign[:bidding_strategy][:xsi_type]
 # TODO bidding_strategy.bid_ceiling
 
-puts "\nTargets:"
-$campaign[:targets].each do |target|
-  p target[:xsi_type]
-  p target
+puts "\nCriteria:"
+$campaign[:criteria].each do |criterion|
+  p criterion[:xsi_type]
+  p criterion
 end
 
 puts "\nAd groups (#{$campaign[:ad_groups].size} in total):"
