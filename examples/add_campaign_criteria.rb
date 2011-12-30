@@ -5,12 +5,9 @@ require 'adapi'
 # create campaign
 require_relative 'add_bare_campaign'
 
-# TODO we should be able call it from campaign instance, for example:
-# $campaign.set_targets(:language => [ 'en' ], ...)
-
-$campaign_target = Adapi::CampaignTarget.new(
+$campaign_criterion = Adapi::CampaignCriterion.new(
   :campaign_id => $campaign[:id],
-  :targets => {
+  :criteria => {
     :language => [ 'en' ],
     :geo => {
       # :country => 'CZ'
@@ -21,6 +18,6 @@ $campaign_target = Adapi::CampaignTarget.new(
   }
 )
 
-$campaign_target.create
+$campaign_criterion.create
 
-p $campaign_target.attributes
+p $campaign_criterion.attributes

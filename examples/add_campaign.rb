@@ -19,6 +19,7 @@ campaign_data = {
     :target_content_contextual => false
   },
 
+  # PS: :targets key is obsolete, this should be named :criteria, but it still works
   :targets => {
     :language => [ 'en', 'cs' ],
     # TODO test together with city target
