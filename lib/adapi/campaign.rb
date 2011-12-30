@@ -6,12 +6,12 @@ module Adapi
     # http://code.google.com/apis/adwords/docs/reference/latest/CampaignService.Campaign.html
     #
     attr_accessor :name, :serving_status, :start_date, :end_date, :budget,
-      :bidding_strategy, :network_setting, :targets, :ad_groups
+      :bidding_strategy, :network_setting, :criteria, :ad_groups
 
     def attributes
       super.merge('name' => name, 'start_date' => start_date, 'end_date' => end_date,
         'budget' => budget, 'bidding_strategy' => bidding_strategy,
-        'network_setting' => network_setting, 'targets' => targets,
+        'network_setting' => network_setting, 'criteria' => criteria,
         'ad_groups' => ad_groups)
     end
 
@@ -24,7 +24,7 @@ module Adapi
       @xsi_type = 'Campaign'
 
       %w{ name status start_date end_date budget bidding_strategy
-      network_setting targets ad_groups}.each do |param_name|
+      network_setting criteria ad_groups}.each do |param_name|
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
@@ -54,7 +54,7 @@ module Adapi
       # PS: not sure if this should be a default. maybe we don't even need it
       @budget[:delivery_method] ||= 'STANDARD'
 
-      @targets ||= []
+      @criteria ||=  []
       @ad_groups ||= []
 
       super(params)
@@ -81,15 +81,15 @@ module Adapi
       
       self.id = response[:value].first[:id] rescue nil
       
-      # create targets if they are available
-      if targets.size > 0
-        target = Adapi::CampaignTarget.create(
+      # create criteria (former targets) if they are available
+      if criteria.size > 0
+        criterion = Adapi::CampaignCriterion.create(
           :campaign_id => @id,
-          :targets => targets
+          :criteria => criteria
         )
         
-        if (target.errors.size > 0)
-          self.errors.add("[campaign target]", target.errors.to_a)
+        if (criterion.errors.size > 0)
+          self.errors.add("[campaign criterion]", criterion.errors.to_a)
           self.rollback
           return false 
         end
@@ -200,13 +200,13 @@ module Adapi
       AdGroup.find( (first_only ? :first : :all), :campaign_id => self.id )
     end
 
-    # Returns complete campaign data: targets, ad groups, keywords and ads.
+    # Returns complete campaign data: criteria, ad groups, keywords and ads.
     # Basically everything what you can set when creating a campaign.
     #
     def self.find_complete(campaign_id)
       campaign = self.find(campaign_id)
       
-      campaign[:targets] = CampaignTarget.find(:campaign_id => campaign.to_param)
+      campaign[:criteria] = CampaignCriterion.find(:campaign_id => campaign.to_param)
 
       campaign[:ad_groups] = AdGroup.find(:all, :campaign_id => campaign.to_param)
 
@@ -226,7 +226,7 @@ module Adapi
         :status => self[:status],
         :budget => self[:budget],
         :bidding_strategy => self[:bidding_strategy],
-        :targets => self[:targets],
+        :criteria => self[:criteria],
         :ad_groups => self[:ad_groups]
       }
     end

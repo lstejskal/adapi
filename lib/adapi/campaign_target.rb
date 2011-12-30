@@ -1,5 +1,10 @@
 # encoding: utf-8
 
+# This class is obsolete, now we use CampaignCriterion instead
+#
+# However, there's still AdScheduleTarget using old CampaignTarget class, not
+# implemented yet
+
 module Adapi
 
   # http://code.google.com/apis/adwords/docs/reference/latest/CampaignTargetService.html
@@ -9,8 +14,6 @@ module Adapi
     attr_accessor :campaign_id, :targets
 
     validates_presence_of :campaign_id
-
-    # TODO validate if targets are in correct format
 
     def attributes
       super.merge( 'campaign_id' => campaign_id, 'targets' => targets )
@@ -52,9 +55,6 @@ module Adapi
 
     def self.find(params = {})
       params.symbolize_keys!
-
-      # by default, return skip target types that have no target data
-      params[:skip_empty_target_types] ||= true
       
       if params[:conditions]
         params[:campaign_id] = params[:campaign_id] || params[:conditions][:campaign_id]
@@ -68,129 +68,13 @@ module Adapi
 
       response = (response and response[:entries]) ? response[:entries] : []
 
-      # return everything or only 
-      if params[:skip_empty_target_types]
-        response.select! { |target_type| target_type.has_key?(:targets) }
-      end
-
-      # TODO optionally return just certain target type(s)
-      # easy, just add condition (single type or array), filter and set
-      # :skip_empty_target_types option to false
-      
-      # optionally convert to original input shortcuts specified by Adapi DSL
-      # TODO on second thought, no need to do that now. it's simpler to make
-      # CampaignTarget.new accept original AdWords data
-      # if params[:format] == :adapi_dsl
-      #   response = Hash[ response.map { |t| CampaignTarget.parse_dsl(t) } ]
-      # end
-
       response
     end
 
-=begin TODO
-    def self.parse_dsl(target)
-      case target[:target_list_type]
-      when "LanguageTargetList"
-        [ :language, target[:targets].map { |t| t[:language_code] } ]
-      when "GeoTargetList"
-        targets = Hash[ target[:targets].map do |t|
-          target_type = t[:target_type].gsub(/Target$/, '')
-
-          case target_type
-          when :proximity
-            [ target_type, { :geo_point => '', :radius => '' } ]
-          when :city
-          else
-            [ target_type, t ]
-          end          
-        end ]
-
-        [ :geo, targets ]
-      else
-        warn "Unsupported target type! %s" % target.inspect
-        [ target[:target_list_type], target[:targets] ] 
-      end
-    end
-=end
-
-    # transform our own high-level target parameters to google low-level
-    # 
-    # TODO allow to enter AdWords parameters in original format
+    # Obsolete. Transforms our own high-level target parameters to google low-level
     #
     def self.create_targets(target_type, target_data)
-      case target_type
-        when :language
-          target_data.map { |language| { :language_code => language.to_s.downcase } }       
-          # example: ['cz','sk'] => [{:language_code => 'cz'}, {:language_code => 'sk'}]
-        when :geo
-          target_data.map do |geo_type, geo_values|
-            case geo_type
-              when :proximity
-                radius_in_units, radius_units = parse_radius(geo_values[:radius])
-                long, lat = parse_geodata(geo_values[:geo_point])
-
-                {
-                  :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                  :excluded => false,
-                  :radius_in_units => radius_in_units,
-                  :radius_distance_units => radius_units,
-                  :geo_point => {
-                    :longitude_in_micro_degrees => long,
-                    :latitude_in_micro_degrees => lat
-                  }
-                }
-
-              when :city
-                geo_values.merge(
-                  :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                  :excluded => false
-                )
-
-              else # :country, :province
-                {
-                  :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                  :excluded => false,
-                  "#{geo_type}_code".to_sym => to_uppercase(geo_values)
-                }
-            end
-          end
-        else nil 
-      end
-    end
-
-    def self.parse_radius(radius)
-      radius_in_units, radius_units = radius.split(' ', 2)
-      [
-        radius_in_units.to_i,
-        (radius_units == 'm') ? 'MILES' : 'KILOMETERS'
-      ]
-    end
-
-    # parse longitude and lattitude from string in this format:
-    # "longitude,lattitude" to [int,int] in Google microdegrees
-    # for example: "38.89859,-77.035971" -> [38898590, -77035971]
-    #
-    def self.parse_geodata(long_lat)
-      long_lat.split(',', 2).map { |x| to_microdegrees(x) }
-    end
-
-    # convert latitude or longitude data to microdegrees,
-    # a format with AdWords API accepts
-    #
-    # TODO alias :to_microdegrees :to_micro_units
-    #
-    def self.to_microdegrees(x)
-      Api.to_micro_units(x)
-    end
-
-    # convert either single value or array of value to uppercase
-    # 
-    def self.to_uppercase(values)
-      if values.is_a?(Array)
-        values.map { |value| value.to_s.upcase }
-      else
-        values.to_s.upcase
-      end
+      nil 
     end
 
   end
