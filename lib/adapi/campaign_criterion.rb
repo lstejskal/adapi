@@ -28,16 +28,29 @@ module Adapi
       super(params)
     end
 
-    def set
-      # transform our custom high-level parameters to google parameters
-      operations = []
+    def create
+      # step 1 - convert input hash to new array of criteria
+      # example: :language => [ :en, :cz ] ->  [:language, :en]
+      criteria_array = []
 
       @criteria.each_pair do |criterion_type, criterion_settings|
-        operations << { :operator => 'SET',
+        case criterion_type
+        when :language
+          criterion_settings.each do |value|
+            criteria_array << [criterion_type, value]
+          end
+        else
+          nil
+        end
+      end
+
+      # step 2 - convert individual criteria to low-level google params
+      operations = criteria_array.map do |criterion_type, criterion_settings|
+        {
+          :operator => 'ADD',
           :operand => {
-            :xsi_type => "#{criterion_type.to_s.capitalize}TargetList",
             :campaign_id => @campaign_id,
-            :criteria => CampaignCriterion::create_criteria(criterion_type, criterion_settings)
+            :criterion => CampaignCriterion::create_criterion(criterion_type, criterion_settings)
           }
         }
       end
@@ -47,8 +60,6 @@ module Adapi
       (response and response[:value]) ? true : false
     end
   
-    alias :create :set
-
     def self.find(params = {})
       params.symbolize_keys!
 
@@ -83,11 +94,13 @@ module Adapi
     # 
     # TODO allow to enter AdWords API parameters in original format
     #
-    def self.create_criteria(criterion_type, criterion_data)
+    def self.create_criterion(criterion_type, criterion_data)
       case criterion_type
+        # example: [:language, 'en'] -> {:xsi_type => 'Language', :id => 1000}
         when :language
-          criterion_data.map { |language| { :language_code => language.to_s.downcase } }       
-          # example: ['cz','sk'] => [{:language_code => 'cz'}, {:language_code => 'sk'}]
+          { :xsi_type => 'Language', :id => language_id(criterion_data) }
+
+=begin
         when :geo
           criterion_data.map do |geo_type, geo_values|
             case geo_type
@@ -120,8 +133,25 @@ module Adapi
                 }
             end
           end
+=end
         else nil 
       end
+    end
+
+    # Return AdWords API language id based for language code
+    #
+    # REFACTOR
+    LANGUAGE_IDS = { :en => 1000, :de => 1001, :fr => 1002, :es => 1003,
+      :it => 1004, :ja => 1005, :da => 1009, :nl => 1010, :fi => 1011, :ko => 1012,
+      :no => 1013, :pt => 1014, :sv => 1015, :zh_CN => 1017, :zh_TW => 1018,
+      :ar => 1019, :bg => 1020, :cs => 1021, :el => 1022, :hi => 1023, :hu => 1024,
+      :id => 1025, :is => 1026, :iw => 1027, :lv => 1028, :lt => 1029, :pl => 1030,
+      :ru => 1031, :ro => 1032, :sk => 1033, :sl => 1034, :sr => 1035, :uk => 1036,
+      :tr => 1037, :ca => 1038, :hr => 1039, :vi => 1040, :ur => 1041, :tl => 1042,
+      :et => 1043, :th => 1044
+    }
+    def self.language_id(language_alias)
+      LANGUAGE_IDS[language_alias.to_sym.downcase]
     end
 
     def self.parse_radius(radius)
