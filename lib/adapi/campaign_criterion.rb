@@ -39,7 +39,22 @@ module Adapi
           criterion_settings.each do |value|
             criteria_array << [criterion_type, value]
           end
+        # location subtypes
+        # core: id, proximity
+        # interpreted (TBI): city, province, country
+        when :location
+          criterion_settings.each_pair do |key, value|
+            case key
+              when :id
+                value = [value] unless value.is_a?(Array)
+                value.each { |v| criteria_array << [criterion_type, v] }
+              else
+                warn "Unknown location criterion type: %s" % key
+                nil
+            end
+          end
         else
+          warn "Unknown criterion type: %s" % criterion_type
           nil
         end
       end
@@ -54,6 +69,9 @@ module Adapi
           }
         }
       end
+      
+      p criteria_array
+      p '!!!'
 
       response = self.mutate(operations)
 
@@ -100,40 +118,45 @@ module Adapi
         when :language
           { :xsi_type => 'Language', :id => language_id(criterion_data) }
 
+        when :location
+          unless criterion_data.is_a?(Hash)
+            criterion_data = { :type => :id, :value => criterion_data } 
+          end
+          
+          case location_type = criterion_data.delete(:type)
+            when :id
+              { :xsi_type => 'Location', :id => criterion_data[:value].to_i }
+            when :proximity
+              radius_in_units, radius_units = parse_radius(criterion_data[:radius])
+              long, lat = parse_geodata(criterion_data[:geo_point])
+
+              {
+                :xsi_type => "#{geo_type.to_s.capitalize}Target",
+                :excluded => false,
+                :radius_in_units => radius_in_units,
+                :radius_distance_units => radius_units,
+                :geo_point => {
+                  :longitude_in_micro_degrees => long,
+                  :latitude_in_micro_degrees => lat
+                }
+              }
 =begin
-        when :geo
-          criterion_data.map do |geo_type, geo_values|
-            case geo_type
-              when :proximity
-                radius_in_units, radius_units = parse_radius(geo_values[:radius])
-                long, lat = parse_geodata(geo_values[:geo_point])
+            when :city
+              geo_values.merge(
+                :xsi_type => "#{geo_type.to_s.capitalize}Target",
+                :excluded => false
+              )
 
-                {
-                  :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                  :excluded => false,
-                  :radius_in_units => radius_in_units,
-                  :radius_distance_units => radius_units,
-                  :geo_point => {
-                    :longitude_in_micro_degrees => long,
-                    :latitude_in_micro_degrees => lat
-                  }
-                }
-
-              when :city
-                geo_values.merge(
-                  :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                  :excluded => false
-                )
-
-              else # :country, :province
-                {
-                  :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                  :excluded => false,
-                  "#{geo_type}_code".to_sym => to_uppercase(geo_values)
-                }
-            end
+            else # :country, :province
+              {
+                :xsi_type => "#{geo_type.to_s.capitalize}Target",
+                :excluded => false,
+                "#{geo_type}_code".to_sym => to_uppercase(geo_values)
+              }
           end
 =end
+        end
+
         else nil 
       end
     end
