@@ -19,6 +19,4 @@ class Test::Unit::TestCase
   Adapi::Config.adapi_dir = 'test/config'
   #Adapi::Config.adapi_file = 'adapi.yml'
   FakeWeb.allow_net_connect = false
-
-
 end
