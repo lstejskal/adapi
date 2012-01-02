@@ -29,6 +29,10 @@ module HTTPI
         setup_http_auth request if request.auth.http?
         # setup_ssl_auth request.auth.ssl if request.auth.ssl?
         # setup_ntlm_auth request if request.auth.ntlm?
+
+        # HOTFIX for bug in curb 0.7.16, see issue:
+        # https://github.com/taf2/curb/issues/96
+        client.resolve_mode = :ipv4
       end
       
     end
