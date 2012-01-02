@@ -89,8 +89,21 @@ module Adapi
       end
 
       raise ArgumentError, "Campaing ID is required" unless params[:campaign_id]
-  
-      selector = { :campaign_ids => [ params[:campaign_id].to_i ] }
+
+      predicates = [ :campaign_id ].map do |param_name|
+        if params[param_name]
+          # convert to array
+          value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
+          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
+        end
+      end.compact
+
+      # TODO: get more fields
+      selector = {
+        :fields => ['Id'],
+        :ordering => [{:field => 'Id', :sort_order => 'ASCENDING'}],
+        :predicates => predicates
+      }
   
       response = CampaignCriterion.new.service.get(selector)
 
