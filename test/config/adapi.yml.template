@@ -1,0 +1,9 @@
+:default:
+  :service:
+    :environment: 'SANDBOX'
+  :authentication:
+    :method: 'ClientLogin'
+    :email: "email@email.com"
+    :password: "secure_pwd"
+    :developer_token: "email@email.com++EUR"
+    :client_customer_id: '111-222-3333'
