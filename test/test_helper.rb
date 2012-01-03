@@ -16,7 +16,7 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'adapi')
 Dir[ File.join(File.dirname(__FILE__), 'factories', '*.rb') ].each { |f| require f }
 
 class Test::Unit::TestCase
-  Adapi::Config.adapi_dir = 'test/config'
-  #Adapi::Config.adapi_filename = 'adapi.yml'
+  Adapi::Config.dir = 'test/config'
+  Adapi::Config.filename = 'adapi.yml.template'
   FakeWeb.allow_net_connect = false
 end
