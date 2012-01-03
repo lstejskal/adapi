@@ -1,9 +1,21 @@
 :default:
-  :service:
-    :environment: 'SANDBOX'
   :authentication:
-    :method: 'ClientLogin'
-    :email: "email@email.com"
-    :password: "secure_pwd"
-    :developer_token: "email@email.com++EUR"
-    :client_customer_id: '111-222-3333'
+    :method: ClientLogin
+    :email: adapi_yml@example.com
+    :password: default_password
+    :developer_token: default_token
+    :client_customer_id: 555-666-7777
+    :user_agent: My Adwords API Client
+  :service:
+    :environment: PRODUCTION
+
+:sandbox:
+  :authentication:
+    :method: ClientLogin
+    :email: sandbox_email@example.com
+    :password: sandbox_password
+    :developer_token: sandbox_token
+    :client_customer_id: 555-666-7777
+    :user_agent: Adwords API Test
+  :service:
+    :environment: SANDBOX
