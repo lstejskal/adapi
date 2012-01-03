@@ -59,14 +59,13 @@ module Adapi
     def self.find(params = {})
       params.symbolize_keys!
 
-      predicates = [ :AdGroupId ].map do |param_name|
+      predicates = [ :ad_group_id, :criterion_id ].map do |param_name|
         if params[param_name]
-          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => params[param_name] }
+          value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
+          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
         end
       end.compact
 
-      # TODO display the rest of the data
-      # TODO get NetworkSetting - setting as in fields doesn't work
       selector = {
         :fields => ['AdGroupId', 'CriterionId', 'InsertionText', 'ParamIndex'],
         :ordering => [{:field => 'AdGroupId', :sort_order => 'ASCENDING'}],
@@ -78,7 +77,7 @@ module Adapi
       response = (response and response[:entries]) ? response[:entries] : []
 
       response.map! do |ad_params_data|
-        AdParams.new(ad_params_data)
+        AdParam.new(ad_params_data)
       end
 
       response
