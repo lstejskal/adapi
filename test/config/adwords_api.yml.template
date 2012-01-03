@@ -1,0 +1,10 @@
+:authentication:
+  :method: ClientLogin
+  :email: adwords_api_yml@example.com
+  :password: default_password
+  :developer_token: default_token
+  :client_customer_id: 555-666-7777
+  :user_agent: My Adwords API Client
+:service:
+  :environment: PRODUCTION
+
