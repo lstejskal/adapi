@@ -103,7 +103,8 @@ module Adapi
       # supported condition parameters: ad_group_id and id
       predicates = [ :ad_group_id ].map do |param_name|
         if params[param_name]
-          {:field => param_name.to_s.camelcase, :operator => 'EQUALS', :values => params[param_name] }
+          value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
+          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
         end
       end.compact
 
