@@ -20,6 +20,7 @@ require 'adapi/ad_group_criterion'
 require 'adapi/keyword'
 require 'adapi/ad'
 require 'adapi/ad/text_ad'
+require 'adapi/ad_param'
 
 # monkeypatch HTTPI
 require 'httpi_request_monkeypatch'
