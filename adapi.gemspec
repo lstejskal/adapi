@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency "google-adwords-api", "~> 0.4.0"
+  s.add_dependency "google-adwords-api", "0.4.4"
   s.add_dependency "activemodel", "~> 3.1"
   s.add_dependency "activesupport", "~> 3.1"
   s.add_dependency "rake", "~> 0.9.2"
