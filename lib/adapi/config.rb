@@ -5,11 +5,23 @@
 
 module Adapi
   class Config
+    class << self
+      attr_accessor :dir, :filename
+    end
+
+    self.dir            = ENV['HOME']
+    self.filename       = 'adapi.yml'
 
     # display hash of all account settings
     #
-    def self.settings
-      @settings ||= self.load_settings
+    def self.settings(reload = false)
+      if( reload )
+        @settings = self.load_settings
+      else
+        @settings ||= self.load_settings
+      end
+
+      return @settings
     end
 
     # display actual account settings
@@ -43,8 +55,6 @@ module Adapi
     # * filename - default: adapi.yml
     # TODO: set to HOME/adwords_api as default
     def self.load_settings(params = {})
-      params[:path] ||= ENV['HOME']
-      params[:filename] ||= 'adapi.yml'
       params[:in_hash] ||= nil
 
       # HOTFIX enable load by hash
@@ -53,17 +63,21 @@ module Adapi
         return @settings
       end
 
-      adapi_path = File.join(params[:path], params[:filename])
-      adwords_api_path = File.join(ENV['HOME'], 'adwords_api.yml')
+      path = dir.present? ? File.join(dir, filename) : filename
 
-      if File.exists?(adapi_path)
-        @settings = YAML::load(File.read(adapi_path)) rescue {}
-      elsif File.exists?(adwords_api_path)
-        @settings = { :default => YAML::load(File.read(adwords_api_path)) } rescue {}
+      if File.exists?(path)
+        @settings = YAML::load(File.read(path)) rescue {}
+        @settings.symbolize_keys!
+
+        if @settings.present?
+          # is it an adwords_api config-file?
+          if @settings[:authentication].present?
+            @settings = {:default => @settings}
+          end
+        end
       end
 
       @settings
     end
-
   end
 end
