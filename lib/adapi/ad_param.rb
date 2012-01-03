@@ -30,7 +30,7 @@ module Adapi
       }
 
       begin
-        response = @service.mutate(operation)
+        response = @service.mutate([operation])
 
       #rescue AdsCommon::Errors::HttpError => e
         self.errors.add(:base, e.message)
