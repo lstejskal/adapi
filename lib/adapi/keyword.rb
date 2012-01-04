@@ -17,8 +17,15 @@
 
 module Adapi
   class Keyword < AdGroupCriterion
+    #:criterion=>{:id=>105790288, :type=>"KEYWORD", :criterion_type=>"Keyword", :text=>"systemtelefon", :match_type=>"PHRASE", :xsi_type=>"Keyword"}
+    attr_accessor :criterion_id, :criterion_type, :criterion_type, :criterion_text, :criterion_match_type, :criterion_xsi_type
+    #:ad_group_criterion_type=>"BiddableAdGroupCriterion",
+    attr_accessor :ad_group_criterion_type
+    #:stats=>{:network=>"SEARCH", :stats_type=>"Stats"},
+    attr_accessor :stats_network, :stats_type
+    #=> {:text=>{:ad_group_id=>1658215692, :criterion_use=>"BIDDABLE", :ad_group_criterion_type=>"BiddableAdGroupCriterion",  :xsi_type=>"BiddableAdGroupCriterion"}, :match_type=>"BROAD", :negative=>false}
+    attr_accessor :type, :criterion_use, :ad_group_criterion_type, :xsi_type, :match_type, :negative
 
-    attr_accessor :keywords
 
     def attributes
       super.merge('keywords' => keywords)
@@ -90,20 +97,16 @@ module Adapi
       true
     end
 
-    def self.find(amount = :all, params = {})
-      params[:format] ||= :google # default, don't do anything with the data from google
-      
-      params.symbolize_keys!
-      # this has no effect, it's here just to have the same interface everywhere
-      first_only = (amount.to_sym == :first)
+    def self.find(ext_options = {})
+      options       = default_find_options.merge(ext_options.delete_if{|k,v|v.nil?})
 
       # we need ad_group_id
-      raise ArgumentError, "AdGroup ID is required" unless params[:ad_group_id]
+      raise ArgumentError, "AdGroup ID is required" unless options[:ad_group_id]
  
       # supported condition parameters: ad_group_id and id
-      predicates = [ :ad_group_id ].map do |param_name|
-        if params[param_name]
-          value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
+      predicates = [ :ad_group_id, :criterion_use ].map do |param_name|
+        if ext_options[param_name]
+          value = Array.try_convert(ext_options[param_name]) ? params_param_name : [options[param_name]]
           {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
         end
       end.compact
@@ -119,22 +122,29 @@ module Adapi
 
       response = (response and response[:entries]) ? response[:entries] : []
 
-# for now, always return keywords in :google format
-=begin
-      response = case params[:format].to_sym
-      when :short
-        Keyword.shortened(response)
-      when :params
-        Keyword.parameterized(response)
-      else
-        response
-      end
-=end
+      #response = case options[:format].to_sym
+      #  when :short
+      #    Keyword.shortened(response)
+      #  when :params
+      #    Keyword.parameterized(response)
+      #  else
+      #    response
+      #end
 
-      Keyword.new(
-        :ad_group_id => params[:ad_group_id],
-        :keywords => response
-      )
+      keywords = []
+
+      response.each do |r|
+        keywords << create_from_api(r)
+      end
+
+      keywords
+    end
+    
+    def self.default_find_options
+      {
+        :format   => :google,
+        :amount   => :all
+      }
     end
 
     # PS: create a better UI for this?
@@ -171,6 +181,33 @@ module Adapi
           :negative => (keyword[:text][:xsi_type] == "NegativeAdGroupCriterion")
         }
       end
+    end
+
+    def self.create_from_api( entry )
+      raise Exception.new("Unsupported type #{entry.keys.first}") unless entry.key?(:text)
+
+      type  = :text
+      e     = entry[type]
+      c     = entry[type][:criterion]
+      s     = entry[type][:stats]
+
+      Keyword.new(
+        :type                           => :type,
+        :match_type                     => entry[:match_type],
+        :negative                       => entry[:negative],
+        :ad_group_id                    => e[:ad_group_id],
+        :criterion_use                  => e[:criterion_use],
+        :ad_group_criterion_type        => e[:ad_group_criterion_type],
+        :xsi_type                       => e[:xsi_type],
+        :id                             => c[:id],
+        :criterion_id                   => c[:id],
+        :criterion_type                 => c[:type],
+        :criterion_text                 => c[:text],
+        :criterion_match_type           => c[:match_type],
+        :criterion_xsi_type             => c[:xsi_type],
+        :stats_network                  => s[:network],
+        :stats_type                     => s[:stats_type]
+      )
     end
 
   end
