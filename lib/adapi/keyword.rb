@@ -24,7 +24,7 @@ module Adapi
     #:stats=>{:network=>"SEARCH", :stats_type=>"Stats"},
     attr_accessor :stats_network, :stats_type
     #=> {:text=>{:ad_group_id=>1658215692, :criterion_use=>"BIDDABLE", :ad_group_criterion_type=>"BiddableAdGroupCriterion",  :xsi_type=>"BiddableAdGroupCriterion"}, :match_type=>"BROAD", :negative=>false}
-    attr_accessor :criterion_use, :ad_group_criterion_type, :xsi_type, :negative, #:match_type
+    attr_accessor :criterion_use, :ad_group_criterion_type, :xsi_type, :negative #:match_type
 
     def attributes
       super.merge(serializable_hash)
