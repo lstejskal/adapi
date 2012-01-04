@@ -33,7 +33,7 @@ module Adapi
         response = @service.mutate([operation])
 
       #rescue AdsCommon::Errors::HttpError => e
-        self.errors.add(:base, e.message)
+        #self.errors.add(:base, e.message)
 
       ## traps any exceptions raised by AdWords API
       #rescue AdwordsApi::Errors::ApiException => e
