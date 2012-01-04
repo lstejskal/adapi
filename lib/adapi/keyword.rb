@@ -24,7 +24,7 @@ module Adapi
     #:stats=>{:network=>"SEARCH", :stats_type=>"Stats"},
     attr_accessor :stats_network, :stats_type
     #=> {:text=>{:ad_group_id=>1658215692, :criterion_use=>"BIDDABLE", :ad_group_criterion_type=>"BiddableAdGroupCriterion",  :xsi_type=>"BiddableAdGroupCriterion"}, :match_type=>"BROAD", :negative=>false}
-    attr_accessor :type, :criterion_use, :ad_group_criterion_type, :xsi_type, :match_type, :negative
+    attr_accessor :criterion_use, :ad_group_criterion_type, :xsi_type, :negative, #:match_type
 
     def attributes
       super.merge(serializable_hash)
@@ -38,8 +38,7 @@ module Adapi
       #  self.send "#{param_name}=", params[param_name.to_sym]
       #end
 
-      self.type                           = options[:type],
-      self.match_type                     = options[:match_type],
+      #self.match_type                     = options[:match_type],
       self.negative                       = options[:negative],
       self.ad_group_id                    = options[:ad_group_id],
       self.criterion_use                  = options[:criterion_use],
@@ -56,7 +55,7 @@ module Adapi
       #self.keywords ||= []
       #self.keywords.map! { |k| Keyword.keyword_attributes(k) }
 
-      super(params)
+      super(options)
     end
 
     def default_options
@@ -119,8 +118,7 @@ module Adapi
 
     def serializable_hash
       {
-        :type                           => type,
-        :match_type                     => match_type,
+       # :match_type                     => match_type,
         :negative                       => negative,
         :ad_group_id                    => ad_group_id,
         :criterion_use                  => criterion_use,
@@ -223,26 +221,23 @@ module Adapi
     end
 
     def self.create_from_api( entry )
-      raise Exception.new("Unsupported type #{entry.keys.first}") unless entry.key?(:text)
-
-      type  = :text
-      e     = entry[type]
-      c     = entry[type][:criterion]
-      s     = entry[type][:stats]
+      c     = entry[:criterion]
+      s     = entry[:stats]
 
       Keyword.new(
-        :type                           => :type,
-        :match_type                     => entry[:match_type],
-        :negative                       => entry[:negative],
-        :ad_group_id                    => e[:ad_group_id],
-        :criterion_use                  => e[:criterion_use],
-        :ad_group_criterion_type        => e[:ad_group_criterion_type],
-        :xsi_type                       => e[:xsi_type],
+        #:match_type                     => entry[:match_type],
+        :negative                       => (entry[:xsi_type].eql?("NegativeAdGroupCriterion")),
+        :ad_group_id                    => entry[:ad_group_id],
+        :criterion_use                  => entry[:criterion_use],
+        :ad_group_criterion_type        => entry[:ad_group_criterion_type],
+        :xsi_type                       => entry[:xsi_type],
+
         :id                             => c[:id],
         :criterion_type                 => c[:type],
         :criterion_text                 => c[:text],
         :criterion_match_type           => c[:match_type],
         :criterion_xsi_type             => c[:xsi_type],
+
         :stats_network                  => s[:network],
         :stats_type                     => s[:stats_type]
       )
