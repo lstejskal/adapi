@@ -24,26 +24,47 @@ module Adapi
     #:stats=>{:network=>"SEARCH", :stats_type=>"Stats"},
     attr_accessor :stats_network, :stats_type
     #=> {:text=>{:ad_group_id=>1658215692, :criterion_use=>"BIDDABLE", :ad_group_criterion_type=>"BiddableAdGroupCriterion",  :xsi_type=>"BiddableAdGroupCriterion"}, :match_type=>"BROAD", :negative=>false}
-    attr_accessor :type, :criterion_use, :ad_group_criterion_type, :xsi_type, :match_type, :negative
-
+    attr_accessor :criterion_use, :ad_group_criterion_type, :xsi_type, :negative #:match_type
 
     def attributes
-      super.merge('keywords' => keywords)
+      super.merge(serializable_hash)
     end
 
-    def initialize(params = {})
-      params[:service_name] = :AdGroupCriterionService
+    def initialize( ext_options = {} )
+      options       = default_options.merge(ext_options.delete_if{|k,v|v.nil?})
 
-      @xsi_type = 'AdGroupCriterion'
+      # I think this is just not necessary and maybe restricting later on
+      #%w{ keywords }.each do |param_name|
+      #  self.send "#{param_name}=", params[param_name.to_sym]
+      #end
 
-      %w{ keywords }.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
-      end
+      # FIXME to be replaced with loop
 
-      self.keywords ||= []
-      self.keywords.map! { |k| Keyword.keyword_attributes(k) }
+      #self.match_type                     = options[:match_type],
+      self.negative                       = options[:negative],
+      self.ad_group_id                    = options[:ad_group_id],
+      self.criterion_use                  = options[:criterion_use],
+      self.ad_group_criterion_type        = options[:ad_group_criterion_type],
+      self.xsi_type                       = options[:xsi_type],
+      self.id                             = options[:id],
+      self.criterion_type                 = options[:type],
+      self.criterion_text                 = options[:text],
+      self.criterion_match_type           = options[:match_type],
+      self.criterion_xsi_type             = options[:xsi_type],
+      self.stats_network                  = options[:network],
+      self.stats_type                     = options[:stats_type]
 
-      super(params)
+      #self.keywords ||= []
+      #self.keywords.map! { |k| Keyword.keyword_attributes(k) }
+
+      super(options)
+    end
+
+    def default_options
+      {
+        :service_name   => :AdGroupCriterionService,
+        :xsi_type       => 'AdGroupCriterion'
+      }
     end
 
     # Converts keyword specification from shortened form to Google format
@@ -73,20 +94,20 @@ module Adapi
     end
 
     def create
-      operations = @keywords.map do |keyword|
+      operations = [
         {
           :operator => 'ADD', 
           :operand => {
-            :xsi_type => (keyword[:negative] ? 'NegativeAdGroupCriterion' : 'BiddableAdGroupCriterion'),
-            :ad_group_id => @ad_group_id,
+            :xsi_type => (negative ? 'NegativeAdGroupCriterion' : 'BiddableAdGroupCriterion'),
+            :ad_group_id => ad_group_id,
             :criterion => {
               :xsi_type => 'Keyword',
-              :text => keyword[:text],
-              :match_type => keyword[:match_type]
+              :text => criterion_text,
+              :match_type => criterion_match_type
             }
           }
         }
-      end
+      ]
 
       response = self.mutate(operations)
 
@@ -95,6 +116,24 @@ module Adapi
       self.keywords = response[:value].map { |keyword| keyword[:criterion] }
 
       true
+    end
+
+    def serializable_hash
+      {
+       # :match_type                     => match_type,
+        :negative                       => negative,
+        :ad_group_id                    => ad_group_id,
+        :criterion_use                  => criterion_use,
+        :ad_group_criterion_type        => ad_group_criterion_type,
+        :xsi_type                       => xsi_type,
+        :id                             => id,
+        :criterion_type                 => type,
+        :criterion_text                 => text,
+        :criterion_match_type           => match_type,
+        :criterion_xsi_type             => xsi_type,
+        :stats_network                  => network,
+        :stats_type                     => stats_type
+      }
     end
 
     def self.find(ext_options = {})
@@ -184,31 +223,26 @@ module Adapi
     end
 
     def self.create_from_api( entry )
-      raise Exception.new("Unsupported type #{entry.keys.first}") unless entry.key?(:text)
-
-      type  = :text
-      e     = entry[type]
-      c     = entry[type][:criterion]
-      s     = entry[type][:stats]
+      c     = entry[:criterion]
+      s     = entry[:stats]
 
       Keyword.new(
-        :type                           => :type,
-        :match_type                     => entry[:match_type],
-        :negative                       => entry[:negative],
-        :ad_group_id                    => e[:ad_group_id],
-        :criterion_use                  => e[:criterion_use],
-        :ad_group_criterion_type        => e[:ad_group_criterion_type],
-        :xsi_type                       => e[:xsi_type],
+        #:match_type                     => entry[:match_type],
+        :negative                       => (entry[:xsi_type].eql?("NegativeAdGroupCriterion")),
+        :ad_group_id                    => entry[:ad_group_id],
+        :criterion_use                  => entry[:criterion_use],
+        :ad_group_criterion_type        => entry[:ad_group_criterion_type],
+        :xsi_type                       => entry[:xsi_type],
+
         :id                             => c[:id],
-        :criterion_id                   => c[:id],
         :criterion_type                 => c[:type],
         :criterion_text                 => c[:text],
         :criterion_match_type           => c[:match_type],
         :criterion_xsi_type             => c[:xsi_type],
+
         :stats_network                  => s[:network],
         :stats_type                     => s[:stats_type]
       )
     end
-
   end
 end
