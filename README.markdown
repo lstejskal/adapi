@@ -159,11 +159,35 @@ Adapi::Config.load_settings(:in_hash => {
 Adapi::Config.set(:sandbox)
 ```
 
+## Branch Structure##
+
+* *stable branch* - `master`, obviously. And also branch with the same name
+  as current version of gem. For example: if gem is version 0.0.4, stable branch
+  in either `master` and `0-0-4`. `master` branch might also contain latest
+  bugfixes from development branch.
+
+* *development branch* - branch with higher number than current gem version;
+  there should be always only one such branch. For example, if gem is version
+  0.0.4, development branch is `0-0-5`. If you living on the edge is your *thang*
+  (just trying to sound cool here), use development branch. It's not considered
+  stable, but it should not be broken (intentionally). It contains latest
+  updates and bugfixes. Bigger features have their own branches.
+
+* *feature branch* - named after feature that's being implemented in it. For
+  example: `v201109`, where the latest version of AdWords API is implemented.
+  Lots of action is happening there, expect things to be broken, use at your own
+  risk and make sure you know what you're doing (like, by reading the source
+  code first).
+
 ## API Version Support ##
 
-* adapi supports only the latest version of Google AdWords API: *v201109*
-* older versions will not be supported (well, maybe *v201101*)
-* *v201109* and newer versions will still be supported when new versions are released
+Adapi currently supports only `v201101`. However, it *will* support only the
+latest version of AdWords API: `v201109`. Older versions (including `v201101`)
+will not be supported.
+
+Note on development: implementation of `v201109` is in progress in `v201109`
+branch. Obvious ETA is the end of February, when `v201101` is going to be
+deprecated, but it should be ready sooner.
 
 ## Examples ##
 
