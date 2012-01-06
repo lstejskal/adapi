@@ -170,7 +170,9 @@ module Adapi
 
       predicates = [ :id ].map do |param_name|
         if params[param_name]
-          {:field => param_name.to_s.camelcase, :operator => 'EQUALS', :values => params[param_name] }
+          # convert to array
+          value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
+          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
         end
       end.compact
 
