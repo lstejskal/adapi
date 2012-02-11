@@ -5,12 +5,22 @@ require 'rake'
 
 task :default => :test
 
+# run all tests except integrations tests
+#
 require 'rake/testtask'
 Rake::TestTask.new(:test) do |test|
   test.libs << %w{ lib test }
-  test.pattern = 'test/**/*_test.rb'
+  test.pattern = 'test/unit/*_test.rb'
   test.verbose = true
 end
+
+require 'rake/testtask'
+Rake::TestTask.new(:"test:integration") do |test|
+  test.libs << %w{ lib test }
+  test.pattern = 'test/integration/*_test.rb'
+  test.verbose = true
+end
+
 
 require 'rcov/rcovtask'
 Rcov::RcovTask.new do |t|

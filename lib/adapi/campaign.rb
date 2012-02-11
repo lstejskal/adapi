@@ -133,11 +133,19 @@ module Adapi
 
     def activate; update(:status => 'ACTIVE'); end
     def pause; update(:status => 'PAUSED'); end
+
+    # Deletes campaign - which means, sets its status to deleted (because
+    # AdWords campaigns are never really deleted.)
+    #
     def delete; update(:status => 'DELETED'); end
 
     def rename(new_name); update(:name => new_name); end
 
     # when Campaign#create fails, "delete" campaign
+
+    # Deletes campaign if it's not already deleted. For more information about
+    # "deleted" campaigns, see `delete` method
+    #
     def rollback
       if (@status == 'DELETED')
         self.errors.add(:base, 'Campaign is already deleted.')

@@ -3,6 +3,11 @@ require 'test_helper'
 
 module Adapi
   class ConfigTest < Test::Unit::TestCase
+
+    # FIXME how come that tests work without custom configurations settings?
+    #  Adapi::Config.dir = 'test/config'
+    #  Adapi::Config.filename = 'adapi.yml.template'
+
     context "Loading adapi.yml" do
       should "load the configuration" do
         # because it could have been set in another test

@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+# FIXME for some reason, tests don't return errors, only quietly fail
+
 require 'rubygems'
 gem 'minitest'
 require 'test/unit'
@@ -16,7 +18,5 @@ require File.join(File.dirname(__FILE__), '..', 'lib', 'adapi')
 Dir[ File.join(File.dirname(__FILE__), 'factories', '*.rb') ].each { |f| require f }
 
 class Test::Unit::TestCase
-  Adapi::Config.dir = 'test/config'
-  Adapi::Config.filename = 'adapi.yml.template'
   FakeWeb.allow_net_connect = false
 end
