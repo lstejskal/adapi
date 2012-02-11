@@ -23,9 +23,7 @@ have all planned functionality.
 
 ## Installation ##
 
-```
-gem install adapi
-```
+`gem install adapi`
 
 ### from git repository ###
 
@@ -39,6 +37,37 @@ rake install
 ## Configuration ##
 
 This section explains how to connect to specific AdWords account and client.
+There are several options to choose from:
+
+### Single account set directly in code ###
+
+```ruby
+# load the settings
+Adapi::Config.load_settings(:in_hash => {
+  :sandbox => {   
+      :authentication => {
+        :method               => "ClientLogin"
+        :email                => "sandbox_email@gmail.com",
+        :password             => "sandbox_password",
+        :developer_token      => "sandbox_token",
+        :client_customer_id   => "555-666-7777",
+        :user_agent           => "Adwords API Test"
+      },
+      :service => {
+        :environment          => "SANDBOX"
+      }
+  }
+})
+
+Adapi::Config.set(:sandbox)
+```
+
+### Configuration by adwords_api.yml ###
+
+If you already have `google-adwords-api` gem configured and use just one account,
+the same configuration will also work for adapi: `~/adwords_api.yml`
+
+### Multiple accounts set directly in code ###
 
 You can set many AdWords accounts to connect to and switch between while running
 the application. You can even update single values of the settings on-the-fly.
@@ -83,13 +112,6 @@ Adapi::Config.set(:coca_cola, :client_customer_id => '777-666-5555')
 # do some stuff here...
 ```
 
-### Authentication workflow ###
-
-* load configuration from `~/adapi.yml`
-* load configuration from `~/adwords_api.yml` (default configuration for AdWords gems
-  from Google)
-* set configuration directly to `Adapi::Config` (overrides previous settings)
-
 ### Configuration by `adapi.yml` ###
 
 Stored in `~/adapi.yml`. Supports multiple accounts, which are identifed by
@@ -128,36 +150,13 @@ Adapi::Config.set(:sandbox)
 `:default` account is, as name implies, used by default. You must either set an
 alias to `Adapi::Config` or have account with `:default` alias available.
 
-### Configuration by adwords_api.yml ###
+### Authentication workflow ###
 
-If you already have `google-adwords-api` gem configured and use just one account,
-the same configuration will also work for adapi: `~/adwords_api.yml`
-
-### Configuration directly in code ###
-
-Before logging into the Adwords API, you can set global settings through
-`Adapi::Config`:
-
-```ruby
-# load the settings
-Adapi::Config.load_settings(:in_hash => {
-  :sandbox => {   
-      :authentication => {
-        :method               => "ClientLogin"
-        :email                => "sandbox_email@gmail.com",
-        :password             => "sandbox_password",
-        :developer_token      => "sandbox_token",
-        :client_customer_id   => "555-666-7777",
-        :user_agent           => "Adwords API Test"
-      },
-      :service => {
-        :environment          => "SANDBOX"
-      }
-  }
-})
-
-Adapi::Config.set(:sandbox)
-```
+* try to load configuration from `~/adapi.yml`
+* if `~/adapi.yml`doesn't exist, try to load configuration from
+  `~/adwords_api.yml` (used by adwords-api gem)
+* if there are no configuration files available, set configuration directly to
+  `Adapi::Config` (overrides previous settings)
 
 ## API Version Support ##
 
