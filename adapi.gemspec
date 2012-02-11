@@ -18,8 +18,15 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  s.add_dependency "google-ads-common", "~> 0.6"
-  s.add_dependency "google-adwords-api", "~> 0.4"
+  # require specific version of ad-common and adwords-api gems,
+  # they're stil changing a lot and automatic updates through '~>'
+  # can easily break something
+  #
+  # PS: ads-common is "freezed" - required before adwords-api
+  #  
+  s.add_dependency "google-ads-common", "0.6.2"
+  s.add_dependency "google-adwords-api", "0.5.0"
+
   s.add_dependency "activemodel", "~> 3.1"
   s.add_dependency "activesupport", "~> 3.1"
   s.add_dependency "rake", "~> 0.9.2"
