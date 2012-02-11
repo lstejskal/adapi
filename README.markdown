@@ -165,6 +165,28 @@ Adapi 0.0.5 and higher supports only the latest version of Google AdWords API: *
 Older versions of adapi supporting older versions of AdWords API will still be
 available (adapi 0.0.4 supports only v201101), marked by AdWords API version tag.
 
+## Unsupported AdWords services ##
+
+Following AdWords services are not supported by adapi at the moment. However,
+they will be implemented (this also serves as TODO list):
+
+* Campaign Data Management
+  * ConversionTrackerService
+  * UserListService
+
+* Optimization
+  * BulkOpportunityService
+  * ReportDefinitionService
+  * TargetingIdeaService
+  * TrafficEstimatorService
+
+* Account Management
+  * CustomerSyncService
+
+* Utility
+  * MutateJobService
+  * BulkMutateJobService
+
 ## Examples ##
 
 Example are available in [examples directory](./master/examples/). For now, they
