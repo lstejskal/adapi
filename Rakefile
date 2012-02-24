@@ -5,11 +5,15 @@ task :default do
   # run examples using current gem environment
   # example: rake example=find_campaigns
   #
-  if ENV.include?("example")
+  if ENV.keys.include?("example")
     ENV["example"] += ".rb" unless ENV["example"] =~ /\.rb$/
-    example_path = "examples/%s" % ENV["example"]
-    raise "Example not found: #{example_path}" unless File.exists?(example_path)
-    system "ruby -Ilib #{example_path}"
+    exec "ruby -Ilib examples/%s" % ENV["example"]
+
+  # load irb with example result using current gem environment
+  # example: rake irb_example=find_campaigns
+  #
+  elsif ENV.keys.include?("irb_example")
+    exec "irb -Ilib -Iexamples -r%s" % ENV["irb_example"].gsub(/\.rb$/, '')
 
   # run default task: test
   #
