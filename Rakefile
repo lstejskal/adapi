@@ -1,9 +1,24 @@
 require 'bundler/gem_tasks'
 require 'rake'
 
-### Tests ###
+task :default do
+  # run examples using current gem environment
+  # example: rake example=find_campaigns
+  #
+  if ENV.include?("example")
+    ENV["example"] += ".rb" unless ENV["example"] =~ /\.rb$/
+    example_path = "examples/%s" % ENV["example"]
+    raise "Example not found: #{example_path}" unless File.exists?(example_path)
+    system "ruby -Ilib #{example_path}"
 
-task :default => :test
+  # run default task: test
+  #
+  else
+    Rake::Task['test'].invoke
+  end
+end
+
+### Tests ###
 
 # run all tests except integrations tests
 #
@@ -20,7 +35,6 @@ Rake::TestTask.new(:"test:integration") do |test|
   test.pattern = 'test/integration/*_test.rb'
   test.verbose = true
 end
-
 
 require 'rcov/rcovtask'
 Rcov::RcovTask.new do |t|
