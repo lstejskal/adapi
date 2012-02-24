@@ -40,30 +40,31 @@ module Adapi
       @data = custom_settings
     end
 
+    # Loads adapi configuration from given hash or from external configuration
+    # file
+    #
     # params:
-    # * path - default: user's home directory
-    # * filename - default: adapi.yml
-    # TODO: set to HOME/adwords_api as default
+    # * dir (default: HOME)
+    # * filename (default: adapi.yml)
+    # * in_hash - hash to use instead of external configuration
+    #
     def self.load_settings(params = {})
-      params[:in_hash] ||= nil
-
-      # HOTFIX enable load by hash
       if params[:in_hash]
-        @settings = params[:in_hash]
-        return @settings
+        return @settings = params[:in_hash]
       end
 
-      path = dir.present? ? File.join(dir, filename) : filename
+      # load external config file (defaults to ~/adapi.yml)
+      self.dir = params[:dir] if params[:dir]
+      self.filename = params[:filename] if params[:filename]
+      path = (self.dir.present? ? File.join(self.dir, self.filename) : self.filename)
 
       if File.exists?(path)
         @settings = YAML::load(File.read(path)) rescue {}
         @settings.symbolize_keys!
 
-        if @settings.present?
-          # is it an adwords_api config-file?
-          if @settings[:authentication].present?
-            @settings = {:default => @settings}
-          end
+        # is it an adwords_api config-file?
+        if @settings.present? && @settings[:authentication].present?
+          @settings = {:default => @settings}
         end
       end
 

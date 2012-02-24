@@ -5,7 +5,7 @@ require 'adapi'
 # this example shows how to load custom settings
 
 Adapi::Config.load_settings(
-  :path => File.expand_path(File.dirname(__FILE__)),
+  :dir => File.expand_path(File.dirname(__FILE__)),
   :filename => 'custom_settings.yml'
 )
 
@@ -16,4 +16,3 @@ p Adapi::Config.read[:authentication][:email]
 Adapi::Config.set(:sandbox)
 p "Set :sandbox account:"
 p Adapi::Config.read[:authentication][:email]
-
