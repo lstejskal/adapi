@@ -192,6 +192,19 @@ Example are available in [examples directory](./master/examples/). For now, they
 are mostly just uninspired rewrites of examples from `google-adwords-api` gem,
 but that's going to change when proper UI to AdWords models will be implemented.
 
+## Logging ##
+
+*STILL IN BETA* By default, nothing is logged. If you set `library/log_level` in
+configuration, SOAP messages will be logged to `~/adapi.log` file according to
+give log level.
+
+Example of logger configuration:
+
+```
+  :library:
+    :log_level: DEBUG
+```
+
 ## Author ##
 
 2011-2012 Lukas Stejskal

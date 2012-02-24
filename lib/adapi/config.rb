@@ -1,7 +1,9 @@
 # encoding: utf-8
 
-# PS: what about this config setting?
-# Campaign.create(:data => campaign_data, :account => :my_account_alias)
+# This class hold configuration data for AdWords API
+
+# TODO enable this way of using configuration
+# Adapi::Campaign.create(:data => campaign_data, :account => :my_account_alias)
 
 module Adapi
   class Config
@@ -9,19 +11,17 @@ module Adapi
       attr_accessor :dir, :filename
     end
 
-    self.dir            = ENV['HOME']
-    self.filename       = 'adapi.yml'
+    self.dir = ENV['HOME']
+    self.filename = 'adapi.yml'
 
     # display hash of all account settings
     #
     def self.settings(reload = false)
-      if( reload )
+      if reload
         @settings = self.load_settings
       else
         @settings ||= self.load_settings
       end
-
-      return @settings
     end
 
     # display actual account settings
@@ -38,16 +38,6 @@ module Adapi
       custom_settings = @settings[account_alias.to_sym]
       custom_settings[:authentication] = custom_settings[:authentication].merge(authentication_params)
       @data = custom_settings
-
-=begin original method, to be merged into the new one
-      # hash of params - default
-      if params.is_a?(Hash)
-        @data = params
-      # set alias from adapi.yml
-      elsif params.is_a?(Symbol)
-        @data = @settings[params]
-      end
-=end
     end
 
     # params:

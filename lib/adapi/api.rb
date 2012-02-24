@@ -28,6 +28,14 @@ module Adapi
       @version = API_VERSION
       @service = @adwords.service(params[:service_name].to_sym, @version)
       @params = params
+
+      # TODO add switched for logging (true/false) and log location
+      log_level = Adapi::Config.read[:library][:log_level] rescue nil
+      if log_level
+        logger = Logger.new( File.join(ENV['HOME'], (params[:logfile] || 'adapi.log')) )
+        logger.level = eval("Logger::%s" % Adapi::Config.read[:library][:log_level].to_s.upcase)
+        @adwords.logger = logger
+      end
     end
 
     def to_param

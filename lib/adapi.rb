@@ -2,6 +2,7 @@
 
 require 'rubygems'
 require 'adwords_api'
+# require 'logger'
 require 'yaml'
 require 'pp'
 
