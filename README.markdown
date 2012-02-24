@@ -39,10 +39,14 @@ rake install
 This section explains how to connect to specific AdWords account and client.
 There are several options to choose from:
 
-### Single account set directly in code ###
+#### Configuration by adwords_api.yml ####
+
+If you already have `google-adwords-api` gem configured and use just one account,
+the same configuration will also work for adapi: `~/adwords_api.yml`
+
+#### Single account set directly in code ####
 
 ```ruby
-# load the settings
 Adapi::Config.load_settings(:in_hash => {
   :sandbox => {   
       :authentication => {
@@ -62,18 +66,12 @@ Adapi::Config.load_settings(:in_hash => {
 Adapi::Config.set(:sandbox)
 ```
 
-### Configuration by adwords_api.yml ###
-
-If you already have `google-adwords-api` gem configured and use just one account,
-the same configuration will also work for adapi: `~/adwords_api.yml`
-
-### Multiple accounts set directly in code ###
+#### Multiple accounts set directly in code ####
 
 You can set many AdWords accounts to connect to and switch between while running
 the application. You can even update single values of the settings on-the-fly.
 
 ```ruby 
-# load the settings
 Adapi::Config.load_settings(:in_hash => {
   :coca_cola => {
     :authentication => {
@@ -112,7 +110,7 @@ Adapi::Config.set(:coca_cola, :client_customer_id => '777-666-5555')
 # do some stuff here...
 ```
 
-### Configuration by `adapi.yml` ###
+#### Configuration by `adapi.yml` ####
 
 Stored in `~/adapi.yml`. Supports multiple accounts, which are identifed by
 aliases. Example:
@@ -141,14 +139,15 @@ aliases. Example:
     :environment: SANDBOX
 ```
 
-You tell adapi which account to use by setting an alias:
+To tell adapi which account to use:
 
 ```ruby
 Adapi::Config.set(:sandbox)
 ```
 
-`:default` account is, as name implies, used by default. You must either set an
-alias to `Adapi::Config` or have account with `:default` alias available.
+`:default` account is, as name implies, used by default. If you don't have
+`:default` account available, you have to manually set account alias to
+`Adapi::Config`.
 
 ### Authentication workflow ###
 
@@ -195,4 +194,4 @@ but that's going to change when proper UI to AdWords models will be implemented.
 
 ## Author ##
 
-2011 Lukas Stejskal
+2011-2012 Lukas Stejskal
