@@ -116,9 +116,8 @@ module Adapi
     # TODO implement class method
     # 
     def update(params = {})
-      # TODO validation or refuse to update
-
-      response = self.mutate(
+      # HOTFIX can't use current instance, gotta create new one
+      response = Adapi::Campaign.new().mutate(
         :operator => 'SET', 
         :operand => params.merge(:id => @id)
       )
@@ -128,7 +127,7 @@ module Adapi
       # faster than self.find
       params.each_pair { |k,v| self.send("#{k}=", v) }
 
-      true      
+      true
     end
 
     def activate; update(:status => 'ACTIVE'); end
