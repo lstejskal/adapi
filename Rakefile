@@ -9,11 +9,11 @@ task :default do
     ENV["example"] += ".rb" unless ENV["example"] =~ /\.rb$/
     exec "ruby -Ilib examples/%s" % ENV["example"]
 
-  # load irb with example result using current gem environment
-  # example: rake irb_example=find_campaigns
+  # load example into irb using current gem environment
+  # example: rake irb=find_campaigns
   #
-  elsif ENV.keys.include?("irb_example")
-    exec "irb -Ilib -Iexamples -r%s" % ENV["irb_example"].gsub(/\.rb$/, '')
+  elsif ENV.keys.include?("irb")
+    exec "irb -Ilib -Iexamples -r%s" % ENV["irb"].gsub(/\.rb$/, '')
 
   # run default task: test
   #
