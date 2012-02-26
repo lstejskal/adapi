@@ -1,9 +1,7 @@
 # encoding: utf-8
 
-# This class is obsolete, now we use CampaignCriterion instead
-#
-# However, there's still AdScheduleTarget using old CampaignTarget class, not
-# implemented yet
+# This class is obsolete in v201109, CampaignCriterion is used instead. Only
+# AdScheduleTarget is still being used, but it's not implemented yet.
 
 module Adapi
 

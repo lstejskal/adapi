@@ -35,6 +35,7 @@ module Adapi
 
       @criteria.each_pair do |criterion_type, criterion_settings|
         case criterion_type
+
         when :language
           criterion_settings.each do |value|
             criteria_array << [criterion_type, value]
@@ -59,6 +60,9 @@ module Adapi
         end
       end
 
+      # p '!!!'
+      # p criteria_array
+
       # step 2 - convert individual criteria to low-level google params
       operations = criteria_array.map do |criterion_type, criterion_settings|
         {
@@ -70,9 +74,6 @@ module Adapi
         }
       end
       
-      p criteria_array
-      p '!!!'
-
       response = self.mutate(operations)
 
       (response and response[:value]) ? true : false
@@ -122,14 +123,22 @@ module Adapi
     end
 
     # Transforms our custom high-level criteria parameters to AdWords API parameters
-    # 
-    # TODO allow to enter AdWords API parameters in original format
+    #
+    # Every criterion can be entered as high-level alias or as id
+    #
+    # Language:
+    # :language => [ :en, :cs ]
+    # :language => [ 1000, 1021 ] # integers!
+    #
     #
     def self.create_criterion(criterion_type, criterion_data)
       case criterion_type
+        # 
         # example: [:language, 'en'] -> {:xsi_type => 'Language', :id => 1000}
         when :language
-          { :xsi_type => 'Language', :id => language_id(criterion_data) }
+          { :xsi_type => 'Language',
+            :id => ConstantData::Language.find(criterion_data).id
+          }
 
         when :location
           unless criterion_data.is_a?(Hash)
@@ -172,22 +181,6 @@ module Adapi
 
         else nil 
       end
-    end
-
-    # Return AdWords API language id based for language code
-    #
-    # REFACTOR
-    LANGUAGE_IDS = { :en => 1000, :de => 1001, :fr => 1002, :es => 1003,
-      :it => 1004, :ja => 1005, :da => 1009, :nl => 1010, :fi => 1011, :ko => 1012,
-      :no => 1013, :pt => 1014, :sv => 1015, :zh_CN => 1017, :zh_TW => 1018,
-      :ar => 1019, :bg => 1020, :cs => 1021, :el => 1022, :hi => 1023, :hu => 1024,
-      :id => 1025, :is => 1026, :iw => 1027, :lv => 1028, :lt => 1029, :pl => 1030,
-      :ru => 1031, :ro => 1032, :sk => 1033, :sl => 1034, :sr => 1035, :uk => 1036,
-      :tr => 1037, :ca => 1038, :hr => 1039, :vi => 1040, :ur => 1041, :tl => 1042,
-      :et => 1043, :th => 1044
-    }
-    def self.language_id(language_alias)
-      LANGUAGE_IDS[language_alias.to_sym.downcase]
     end
 
     def self.parse_radius(radius)

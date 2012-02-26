@@ -22,6 +22,8 @@ require 'adapi/keyword'
 require 'adapi/ad'
 require 'adapi/ad/text_ad'
 require 'adapi/ad_param'
+require 'adapi/constant_data'
+require 'adapi/constant_data/language'
 
 # monkeypatch HTTPI - important, check the file!
 require 'httpi_request_monkeypatch'
