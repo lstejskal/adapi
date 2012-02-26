@@ -51,20 +51,32 @@ module Adapi
           # :location => { :id => location_id }
           # :location => { :id => [ location_id ] }
           #
-          # Accepted custom subtypes:
+          # Accepted subtypes:
+          # id
           # proximity (just actually redirects to proximity criterion)
           # city
           # province
           # country
           #
           when :location
-            criterion_settings.each_pair do |subtype, values|
+            # handles ":location => location_id" shortcut
+            unless criterion_settings.is_a?(Hash)
+              criterion_settings = { :id => criterion_settings.to_i }
+            end
+            
+            criterion_settings.each_pair do |subtype, subtype_settings|
+              # any location subtypes can be in array
+              subtype_settings = [ subtype_settings ] unless subtype_settings.is_a?(Array)
+              
               case subtype
-                # enter location as id
                 when :id
-                  values = [values] unless values.is_a?(Array)
-                  values.each do |value|
-                    criteria_array << [criterion_type, value]
+                  subtype_settings.each do |value|
+                    criteria_array << [:location, value]
+                  end                  
+
+                when :proximity
+                  subtype_settings.each do |value|
+                    criteria_array << [subtype, value]
                   end
                 else
                   raise "Unknown location subtype: %s" % subtype
@@ -78,13 +90,17 @@ module Adapi
               raise "Unknown criterion type; #{criterion_type}"
             end
           
-            criterion_settings.each do |value|
-              criteria_array << [criterion_type, value]
+            if criterion_settings.is_a?(Array)
+              criterion_settings.each do |value|
+                criteria_array << [criterion_type, value]
+              end
+            else
+              criteria_array << [criterion_type, criterion_settings]
             end
-        end
+          end
       end
 
-#       p '!!!'
+#      p '!!! ARRAY !!!'
 #       p criteria_array
 
       # step 2 - convert individual criteria to low-level google params
@@ -98,7 +114,7 @@ module Adapi
         }
       end
       
-#      p '!!!'
+#      p '!!! CRITERIA !!!'
 #      p operations
       
       response = self.mutate(operations)
@@ -163,33 +179,30 @@ module Adapi
         # 
         # example: [:language, 'en'] -> {:xsi_type => 'Language', :id => 1000}
         when :language
-          { :xsi_type => 'Language',
+          {
+            :xsi_type => 'Language',
             :id => ConstantData::Language.find(criterion_data).id
           }
 
         when :location
-          unless criterion_data.is_a?(Hash)
-            criterion_data = { :type => :id, :value => criterion_data } 
-          end
-          
-          case location_type = criterion_data.delete(:type)
-            when :id
-              { :xsi_type => 'Location', :id => criterion_data[:value].to_i }
-            when :proximity
-              radius_in_units, radius_units = parse_radius(criterion_data[:radius])
-              long, lat = parse_geodata(criterion_data[:geo_point])
+          {
+            :xsi_type => 'Location',
+            :id => criterion_data.to_i
+          }
 
-              {
-                :xsi_type => "#{geo_type.to_s.capitalize}Target",
-                :excluded => false,
-                :radius_in_units => radius_in_units,
-                :radius_distance_units => radius_units,
-                :geo_point => {
-                  :longitude_in_micro_degrees => long,
-                  :latitude_in_micro_degrees => lat
-                }
-              }
-            end
+        when :proximity
+          radius_in_units, radius_units = parse_radius(criterion_data[:radius])
+          long, lat = parse_geodata(criterion_data[:geo_point])
+
+          {
+            :xsi_type => 'Proximity',
+            :radius_in_units => radius_in_units,
+            :radius_distance_units => radius_units,
+            :geo_point => {
+              :longitude_in_micro_degrees => long,
+              :latitude_in_micro_degrees => lat
+            }
+          }
 
 =begin
             when :city

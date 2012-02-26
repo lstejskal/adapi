@@ -10,6 +10,8 @@ $campaign_criterion = Adapi::CampaignCriterion.new(
   :criteria => {
     :language => %w{ en cs },
 
+    :proximity => { :geo_point => '50.083333,14.366667', :radius => '50 km'  },
+
     :location => {
       # core location types
       :id => 21137,
@@ -19,7 +21,7 @@ $campaign_criterion = Adapi::CampaignCriterion.new(
       # interpreted location types
       # :country => 'CZ'
       # :province => 'CZ-PR'
-      # :city => { :city_name => 'Prague', :province_code => 'CZ-PR', :country_code => 'CZ' }      
+      # :city => { :city_name => 'Prague', :province_code => 'CZ-PR', :country_code => 'CZ' }
     },
 
     # add custom platform criteria
