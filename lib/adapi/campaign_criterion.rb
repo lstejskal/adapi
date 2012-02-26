@@ -35,33 +35,39 @@ module Adapi
 
       @criteria.each_pair do |criterion_type, criterion_settings|
         case criterion_type
-
-        when :language
-          criterion_settings.each do |value|
-            criteria_array << [criterion_type, value]
-          end
-        # location subtypes
-        # core: id, proximity
-        # interpreted (TBI): city, province, country
-        when :location
-          criterion_settings.each_pair do |key, value|
-            case key
-              when :id
-                value = [value] unless value.is_a?(Array)
-                value.each { |v| criteria_array << [criterion_type, v] }
-              else
-                warn "Unknown location criterion type: %s" % key
-                nil
+          when :language
+            criterion_settings.each do |value|
+              criteria_array << [criterion_type, value]
             end
-          end
-        else
-          warn "Unknown criterion type: %s" % criterion_type
-          nil
+
+          # location criterion - has custom sub-criteria:
+          # core: id, proximity
+          # interpreted (TBI): city, province, country
+          when :location
+            criterion_settings.each_pair do |subtype, values|
+              case subtype
+                # enter location as id
+                when :id
+                  values = [values] unless values.is_a?(Array)
+                  values.each do |value|
+                    criteria_array << [criterion_type, value]
+                  end
+                else
+                  warn "Unknown location subtype: %s" % subtype
+                  nil
+              end
+            end
+
+          # not-supported criterions
+          else
+            criterion_settings.each do |value|
+              criteria_array << [criterion_type, value]
+            end
         end
       end
 
-      # p '!!!'
-      # p criteria_array
+#       p '!!!'
+#       p criteria_array
 
       # step 2 - convert individual criteria to low-level google params
       operations = criteria_array.map do |criterion_type, criterion_settings|
@@ -73,6 +79,9 @@ module Adapi
           }
         }
       end
+      
+#      p '!!!'
+#      p operations
       
       response = self.mutate(operations)
 
@@ -162,6 +171,8 @@ module Adapi
                   :latitude_in_micro_degrees => lat
                 }
               }
+            end
+
 =begin
             when :city
               geo_values.merge(
@@ -177,9 +188,11 @@ module Adapi
               }
           end
 =end
-        end
+        
+        # unsupported criterion types
+        else
+          { :xsi_type => criterion_type.to_s.camelize }.merge(criterion_data)
 
-        else nil 
       end
     end
 
