@@ -10,7 +10,10 @@ module Adapi
 
     validates_presence_of :campaign_id
 
-    # TODO validate that criteria are in correct format
+    CRITERION_TYPES = [ :age_range, :carrier, :content_label, :gender, :keyword,
+      :language, :location, :operating_system_version, :placement, :platform,
+      :polygon, :product, :proximity, :criterion_user_interest,
+      :criterion_user_list, :vertical ]
 
     def attributes
       super.merge( 'campaign_id' => campaign_id, 'criteria' => criteria )
@@ -40,9 +43,20 @@ module Adapi
               criteria_array << [criterion_type, value]
             end
 
-          # location criterion - has custom sub-criteria:
-          # core: id, proximity
-          # interpreted (TBI): city, province, country
+          # location - besides standard, expected interface, this criterion is
+          # heavily customized to comply with legacy interfaces (pre-v201109).
+          #
+          # Standard v201109 location interface:
+          # :location => location_id
+          # :location => { :id => location_id }
+          # :location => { :id => [ location_id ] }
+          #
+          # Accepted custom subtypes:
+          # proximity (just actually redirects to proximity criterion)
+          # city
+          # province
+          # country
+          #
           when :location
             criterion_settings.each_pair do |subtype, values|
               case subtype
@@ -53,13 +67,17 @@ module Adapi
                     criteria_array << [criterion_type, value]
                   end
                 else
-                  warn "Unknown location subtype: %s" % subtype
-                  nil
+                  raise "Unknown location subtype: %s" % subtype
               end
             end
 
-          # not-supported criterions
+          # not-supported criterions (they work, but have to be entered in
+          # google format, no shortcuts are set up for them)
           else
+            unless CRITERION_TYPES.include?(criterion_type)
+              raise "Unknown criterion type; #{criterion_type}"
+            end
+          
             criterion_settings.each do |value|
               criteria_array << [criterion_type, value]
             end
