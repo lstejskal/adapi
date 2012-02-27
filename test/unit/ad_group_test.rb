@@ -20,13 +20,12 @@ module Adapi
       end
 
       should "parse :bids correctly" do
-        # FIXME factory doesn't work in this case for some reason
-        ag = AdGroup.new( :bids => { :xsi_type => 'ManualCPCAdGroupBids', :keyword_max_cpc => 10 } )
+        ag = AdGroup.new( :bids => { :xsi_type => 'ManualCPCAdGroupBids', :proxy_keyword_max_cpc => 10 } )
 
         assert_equal ag.bids,
         {
           :xsi_type => 'ManualCPCAdGroupBids',
-          :keyword_max_cpc => { :amount => { :micro_amount => 10000000 } }
+          :proxy_keyword_max_cpc => { :amount => { :micro_amount => 10000000 } }
         }
       end
 

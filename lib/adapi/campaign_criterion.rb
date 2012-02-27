@@ -144,7 +144,7 @@ module Adapi
         params[:campaign_id] = params[:campaign_id] || params[:conditions][:campaign_id]
       end
 
-      raise ArgumentError, "Campaing ID is required" unless params[:campaign_id]
+      raise ArgumentError, "Campaign ID is required" unless params[:campaign_id]
 
       predicates = [ :campaign_id ].map do |param_name|
         if params[param_name]
