@@ -21,8 +21,13 @@ module Adapi
 
     def initialize(params = {})
       params[:service_name] = :CampaignCriterionService
+      params[:negative] ||= false
 
-      @xsi_type = 'CampaignCriterion'
+      @xsi_type = if (params[:negative] == true)
+        'NegativeCampaignCriterion'
+      else
+        'CampaignCriterion'
+      end
 
       %w{ campaign_id criteria }.each do |param_name|
         self.send "#{param_name}=", params[param_name.to_sym]
@@ -113,9 +118,6 @@ module Adapi
           end
       end
 
-#      p '!!! ARRAY !!!'
-#      p criteria_array
-
       # step 2 - convert individual criteria to low-level google params
       operations = criteria_array.map do |criterion_type, criterion_settings|
         {
@@ -126,9 +128,6 @@ module Adapi
           }
         }
       end
-      
-#      p '!!! CRITERIA !!!'
-#      p operations
       
       response = self.mutate(operations)
 
