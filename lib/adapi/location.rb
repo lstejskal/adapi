@@ -22,6 +22,8 @@ module Adapi
     # Location.find(:country => 'CZ', :city => 'Prague')
     # Location.find(:country => 'CZ', :region => 'Prague' :city => 'Prague')
     #
+    # TODO add legacy aliases: :city_name, :province_code, :country_code
+    #
     def self.find(amount = :all, params = {})
       # set amount = :first by default
       if amount.is_a?(Hash) and params.empty?

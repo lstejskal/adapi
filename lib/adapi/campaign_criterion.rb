@@ -58,7 +58,7 @@ module Adapi
           # province
           # country
           #
-          when :location
+          when :location, :geo # PS: geo is legacy synonym for location
             # handles ":location => location_id" shortcut
             unless criterion_settings.is_a?(Hash)
               criterion_settings = { :id => criterion_settings.to_i }
@@ -74,10 +74,23 @@ module Adapi
                     criteria_array << [:location, value]
                   end                  
 
+                # find id for location(s) by LocationCriterion service
+                when :name
+                  subtype_settings = [subtype_settings] unless subtype_settings.is_a?(Array)
+                  
+                  subtype_settings.each do |location_criteria|                   
+                    location = Adapi::Location.find(location_criteria)
+  
+                    raise "Location not found" if location.nil?
+
+                    criteria_array << [ :location, location[:id] ]
+                  end
+
                 when :proximity
                   subtype_settings.each do |value|
                     criteria_array << [subtype, value]
                   end
+                  
                 else
                   raise "Unknown location subtype: %s" % subtype
               end
@@ -101,7 +114,7 @@ module Adapi
       end
 
 #      p '!!! ARRAY !!!'
-#       p criteria_array
+#      p criteria_array
 
       # step 2 - convert individual criteria to low-level google params
       operations = criteria_array.map do |criterion_type, criterion_settings|
