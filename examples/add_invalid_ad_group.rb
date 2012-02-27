@@ -1,5 +1,7 @@
 # encoding: utf-8
 
+# This example should throw an error on ad.url
+
 require 'adapi'
 
 # create campaign
