@@ -2,8 +2,11 @@
 
 require 'adapi'
 
-# attempt to create complete campaign and gracefully fail, because ad is
-# intentionally left without url
+# This test tries to create a complete campaign and fails because ad is
+# intentionally left without url. The point is to test how create_campaign
+# fails: campaign status should be set to DELETED and name changed (so the
+# name isn't blocked and another campaign can be created with the same name
+# eventually)
 
 campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
