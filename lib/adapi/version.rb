@@ -1,9 +1,16 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.0.4"
+  VERSION = "0.0.5"
 
   # CHANGELOG:
+  #
+  # 0.0.5
+  # converted to AdWords API version v201109
+  #   moved from CampaignTarget to CampaignCriterion
+  #   implemented Location and Language finders
+  # started writing integration tests
+  # added logging of SOAP requests
   #
   # 0.0.4
   # changed README to markdown format
