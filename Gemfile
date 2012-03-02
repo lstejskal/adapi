@@ -1,11 +1,7 @@
 source "http://rubygems.org"
 
-# Gemfile runs, but packages are not installed
-#
-#git "git://github.com/google/google-api-ads-ruby.git" do
-#  gem "google-ads-common", :require => "ads-common"
-#  gem "google-adwords-api", :require => "adwords-api"
-#end
+gem "google-ads-common", "0.6.3", :require => "ads_common", :git => "git://github.com/lstejskal/google-ads-common.git"
+gem "google-adwords-api", "0.5.1", :require => "adwords_api", :git => "git://github.com/lstejskal/google-adwords-api.git"
 
 # Specify your gem's dependencies in adapi.gemspec
 gemspec

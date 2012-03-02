@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
   # these versions are not officialy released yet and exist only in git repo:
   # git://github.com/google/google-api-ads-ruby.git
   #
-  s.add_dependency "google-ads-common", "0.6.3"
-  s.add_dependency "google-adwords-api", "0.5.1"
+#  s.add_dependency "google-ads-common", "0.6.3"
+#  s.add_dependency "google-adwords-api", "0.5.1"
 
   s.add_dependency "activemodel", "~> 3.1"
   s.add_dependency "activesupport", "~> 3.1"
