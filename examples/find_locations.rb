@@ -11,11 +11,17 @@ $search_params = [
   { :province => 'Prague' },
   { :city => 'Prague' }
 ]
- 
+
 $search_params.each do |params| 
   $location = Adapi::Location.find(params)
 
   puts "\nSearched for: " + params.inspect
-  # puts "Found Location ID: #{Adapi::Location.location_tree($location)}"
-  puts "Found Location ID: #{$location[:id]}"
+
+  if $location.nil?
+    puts "Not found."
+    next
+  else
+    # puts "Found Location ID: #{Adapi::Location.location_tree($location)}"
+    puts "Found Location ID: #{$location[:id]}"
+  end
 end
