@@ -29,8 +29,7 @@ require 'adapi/location'
 # monkeypatch HTTPI - important, check the file!
 require 'httpi_request_monkeypatch'
 
-# HOTFIX curb has trouble with special characters, use default HTTPI client instead
-# HTTPI.adapter = :curb
+HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
 
 module Adapi

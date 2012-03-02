@@ -22,10 +22,13 @@ Gem::Specification.new do |s|
   # they're stil changing a lot and automatic updates through '~>'
   # can easily break something
   #
-  # PS: ads-common is "freezed" - required before adwords-api
-  #  
-  s.add_dependency "google-ads-common", "0.6.2"
-  s.add_dependency "google-adwords-api", "0.5.0"
+  # both gems are freeze and ads-common should be required BEFORE adwords-api
+  #
+  # these versions are not officialy released yet and exist only in git repo:
+  # git://github.com/google/google-api-ads-ruby.git
+  #
+  s.add_dependency "google-ads-common", "0.6.3"
+  s.add_dependency "google-adwords-api", "0.5.1"
 
   s.add_dependency "activemodel", "~> 3.1"
   s.add_dependency "activesupport", "~> 3.1"
@@ -39,4 +42,5 @@ Gem::Specification.new do |s|
   s.add_development_dependency "fakeweb"
   s.add_development_dependency "factory_girl"
   s.add_development_dependency "minitest"
+
 end
