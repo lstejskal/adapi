@@ -18,17 +18,20 @@ Gem::Specification.new do |s|
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
 
-  # require specific version of ad-common and adwords-api gems,
-  # they're stil changing a lot and automatic updates through '~>'
-  # can easily break something
+  # Requires google-adwords-api gem, which provides low-level interface to
+  # AdWords API, and its dependecy, google-ads-common gem.
   #
-  # both gems are freeze and ads-common should be required BEFORE adwords-api
+  # * versions of both gems should be freezed
+  # * ads-common should be required before adwords-api
+  #  
+  # PS: versions are freezed because both of these gems change a lot and
+  # automatic updates through '~>' can (and actually did) break something
   #
-  # these versions are not officialy released yet and exist only in git repo:
+  # These versions are not officialy released yet and taken from git repo:
   # git://github.com/google/google-api-ads-ruby.git
   #
-#  s.add_dependency "google-ads-common", "0.6.3"
-#  s.add_dependency "google-adwords-api", "0.5.1"
+  s.add_dependency "google-ads-common", "0.6.3"
+  s.add_dependency "google-adwords-api", "0.5.1"
 
   s.add_dependency "activemodel", "~> 3.1"
   s.add_dependency "activesupport", "~> 3.1"
