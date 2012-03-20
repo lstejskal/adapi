@@ -54,7 +54,9 @@ module Adapi
       # PS: not sure if this should be a default. maybe we don't even need it
       @budget[:delivery_method] ||= 'STANDARD'
 
-      @criteria ||=  []
+      # HOTFIX backward compatibility with old field for criteria
+      @criteria ||= params[:targets] || {}
+
       @ad_groups ||= []
 
       super(params)

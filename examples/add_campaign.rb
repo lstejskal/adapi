@@ -21,7 +21,7 @@ campaign_data = {
 
   # PS: :targets key is obsolete, this should be named :criteria, but it still works
   :targets => {
-    :language => [ 'en', 'cs' ],
+    :language => [ :en, :cs ],
     # TODO test together with city target
     :geo => { :proximity => { :geo_point => '38.89859,-77.035971', :radius => '10 km' } }
   },

@@ -38,7 +38,7 @@ module Adapi
 
     def create
       # step 1 - convert input hash to new array of criteria
-      # example: :language => [ :en, :cz ] ->  [:language, :en]
+      # example: :language => [ :en, :cs ] -> [ [:language, :en], [:language, :cs] ]
       criteria_array = []
 
       @criteria.each_pair do |criterion_type, criterion_settings|
@@ -154,9 +154,10 @@ module Adapi
         end
       end.compact
 
-      # TODO: get more fields
+      # TODO: get more fields - tricky, because value files differ for most types
+      #
       selector = {
-        :fields => ['Id'],
+        :fields => ['Id', 'CriteriaType'],
         :ordering => [{:field => 'Id', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }
@@ -185,6 +186,7 @@ module Adapi
     # :language => [ :en, :cs ]
     # :language => [ 1000, 1021 ] # integers!
     #
+    # TODO return error if language cannot be found
     #
     def self.create_criterion(criterion_type, criterion_data)
       case criterion_type
