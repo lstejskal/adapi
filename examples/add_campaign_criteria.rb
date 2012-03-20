@@ -7,7 +7,7 @@ require_relative 'add_bare_campaign'
 
 $campaign_criterion = Adapi::CampaignCriterion.new(
   :campaign_id => $campaign[:id],
-  :criteria => {
+  :targets => { #  obsolete, use :criteria instead
     :language => %w{ en cs },
 
     :location => { 

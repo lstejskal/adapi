@@ -33,6 +33,9 @@ module Adapi
         self.send "#{param_name}=", params[param_name.to_sym]
       end
 
+      # HOTFIX backward compatibility with old field for criteria
+      @criteria ||= params[:targets] || {}
+
       super(params)
     end
 
