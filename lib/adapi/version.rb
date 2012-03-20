@@ -1,9 +1,14 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.0.5"
+  VERSION = "0.0.6"
 
   # CHANGELOG:
+  #
+  # 0.0.6
+  # updated to latest adwords-api and ads-common gems, which fix many issues with AdWords API version v201109
+  # fix CampaignCriterion service
+  # fix examples
   #
   # 0.0.5
   # converted to AdWords API version v201109
