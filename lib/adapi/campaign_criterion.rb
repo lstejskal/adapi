@@ -139,9 +139,6 @@ module Adapi
   
     def self.find(params = {})
       params.symbolize_keys!
-
-      # by default, skip criteria types that have no criterion data
-      params[:skip_empty_criterion_types] ||= true
       
       if params[:conditions]
         params[:campaign_id] = params[:campaign_id] || params[:conditions][:campaign_id]
@@ -160,7 +157,8 @@ module Adapi
       # TODO: get more fields - tricky, because value files differ for most types
       #
       selector = {
-        :fields => ['Id', 'CriteriaType'],
+        # HOTFIX added LocationName - and values for other criterion types mysteriously appeared as well!
+        :fields => ['Id', 'CriteriaType', 'KeywordText', 'LocationName'],
         :ordering => [{:field => 'Id', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }
@@ -169,16 +167,15 @@ module Adapi
 
       response = (response and response[:entries]) ? response[:entries] : []
 
-      # return everything or only 
-      if params[:skip_empty_criterion_types]
-        response.select! { |criterion_type| criterion_type.has_key?(:criteria) }
-      end
-
       # TODO optionally return just certain type(s)
       # easy, just add condition (single type or array), filter and set
       # :skip_empty_target_types option to false
 
-      response
+      # TODO add custom column :value, which will return criterion value
+      # unrelated to the actual column where value is stored (code,
+      # location_name, etc.)
+
+      response.map { |entry| entry[:criterion] }.compact
     end
 
     # Transforms our custom high-level criteria parameters to AdWords API parameters
