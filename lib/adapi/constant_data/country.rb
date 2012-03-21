@@ -245,6 +245,7 @@ module Adapi
       ]
     
       def self.find_name_by_country_code(country_code)
+        country_code = country_code.upcase
         COUNTRIES.find { |name,code,id| country_code == code }.first rescue nil
       end
 

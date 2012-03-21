@@ -3,9 +3,12 @@
 require 'adapi'
 
 # find location by LocationService
+#
+# PS: country is locally translated to country_name if possible
 
 $search_params = [
   { :country => 'CZ' },
+  { :country => 'SK' },
   { :country => 'CZ', :province => 'Prague' },
   { :country => 'CZ', :province => 'Prague', :city => 'Prague' },
   { :province => 'Prague' },

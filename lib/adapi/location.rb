@@ -33,11 +33,19 @@ module Adapi
 
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
+
       # in which language to retrieve locations
       params[:locale] ||= 'en'
+
       # support for legacy parameter
       if params[:province] and not params[:region]
         params[:region] = params[:province]
+      end
+
+      # if :country parameter is valid country code, replace it with country name
+      if params[:country] && (params[:country].size == 2)
+        country_name = ConstantData::Location::Country.find_name_by_country_code(params[:country])
+        params[:country] = country_name if country_name
       end
 
       # determine by what criteria to search
