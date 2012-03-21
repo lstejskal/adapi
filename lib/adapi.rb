@@ -24,6 +24,7 @@ require 'adapi/ad/text_ad'
 require 'adapi/ad_param'
 require 'adapi/constant_data'
 require 'adapi/constant_data/language'
+require 'adapi/constant_data/country'
 require 'adapi/location'
 
 # monkeypatch HTTPI - important, check the file!
