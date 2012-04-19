@@ -30,10 +30,6 @@ require 'adapi/location'
 # monkeypatch HTTPI - important, check the file!
 require 'httpi_request_monkeypatch'
 
-# I can haz hack?! This hotfixes OAuth
-# will be removed when new version of ads-common is released
-require 'ads_common_monkeypatch'
-
 HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
 
