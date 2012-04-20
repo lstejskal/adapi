@@ -33,7 +33,7 @@ Gem::Specification.new do |s|
   s.add_dependency "activemodel", "~> 3.1"
   s.add_dependency "activesupport", "~> 3.1"
   s.add_dependency "rake", "~> 0.9.2"
-  s.add_dependency "curb", "~> 0.7"
+  s.add_dependency "curb", "~> 0.8.0"
 
   s.add_development_dependency "yard", "~> 0.7"
   s.add_development_dependency "rcov", "~> 0.9"

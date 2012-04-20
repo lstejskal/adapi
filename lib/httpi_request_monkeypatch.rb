@@ -15,6 +15,10 @@ module HTTPI
   end
 end
 
+# according to https://github.com/taf2/curb/issues/96, should be fixed in
+# curb 0.8.0, so let's to comment it out
+=begin
+
 # disable ssl authentication in curb
 # HOTFIX for bug in HTTPI
 
@@ -38,3 +42,5 @@ module HTTPI
     end
   end
 end
+
+=end
