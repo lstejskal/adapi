@@ -20,8 +20,6 @@ module Adapi
 
       raise "Missing Service Name" unless params[:service_name]
 
-      puts "\n\nEXISTING INSTANCE USED\n\n" if params[:adwords_api_instance]
-
       # if params[:api_login] in nil, default login data are used
       # from ~/adwords_api.yml
       @adwords = params[:adwords_api_instance] || AdwordsApi::Api.new(Adapi::Config.read)
@@ -29,11 +27,10 @@ module Adapi
       @service = @adwords.service(params[:service_name].to_sym, @version)
       @params = params
 
-      # TODO add switched for logging (true/false) and log location
       log_level = Adapi::Config.read[:library][:log_level] rescue nil
       if log_level
-        logger = Logger.new( File.join(ENV['HOME'], (params[:logfile] || 'adapi.log')) )
-        logger.level = eval("Logger::%s" % Adapi::Config.read[:library][:log_level].to_s.upcase)
+        logger = Logger.new( params[:log_path] || Adapi::Config.log_path )
+        logger.level = eval("Logger::%s" % log_level.to_s.upcase)
         @adwords.logger = logger
       end
     end

@@ -14,6 +14,8 @@ module Adapi
     self.dir = ENV['HOME']
     self.filename = 'adapi.yml'
 
+    DEFAULT_LOG_PATH = File.join(ENV['HOME'], 'adapi.log')
+
     # display hash of all account settings
     #
     def self.settings(reload = false)
@@ -29,6 +31,12 @@ module Adapi
     #
     def self.read # = @data
       @data ||= self.settings[:default]
+    end
+
+    # Returns complete path to log file - both directory and file name.
+    #
+    def self.log_path
+      (Adapi::Config.read[:library][:log_path] rescue nil) || DEFAULT_LOG_PATH 
     end
 
     # account_alias - alias of an account set in settings
