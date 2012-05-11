@@ -27,8 +27,8 @@ require 'adapi/constant_data/language'
 require 'adapi/constant_data/country'
 require 'adapi/location'
 
-# monkeypatch HTTPI - important, check the file!
-require 'httpi_request_monkeypatch'
+# monkeypatch that hardcodes HTTP timeout to 5 minutes
+require 'httpi_monkeypatch'
 
 HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
