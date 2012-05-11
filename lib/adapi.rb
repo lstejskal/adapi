@@ -30,6 +30,9 @@ require 'adapi/location'
 # monkeypatch that hardcodes HTTP timeout to 5 minutes
 require 'httpi_monkeypatch'
 
+# monkeypatch that saves SOAP in Savon log in pretty format
+require 'savon_monkeypatch'
+
 HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
 
