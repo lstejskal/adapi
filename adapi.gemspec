@@ -40,7 +40,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency "turn", "0.8.2" # PS: 0.8.3 is broken
   s.add_development_dependency "shoulda"
   s.add_development_dependency "fakeweb"
-  s.add_development_dependency "factory_girl"
+  s.add_development_dependency "factory_girl", "~> 3.3.0"
   s.add_development_dependency "minitest"
 
 end

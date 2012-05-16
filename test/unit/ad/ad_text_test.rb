@@ -12,7 +12,7 @@ module Adapi
 
     context "valid new TextAd instance" do
       setup do
-        @text_ad = Factory.build(:text_ad)
+        @text_ad = FactoryGirl.build(:text_ad)
       end
 
       should "be valid" do

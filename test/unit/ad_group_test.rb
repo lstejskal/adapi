@@ -12,7 +12,7 @@ module Adapi
 
     context "valid new instance" do
       setup do
-        @ad_group = Factory.build(:ad_group)
+        @ad_group = FactoryGirl.build(:ad_group)
       end
 
       should "be valid" do
