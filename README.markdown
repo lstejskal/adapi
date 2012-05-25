@@ -196,15 +196,24 @@ but that's going to change when proper UI to AdWords models will be implemented.
 
 ## Logging ##
 
-*STILL IN BETA* By default, nothing is logged. If you set `library/log_level` in
-configuration, SOAP messages will be logged to `~/adapi.log` file according to
-give log level.
+By default, communication with AdWords API is not logged. In order to log
+messages of certain log level or above, set the `library/log_level` in
+configuration (INFO or DEBUG setting is recommended for local development).
+
+Default log path is "~/adapi.log". You can set custom log path in configuration:
+`library/log_path`.
+
+By default, SOAP messages are logged in ugly format - everything fits on single
+line. It's fast, but quite difficult to read. To log SOAP requests and responses
+in pretty format, set the `library/log_path` in configuration to `true`.
 
 Example of logger configuration:
 
 ```
   :library:
     :log_level: DEBUG
+    :log_path: /home/username/log/adapi.log
+    :log_pretty_format: true
 ```
 
 ## Author ##
