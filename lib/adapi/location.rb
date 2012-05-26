@@ -76,17 +76,15 @@ module Adapi
       # now we have to find location with correct display_type and TODO hierarchy
       # problematic example: Prague is both city and province (region)
       
-      location = nil 
       locations.each do |entry|
+        next unless entry.is_a?(Hash)
+
         if entry[:location][:display_type] == location_type
-          location = entry[:location]
-          break
+          return entry[:location]
         end
       end
       
-      # FIXME for now, omit hierarchy as check just display type. results will be in 99,5% the same
-
-      location
+      nil
     end
 
     # Displays location tree - location with its parents
