@@ -23,6 +23,7 @@ module Adapi
     # Location.find(:country => 'CZ', :region => 'Prague' :city => 'Prague')
     #
     # TODO add legacy aliases: :city_name, :province_code, :country_code
+    # TODO move search by id into separate method
     #
     def self.find(amount = :all, params = {})
       # set amount = :first by default
@@ -47,7 +48,7 @@ module Adapi
         country_name = ConstantData::Location::Country.find_name_by_country_code(params[:country])
         params[:country] = country_name if country_name
       end
-
+      
       # determine by what criteria to search
       location_type, location_name = nil, nil
       LOCATIONS_HIERARCHY.each do |param_name|
@@ -58,7 +59,7 @@ module Adapi
         end
       end
       
-      raise "Invalid params" unless location_name
+      raise "Invalid params" if location_name.nil? and not params[:id]
       
       selector = {
         :fields => ['Id', 'LocationName', 'CanonicalName', 'DisplayType', 'ParentLocations', 'Reach'],
@@ -70,8 +71,18 @@ module Adapi
         ]
       }
 
+      if params[:id]
+        selector[:predicates] = [
+            { :field => 'Id', :operator => 'EQUALS', :values => [ params[:id].to_i ] }
+        ]
+      end
+
       # returns array of locations. and now the fun begins    
       locations = Location.new.service.get(selector)
+
+      if params[:id]
+        return locations.first[:location] rescue nil
+      end
       
       # now we have to find location with correct display_type and TODO hierarchy
       # problematic example: Prague is both city and province (region)
