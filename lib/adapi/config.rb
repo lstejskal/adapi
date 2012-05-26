@@ -33,12 +33,6 @@ module Adapi
       @data ||= self.settings[:default]
     end
 
-    # Returns complete path to log file - both directory and file name.
-    #
-    def self.log_path
-      (Adapi::Config.read[:library][:log_path] rescue nil) || DEFAULT_LOG_PATH 
-    end
-
     # account_alias - alias of an account set in settings
     # authentication_params - ...which we want to override
     #
@@ -78,5 +72,26 @@ module Adapi
 
       @settings
     end
+
+    # Returns complete path to log file - both directory and file name.
+    #
+    def self.log_path
+      (Adapi::Config.read[:library][:log_path] rescue nil) || DEFAULT_LOG_PATH 
+    end
+
+    # Returns freshly initialized logger object (or nil, if not available)
+    #
+    def self.setup_logger
+      log_level = self.read[:library][:log_level] rescue nil
+
+      if log_level
+        logger = Logger.new(self.log_path)
+        logger.level = eval("Logger::%s" % log_level.to_s.upcase)
+        logger
+      else
+        nil
+      end
+    end
+    
   end
 end

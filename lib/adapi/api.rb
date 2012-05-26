@@ -8,6 +8,8 @@ module Adapi
     include ActiveModel::Conversion
     # TODO include ActiveModel::Dirty
 
+    LOGGER = Config.setup_logger
+
     attr_accessor :adwords, :service, :version, :params,
       :id, :status, :xsi_type
 
@@ -23,16 +25,10 @@ module Adapi
       # if params[:api_login] in nil, default login data are used
       # from ~/adwords_api.yml
       @adwords = params[:adwords_api_instance] || AdwordsApi::Api.new(Adapi::Config.read)
+      @adwords.logger = LOGGER if LOGGER
       @version = API_VERSION
       @service = @adwords.service(params[:service_name].to_sym, @version)
       @params = params
-
-      log_level = Adapi::Config.read[:library][:log_level] rescue nil
-      if log_level
-        logger = Logger.new( params[:log_path] || Adapi::Config.log_path )
-        logger.level = eval("Logger::%s" % log_level.to_s.upcase)
-        @adwords.logger = logger
-      end
     end
 
     def to_param
