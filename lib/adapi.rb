@@ -25,6 +25,7 @@ require 'adapi/ad_param'
 require 'adapi/constant_data'
 require 'adapi/constant_data/language'
 require 'adapi/constant_data/country'
+require 'adapi/constant_data/province'
 require 'adapi/location'
 
 # monkeypatch that hardcodes HTTP timeout to 5 minutes

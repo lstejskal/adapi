@@ -38,9 +38,15 @@ module Adapi
       # in which language to retrieve locations
       params[:locale] ||= 'en'
 
-      # support for legacy parameter
+      # support for legacy :province parameter
       if params[:province] and not params[:region]
         params[:region] = params[:province]
+      end
+
+      # if :region parameter is in old format, replace it with province name
+      if params[:region] && (params[:region] =~ /^[A-Z]{2}\-\w{1,3}$/)
+        province_name = ConstantData::Location::Province.find_name_by_province_code(params[:region])
+        params[:region] = province_name if province_name
       end
 
       # if :country parameter is valid country code, replace it with country name
