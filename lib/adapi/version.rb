@@ -1,9 +1,18 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.0.7"
+  VERSION = "0.0.8"
 
   # CHANGELOG:
+  #
+  # 0.0.8
+  # updated to AdWords API version v201109
+  # updated gem dependencies
+  # removed obsolete monkeypatches
+  # improved SOAP logging - enable pretty logging and configurable log path
+  # added conversion of legacy province_code to province_name in location search
+  # added tests for Campaign, CampaignCriterion and Location service
+  # added Getting Started section to README
   #
   # 0.0.7
   # fix Location search by country code
