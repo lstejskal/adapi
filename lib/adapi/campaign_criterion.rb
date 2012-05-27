@@ -47,7 +47,7 @@ module Adapi
       @criteria.each_pair do |criterion_type, criterion_settings|
         case criterion_type
           when :language
-            criterion_settings.each do |value|
+            Array(criterion_settings).each do |value|
               criteria_array << [criterion_type, value]
             end
 
