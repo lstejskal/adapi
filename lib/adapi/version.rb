@@ -6,7 +6,7 @@ module Adapi
   # CHANGELOG:
   #
   # 0.0.8
-  # updated to AdWords API version v201109
+  # updated to AdWords API version v201109_1
   # updated gem dependencies
   # removed obsolete monkeypatches
   # improved SOAP logging - enable pretty logging and configurable log path
