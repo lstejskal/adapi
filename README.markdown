@@ -203,7 +203,7 @@ available in [examples directory](./master/examples/).)
 
 Creates a campaign with ad_groups and ad_texts from hash - by single method call.
 
-```
+```ruby
 campaign = Adapi::Campaign.create(
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
@@ -250,7 +250,7 @@ campaign = Adapi::Campaign.create(
 
 Creates a campaign with ad_groups and ad_texts step by step.
 
-```
+```ruby
 campaign = Adapi::Campaign.create(
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
@@ -293,21 +293,124 @@ new_campaign = Adapi::Campaign.find_complete(campaign.id)
 
 # display campaign as hash
 puts new_campaign.to_hash.inspect
+```
 
+#### Create campaign criteria ###
+
+Campaign criteria (formerly targets) have been rewritten from the scratch for
+*v201109*. The goal is to provide a simple DSL for criteria so user doesn't have
+to deal with somewhat convoluted AdWords API syntax made for machines, not
+humans. So far, this has been done only for *language* and *location* criterion.
+You can use any other criteria, you just have to enter them in AdWords format.
+
+##### Language #####
+
+```ruby
+Adapi::CampaignCriterion.create(
+  :campaign_id => campaign.id,
+  :criteria => { 
+    :language => %w{ en cs },
+  }
+)
+```
+
+`:language` parameter accepts string or symbols for single language target or
+array of strings/symbols for several language targets.
+
+##### Location #####
+
+```ruby
+Adapi::CampaignCriterion.create(
+  :campaign_id => campaign.id,
+  :criteria => { 
+    :location => { 
+      :name => { :city => 'Prague', :region => 'CZ-PR', :country => 'CZ' }
+    }    
+)
+
+```
+
+This criterion has been heavily customized in adapi to comply with legacy
+interfaces (pre-v201109). In other words, you don't have to enter locations as
+ids (although you can). `:location` accepts following parameters:
+
+* `:id` - this is standard location interface of AdWords `v201109_1`
+
+```ruby
+:location => location_id
+:location => { :id => location_id }
+:location => { :id => [ location_id ] }
+```
+
+* `:proximity`
+  * `:geo_point`: "longitude,lattitude"
+  * `:radius`: "radius_in_units radius_units"
+
+```ruby
+:location => { :proximity => { :geo_point => '50.083333,14.366667', :radius => '50 km' } }
+```
+
+* `:name` - hash with parameters specifying location name:
+  * `:city`
+  * `:region` (also `:province`) - as name (`"New York"`) or code (`"US-NY"`)
+  * `:country` - as name (`"Czech Republic"`) or code (`"CZ"`)
+
+```ruby
+:location => { :name => { :country => 'Czech Republic' } }
+:location => { :name => { :city => 'Prague' } }
+:location => { :name => { :city => 'Prague', :region => 'CZ-PR', :country => 'CZ' } }
+```
+
+Unfortunately, at the moment you can't target more locations in one
+CampaignCriterion request. This is going to be fixed in the next version, but
+for now please use following workaround - call CampaignCriterion several times:
+
+```ruby
+Adapi::CampaignCriterion.create(
+  :campaign_id => campaign.id,
+  :criteria => { 
+    :location => { 
+      :name => { :city => 'Prague', :region => 'CZ-PR', :country => 'CZ' }
+    }    
+)
+
+Adapi::CampaignCriterion.create(
+  :campaign_id => campaign.id,
+  :criteria => { 
+    :location => {
+      :name => { :city => 'Brno', :region => 'CZ-JM', :country => 'CZ' }
+    }
+  }
+)
+```
+
+##### Criterion in AdWords format #####
+
+Convenient shortcuts for other criteria besides *language* and *location* are
+not yet implemented. However, you can use any other criteria, you just have to
+enter them as ids.
+
+```ruby
+Adapi::CampaignCriterion.create(
+  :campaign_id => campaign.id,
+  :criteria => {
+    :platform => [ { :id => 30001} ]
+  }
+)
 ```
 
 ## Logging ##
 
 By default, communication with AdWords API is not logged. In order to log
-messages of certain log level or above, set the `library/log_level` in
-configuration (INFO or DEBUG setting is recommended for local development).
+messages of certain log level or above, set `library/log_level` in configuration
+(INFO or DEBUG setting is recommended for local development).
 
-Default log path is "~/adapi.log". You can set custom log path in configuration:
+Default log path is "~/adapi.log". You can set custom log path in:
 `library/log_path`.
 
 By default, SOAP messages are logged in ugly format - everything fits on single
 line. It's fast, but quite difficult to read. To log SOAP requests and responses
-in pretty format, set the `library/log_path` in configuration to `true`.
+in pretty format, set `library/log_pretty_format` in configuration to `true`.
 
 Example of logger configuration:
 
