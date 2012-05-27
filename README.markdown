@@ -190,9 +190,111 @@ they will be implemented (this also serves as TODO list):
 
 ## Examples ##
 
-Example are available in [examples directory](./master/examples/). For now, they
+Examples are available in [examples directory](./master/examples/). For now, they
 are mostly just uninspired rewrites of examples from `google-adwords-api` gem,
 but that's going to change when proper UI to AdWords models will be implemented.
+
+### Getting started ###
+
+Here are some examples to get you started with adapi. (All this is also
+available in [examples directory](./master/examples/).)
+
+#### Create complete campaign ###
+
+Creates a campaign with ad_groups and ad_texts from hash - by single method call.
+
+```
+campaign = Adapi::Campaign.create(
+  :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
+  :status => 'PAUSED',
+  :bidding_strategy => {
+    :xsi_type => 'BudgetOptimizer',
+    :bid_ceiling => 100
+  },
+  :budget => {
+    :amount => 50,
+    :delivery_method => 'STANDARD'
+  },
+
+  :criteria => {
+    :language => [ :en, :cs ],
+    :location => {
+      # PS: province and country codes are now obsolete in AdWords API,
+      # but they still work in adapi
+      :name => { :city => 'Prague', :region => 'CZ-PR', :country => 'CZ' }
+    }
+  },
+
+  :ad_groups => [
+    {
+      :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
+      :status => 'ENABLED',
+
+      :keywords => [ 'dem codez', '"top coder"', "[-code]" ],
+
+      :ads => [
+        {
+          :headline => "Code like Neo",
+          :description1 => 'Need mad coding skills?',
+          :description2 => 'Check out my new blog!',
+          :url => 'http://www.demcodez.com',
+          :display_url => 'http://www.demcodez.com'
+        }
+      ]
+    }
+  ]
+)
+```
+
+#### Create campaign step by step ###
+
+Creates a campaign with ad_groups and ad_texts step by step.
+
+```
+campaign = Adapi::Campaign.create(
+  :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
+  :status => 'PAUSED',
+  :bidding_strategy => { :xsi_type => 'BudgetOptimizer', :bid_ceiling => 100 },
+  :budget => { :amount => 50, :delivery_method => 'STANDARD' }
+)
+
+Adapi::CampaignCriterion.create(
+  :campaign_id => campaign.id,
+  :criteria => { 
+    :language => %w{ en cs },
+    :location => {
+      :name => { :city => 'Prague', :region => 'CZ-PR', :country => 'CZ' }
+    }
+  }
+)
+
+ad_group = Adapi::AdGroup.create(
+  :campaign_id => campaign.id,
+  :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
+  :status => 'ENABLED'
+)
+
+Adapi::Keyword.create(
+  :ad_group_id => ad_group.id,
+  :keywords => [ 'dem codez', '"top coder"', '[-code]' ]
+)
+
+Adapi::Ad::TextAd.create(
+  :ad_group_id => ad_group.id,
+  :headline => "Code like Neo",
+  :description1 => 'Need mad coding skills?',
+  :description2 => 'Check out my new blog!',
+  :url => 'http://www.demcodez.com',
+  :display_url => 'http://www.demcodez.com'
+)
+
+# find complete campaign
+new_campaign = Adapi::Campaign.find_complete(campaign.id)
+
+# display campaign as hash
+puts new_campaign.to_hash.inspect
+
+```
 
 ## Logging ##
 
