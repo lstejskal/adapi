@@ -33,9 +33,9 @@ require 'httpi_monkeypatch'
 
 # optional monkeypatch that saves SOAP in Savon log in pretty format
 # doesn't save SOAP in pretty format by default (it's faster)
-if (Adapi::Config.read[:library][:log_pretty_format] rescue false)
-  require 'savon_monkeypatch'
-end
+#if (Adapi::Config.read[:library][:log_pretty_format] rescue false)
+#  require 'savon_monkeypatch'
+#end
 
 HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
