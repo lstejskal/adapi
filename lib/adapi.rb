@@ -31,11 +31,11 @@ require 'adapi/location'
 # monkeypatch that hardcodes HTTP timeout to 5 minutes
 require 'httpi_monkeypatch'
 
-# optional monkeypatch that saves SOAP in Savon log in pretty format
-# doesn't save SOAP in pretty format by default (it's faster)
-#if (Adapi::Config.read[:library][:log_pretty_format] rescue false)
-#  require 'savon_monkeypatch'
-#end
+# optionally prettify Savon SOAP log
+# PS: slow, should be set to false in production
+Savon.configure do |config|
+  config.pretty_print_xml = ((Adapi::Config.read[:library][:log_pretty_format] == true) rescue false)
+end
 
 HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
