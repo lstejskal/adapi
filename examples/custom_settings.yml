@@ -9,6 +9,10 @@
     :user_agent: My Adwords API Client
   :service:
     :environment: PRODUCTION
+  :library:
+    :log_level: WARN
+    :log_path: /tmp/adapi_production.log
+#   :log_pretty_format is set to :false by default
 
 :sandbox:
   :authentication:
@@ -20,3 +24,7 @@
     :user_agent: Adwords API Test
   :service:
     :environment: SANDBOX
+  :library:
+    :log_level: DEBUG
+    :log_path: /tmp/adapi_sandbox.log
+    :log_pretty_format: true

@@ -5,6 +5,6 @@ pkg/*
 doc/*
 coverage/*
 .yardoc/*
-adapi.yml
+./adapi.yml
 .rvmrc
 .idea/
