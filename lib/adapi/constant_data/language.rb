@@ -6,6 +6,10 @@
 # PS: Previously it has been possible to target by language code. This is not
 # supported by AdWords API anymore.
 
+# TODO refactor in tests and targeting code as well, self.find should return nil
+# if nothing is found
+# TODO maybe refactor through Array#assoc method
+
 module Adapi
   class ConstantData::Language < ConstantData
 
@@ -28,11 +32,10 @@ module Adapi
       super(params)
     end
 
-    # Returns AdWords API language id based for language code
+    # Finds Language instance by language code or language id (numeric argument)
     #
     def self.find(code)
       
-      # TODO just in case, also allow searching by id
       if code.is_a?(Integer)
         Language.new(
           :id => code,
