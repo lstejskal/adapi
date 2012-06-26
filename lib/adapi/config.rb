@@ -1,9 +1,6 @@
 # encoding: utf-8
 
-# This class hold configuration data for AdWords API
-
-# TODO enable this way of using configuration
-# Adapi::Campaign.create(:data => campaign_data, :account => :my_account_alias)
+# This class holds configuration data for AdWords API
 
 module Adapi
   class Config

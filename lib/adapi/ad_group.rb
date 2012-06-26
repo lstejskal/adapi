@@ -1,5 +1,9 @@
 # encoding: utf-8
 
+# Class for AdGroupService
+#
+# https://developers.google.com/adwords/api/docs/reference/latest/AdGroupService
+
 module Adapi
   class AdGroup < Api
   

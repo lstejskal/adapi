@@ -1,10 +1,12 @@
 # encoding: utf-8
 
+# Class for CampaignService
+#
+# https://developers.google.com/adwords/api/docs/reference/latest/CampaignService
+
 module Adapi
   class Campaign < Api
 
-    # http://code.google.com/apis/adwords/docs/reference/latest/CampaignService.Campaign.html
-    #
     attr_accessor :name, :serving_status, :start_date, :end_date, :budget,
       :bidding_strategy, :network_setting, :criteria, :ad_groups
 
@@ -162,7 +164,6 @@ module Adapi
     def find # == refresh
       Campaign.find(:first, :id => @id)
     end
-
 
     # if nothing else than single number or string at the input, assume it's an
     # id and we want to find campaign by id

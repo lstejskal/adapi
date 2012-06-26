@@ -1,5 +1,11 @@
 # encoding: utf-8
 
+# ConstantData::Language provides searching language id by its code. It is used
+# a a helper function for targeting.
+#
+# PS: Previously it has been possible to target by language code. This is not
+# supported by AdWords API anymore.
+
 module Adapi
   class ConstantData::Language < ConstantData
 
@@ -26,7 +32,7 @@ module Adapi
     #
     def self.find(code)
       
-      # let's also allow searching by id
+      # TODO just in case, also allow searching by id
       if code.is_a?(Integer)
         Language.new(
           :id => code,

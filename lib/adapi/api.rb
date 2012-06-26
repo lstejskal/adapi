@@ -1,12 +1,13 @@
 # encoding: utf-8
 
+# Basic adapi class, parent of all service classes
+
 module Adapi
   class Api
     extend ActiveModel::Naming
     include ActiveModel::Validations
     include ActiveModel::Serialization
     include ActiveModel::Conversion
-    # TODO include ActiveModel::Dirty
 
     LOGGER = Config.setup_logger
 
