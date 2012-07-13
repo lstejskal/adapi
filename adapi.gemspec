@@ -21,7 +21,8 @@ Gem::Specification.new do |s|
   # google-adwords-api gem provides low-level interface to AdWords API
   #
   # its core dependency, google-ads-common gem, is also required
-  # (before google-adwords-api gem)
+  # (before google-adwords-api gem, so the clash of our version
+  # with version required by google-adwords api is less probable)
   #
   # versions of both gems are freezed, because both gems change a lot and
   # automatic updates through '~>' can (and already did) break something
@@ -29,8 +30,8 @@ Gem::Specification.new do |s|
   s.add_dependency "google-ads-common", "0.7.2"
   s.add_dependency "google-adwords-api", "0.6.1"
 
-  s.add_dependency "activemodel", "~> 3.1"
-  s.add_dependency "activesupport", "~> 3.1"
+  s.add_dependency "activemodel", "~> 3.0"
+  s.add_dependency "activesupport", "~> 3.0"
   s.add_dependency "rake", "~> 0.9.2"
   s.add_dependency "curb", "~> 0.8.0"
 
