@@ -7,14 +7,17 @@
 module Adapi
   class Campaign < Api
 
-    attr_accessor :name, :serving_status, :start_date, :end_date, :budget,
-      :bidding_strategy, :network_setting, :criteria, :ad_groups
+    # FIXME duplication of attribute keys in attr_accessor, attributes and initalizer
+
+    attr_accessor :name, :status, :serving_status, :start_date, :end_date, :budget,
+      :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups
 
     def attributes
       super.merge('name' => name, 'start_date' => start_date, 'end_date' => end_date,
+        'status' => status, 'serving_status' => serving_status,
         'budget' => budget, 'bidding_strategy' => bidding_strategy,
-        'network_setting' => network_setting, 'criteria' => criteria,
-        'ad_groups' => ad_groups)
+        'network_setting' => network_setting, 'campaign_stats' => campaign_stats,
+        'criteria' => criteria, 'ad_groups' => ad_groups)
     end
 
     validates_presence_of :name, :status
@@ -25,9 +28,14 @@ module Adapi
       
       @xsi_type = 'Campaign'
 
-      %w{ name status start_date end_date budget bidding_strategy
-      network_setting criteria ad_groups}.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
+      [ :name, :status, :serving_status, :start_date, :end_date, :budget, :bidding_strategy,
+      :network_setting, :campaign_stats, :criteria, :ad_groups ].each do |param_name|
+        self[param_name] = params[param_name]
+      end
+
+      # convert dates to DateTime object
+      [ :start_date, :end_date ].each do |k| 
+        self[k] = DateTime.parse(params[k]) if params[k].present?
       end
 
       # convert bidding_strategy to GoogleApi
@@ -111,13 +119,12 @@ module Adapi
         end
       end
 
-      return true
+      true
     end
 
-    # general method for changing campaign data
-    # TODO enable updating of all campaign parts at once, same as for Campaign#create method
+    # Sets campaign data en masse, including ad_groups, keywords and ads
     #
-    # TODO implement class method
+    # TODO implement primarily as class method, instance will be just a redirect with campaign_id
     # 
     def update(params = {})
       # HOTFIX can't use current instance, gotta create new one
@@ -128,7 +135,6 @@ module Adapi
 
       return false unless (response and response[:value])
 
-      # faster than self.find
       params.each_pair { |k,v| self.send("#{k}=", v) }
 
       true
@@ -186,10 +192,14 @@ module Adapi
         end
       end.compact
 
+      # TODO make configurable (but for the moment, return everything)
+      select_fields = [ 'Id', 'Name', 'Status', 'ServingStatus', 'BiddingStrategy', 
+        'Clicks', 'Impressions', 'Cost', 'Ctr', 'StartDate', 'EndDate' ]
+
       # TODO display the rest of the data
       # TODO get NetworkSetting - setting as in fields doesn't work
       selector = {
-        :fields => ['Id', 'Name', 'Status', 'BiddingStrategy'],
+        :fields => select_fields,
         :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }
