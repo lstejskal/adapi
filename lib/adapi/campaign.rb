@@ -9,6 +9,9 @@ module Adapi
 
     # FIXME duplication of attribute keys in attr_accessor, attributes and initalizer
 
+    NETWORK_SETTING_KEYS = [ :target_google_search, :target_search_network, 
+      :target_content_network, :target_content_contextual, :target_partner_search_network ]
+
     attr_accessor :name, :status, :serving_status, :start_date, :end_date, :budget,
       :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups
 
@@ -195,6 +198,8 @@ module Adapi
       # TODO make configurable (but for the moment, return everything)
       select_fields = [ 'Id', 'Name', 'Status', 'ServingStatus', 'BiddingStrategy', 
         'Clicks', 'Impressions', 'Cost', 'Ctr', 'StartDate', 'EndDate' ]
+      # PS: NetworkSettings can be only retrieved by listing its individual keys
+      select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize }
 
       # TODO display the rest of the data
       # TODO get NetworkSetting - setting as in fields doesn't work
