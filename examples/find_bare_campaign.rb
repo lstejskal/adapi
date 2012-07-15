@@ -8,7 +8,7 @@ require_relative 'add_bare_campaign'
 $campaign = Adapi::Campaign.find($campaign.id)
 
 puts "Campaign data:"
-%w{ id name status serving_status start_date end_date }.each do |param_name|
+%w{ id name status serving_status ad_serving_optimization_status start_date end_date }.each do |param_name|
   puts "  %s: %s" % [ param_name.to_s.humanize, $campaign[param_name] ]
 end
 

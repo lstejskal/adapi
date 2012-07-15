@@ -11,7 +11,8 @@ module Adapi
       :target_content_network, :target_content_contextual, :target_partner_search_network ]
 
     ATTRIBUTES = [ :name, :status, :serving_status, :start_date, :end_date, :budget,
-      :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups ]
+      :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups,
+      :ad_serving_optimization_status ]
 
     attr_accessor *ATTRIBUTES
 
@@ -23,13 +24,17 @@ module Adapi
     validates_inclusion_of :status, :in => %w{ ACTIVE DELETED PAUSED }
 
     def initialize(params = {})
+      params.symbolize_keys!
+
       params[:service_name] = :CampaignService
       
       @xsi_type = 'Campaign'
 
       ATTRIBUTES.each do |param_name|
-        self[param_name] = params[param_name]
+        self.send("#{param_name}=", params[param_name])
       end
+
+      # TODO outsource all this into separate setters and getters
 
       # convert dates to DateTime object
       [ :start_date, :end_date ].each do |k| 
@@ -192,7 +197,8 @@ module Adapi
 
       # TODO make configurable (but for the moment, return everything)
       select_fields = [ 'Id', 'Name', 'Status', 'ServingStatus', 'BiddingStrategy', 
-        'Clicks', 'Impressions', 'Cost', 'Ctr', 'StartDate', 'EndDate' ]
+        'Clicks', 'Impressions', 'Cost', 'Ctr', 'StartDate', 'EndDate',
+        'AdServingOptimizationStatus' ]
       # PS: NetworkSettings can be only retrieved by listing its individual keys
       select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize }
 
