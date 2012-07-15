@@ -7,29 +7,43 @@
 module Adapi
   class AdGroup < Api
   
-    attr_accessor :campaign_id, :name, :bids, :keywords, :ads
+    ATTRIBUTES = [ :campaign_id, :name, :status, :bids, :keywords, :ads ]
+
+    attr_accessor *ATTRIBUTES 
 
     validates_presence_of :campaign_id, :name, :status
     validates_inclusion_of :status, :in => %w{ ENABLED PAUSED DELETED }
 
     def attributes
-      super.merge('campaign_id' => campaign_id, 'name' => name, 'bids' => bids)
+      super.merge Hash[ ATTRIBUTES.map { |k| [k, self.send(k)] } ]
     end
+
+    alias to_hash attributes
 
     def initialize(params = {})
       params[:service_name] = :AdGroupService
 
       @xsi_type = 'AdGroup'
 
-      %w{ campaign_id name status bids keywords ads }.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
+      ATTRIBUTES.each do |param_name|
+        self.send("#{param_name}=", params[param_name])
       end
 
-      # convert bids to GoogleApi format
-      #
-      # can be either string (just xsi_type) or hash (xsi_type with params)
-      # although I'm not sure if just string makes sense in this case
-      #
+      @keywords ||= []
+
+      @ads ||= []
+
+      super(params)
+    end
+
+    # convert bids to GoogleApi format
+    #
+    # can be either string (just xsi_type) or hash (xsi_type with params)
+    # although I'm not sure if just string makes sense in this case
+    #
+    def bids=(params = {})
+      @bids = params
+
       if @bids
         unless @bids.is_a?(Hash)
           @bids = { :xsi_type => @bids }
@@ -46,11 +60,6 @@ module Adapi
           end
         end
       end
-
-      @keywords ||= []
-      @ads ||= []
-
-      super(params)
     end
 
     def create
@@ -94,6 +103,9 @@ module Adapi
 
       true
     end
+
+    # def update
+    # end
  
     def self.find(amount = :all, params = {})
       params.symbolize_keys!
@@ -138,17 +150,6 @@ module Adapi
     # TODO find all types of ads
     def find_ads(first_only = false)
       Ad::TextAd.find( (first_only ? :first : :all), :ad_group_id => self.id )
-    end
-
-    # Converts ad group data to hash - of the same structure which is used when
-    # creating an ad group.
-    #
-    def to_hash
-      ad_group_hash = {
-        :id => self[:id],
-        :name => self[:name],
-        :status => self[:status]
-      }
     end
 
   end
