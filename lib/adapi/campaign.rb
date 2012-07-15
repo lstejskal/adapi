@@ -20,6 +20,8 @@ module Adapi
       super.merge Hash[ ATTRIBUTES.map { |k| [k, self.send(k)] } ]
     end
 
+    alias to_hash attributes
+
     validates_presence_of :name, :status
     validates_inclusion_of :status, :in => %w{ ACTIVE DELETED PAUSED }
 
@@ -149,14 +151,24 @@ module Adapi
     # TODO implement primarily as class method, instance will be just a redirect with campaign_id
     # 
     def update(params = {})
-      # HOTFIX can't use current instance, gotta create new one
-      response = Adapi::Campaign.new().mutate(
+      # REFACTOR this params formatting through self.to_google_format method?
+
+      # parse the given params by initialize method...
+      campaign = Adapi::Campaign.new(params)
+      # HOTFIX remove :service_name param inserted byu initialize method
+      params.delete(:service_name)
+      # ...and load parsed params back into the hash
+      params.keys.each { |k| params[k] = campaign.send(k) }
+      params[:id] = @id
+
+      response = campaign.mutate(
         :operator => 'SET', 
-        :operand => params.merge(:id => @id)
+        :operand => params
       )
 
       return false unless (response and response[:value])
 
+      # "refresh" original campaign
       params.each_pair { |k,v| self.send("#{k}=", v) }
 
       true
@@ -261,24 +273,6 @@ module Adapi
       campaign[:ad_groups] = AdGroup.find(:all, :campaign_id => campaign.to_param)
 
       campaign
-    end
-
-    # Converts campaign data to hash - of the same structure which is used when
-    # creating a campaign.
-    #
-    # PS: could be implemented more succintly, but let's leave it like this for
-    # now, code can change and this is more readable
-    #
-    def to_hash
-      {
-        :id => self[:id],
-        :name => self[:name],
-        :status => self[:status],
-        :budget => self[:budget],
-        :bidding_strategy => self[:bidding_strategy],
-        :criteria => self[:criteria],
-        :ad_groups => self[:ad_groups]
-      }
     end
 
   end
