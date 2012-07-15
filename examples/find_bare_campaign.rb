@@ -17,9 +17,13 @@ puts "\nBudget:"
   puts "  %s: %s" % [ param_name.to_s.humanize, $campaign[:budget][param_name.to_sym] ]
 end
 
-# TODO bidding strategy
+puts "\nBidding strategy:"
+%w{ xsi_type bid_ceiling enhanced_cpc_enabled }.each do |param_name|
+  next unless $campaign[:bidding_strategy].has_key?(param_name.to_sym)
+  puts "  %s: %s" % [ param_name.to_s.humanize, $campaign[:bidding_strategy][param_name.to_sym] ]
+end
 
-puts "\nStats:"
+puts "\nCampaign stats:"
 %w{ clicks impressions cost ctr }.each do |param_name|
   puts "  %s: %s" % [ param_name.to_s.humanize, $campaign[:campaign_stats][param_name.to_sym] ]
 end

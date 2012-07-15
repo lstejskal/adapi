@@ -62,6 +62,10 @@ module Adapi
     # can be either string (just xsi_type) or hash (xsi_type with params)
     # TODO validations for xsi_type
     # 
+    # TODO watch out when doing update. according to documentation:
+    # "to modify an existing campaign's bidding strategy, use 
+    # CampaignOperation.biddingTransition" 
+    #
     def bidding_strategy=(params = {})
       unless params.is_a?(Hash)
         params = { xsi_type: params }
@@ -211,16 +215,17 @@ module Adapi
       end.compact
 
       # TODO make configurable (but for the moment, return everything)
-      select_fields = [ 'Id', 'Name', 'Status', 'ServingStatus', 'BiddingStrategy', 
-        'Clicks', 'Impressions', 'Cost', 'Ctr', 'StartDate', 'EndDate',
-        'AdServingOptimizationStatus' ]
+      select_fields = %w{ Id Name Status ServingStatus 
+        StartDate EndDate AdServingOptimizationStatus } 
+      # retrieve CampaignStats fields
+      select_fields += %w{ Clicks Impressions Cost Ctr }
       # retrieve Budget fields
-      select_fields += [ 'Amount', 'Period', 'DeliveryMethod' ] 
+      select_fields += %w{ Amount Period DeliveryMethod } 
+      # retrieve BiddingStrategy fields
+       select_fields += %w{ BiddingStrategy BidCeiling EnhancedCpcEnabled }
       # retrieve NetworkSetting fields
       select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize } 
 
-      # TODO display the rest of the data
-      # TODO get NetworkSetting - setting as in fields doesn't work
       selector = {
         :fields => select_fields,
         :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
