@@ -104,8 +104,37 @@ module Adapi
       true
     end
 
-    # def update
-    # end
+    def update(params = {})
+      # step 1. update core attributes
+      core_attributes = [ :id, :campaign_id, :name, :status, :bids ]
+      # get operand in google format 
+      # parse the given params by initialize method...
+      ad_group = Adapi::AdGroup.new(params)
+      # HOTFIX remove :service_name param inserted by initialize method
+      params.delete(:service_name)
+      # ...and load parsed params back into the hash
+      core_attributes.each { |k| params[k] = ad_group.send(k) if params[k].present? }
+
+      response = ad_group.mutate(
+        :operator => 'SET', 
+        :operand => params
+      )
+
+      return false unless (response and response[:value])
+
+      # step 2. update keywords
+      # delete everything and create new keywords
+
+      # step 3. update ads
+      # similar loop as in campaign ad_groups
+      # - get ads
+      # - find ad by id or name
+      #   - if found, update and remove from ads
+      #   - if not found, create
+      # - delete original ads that are left 
+
+      true
+    end
  
     # TODO add support for :stats attributes
     #
