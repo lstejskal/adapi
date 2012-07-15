@@ -150,6 +150,8 @@ module Adapi
     #
     # TODO implement primarily as class method, instance will be just a redirect with campaign_id
     # 
+    # TODO add transactions
+    # 
     def update(params = {})
       # REFACTOR this params formatting through self.to_google_format method?
 
@@ -171,8 +173,58 @@ module Adapi
       # "refresh" original campaign
       params.each_pair { |k,v| self.send("#{k}=", v) }
 
+      # TODO set error if there are any
+      #if params[:ad_groups]
+      #  Adapi::Campaign.update_ad_groups!(:id => @id, ad_groups => params[:ad_groups]) || return false
+      #end
+
       true
     end
+
+=begin
+    # helper method that updates ad_groups. called from Campaign#update method
+    #
+    def self.update_ad_groups!(params = {})
+      # get current ad_groups
+      original_ad_groups = AdGroup.find(:all, :campaign_id => params[:id])
+
+      # TODO throw error is ad_group doesn't have neither :id nor :name
+      params[:ad_groups].each do |ad_group_data|
+        ad_group_data.symbolize_keys!
+        ad_group_data.merge(:campaign_id => params[:id])
+
+        # find ad_group in campaign ad_groups by id or name 
+        k, v = ad_group_data.has_key?(:id) ? [:id, ad_group_data[:id]], [:name, ad_group_data[:name]] 
+
+        ad_group = original_ad_groups.find { |ag| ag[k] == v } 
+
+        # if such ad_group exists, update it and remove from original ad_groups
+        if ad_group.present?
+          ad_group.update(ad_group_data)
+
+          original_ad_groups.remove_if { |ag| ag[k] == v }
+
+        # TODO report error if searching by :id, such ad_group should exists
+        # elsif k == :id
+        #   report error 
+        # if it doesn't exist, create a new ad_group for campaign
+
+        else
+          ad_group_data.delete(:id)
+          Adapi::AdGroup.create(ad_group_data)
+        end
+
+      end
+
+      # TODO remove original ad_group that haven't been updated
+      original_ad_groups.each do |ad_group|
+        # how? set status to deleted? (so I should modify find method as well)
+        ad_group.update(:status => 'DELETE') # or ad_group.delete!
+      end
+
+      true # and fetch campaign ad_groups again
+    end
+=end
 
     def activate; update(:status => 'ACTIVE'); end
     def pause; update(:status => 'PAUSED'); end
