@@ -1,9 +1,9 @@
 # encoding: utf-8
 
-# Class for AdGroupService
+# This class handles operations with ad_groups
 #
 # https://developers.google.com/adwords/api/docs/reference/latest/AdGroupService
-
+#
 module Adapi
   class AdGroup < Api
   
@@ -107,21 +107,28 @@ module Adapi
     # def update
     # end
  
+    # TODO add support for :stats attributes
+    #
     def self.find(amount = :all, params = {})
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
 
       raise "Campaign ID is required" unless params[:campaign_id]
       
-      predicates = [ :campaign_id, :id ].map do |param_name|
-        if params[param_name]
-          value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
-          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
+      predicates = [ :campaign_id, :id, :name ].map do |param_name|
+        if params[param_name].present?
+          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => Array( params[param_name] ) }
         end
       end.compact
 
+      select_fields = %w{ Id CampaignId Name Status } 
+      # add Bids atributes
+      select_fields += %w{ EnhancedCpcEnabled 
+        ProxyKeywordMaxCpc ProxySiteMaxCpc 
+        KeywordMaxCpc KeywordContentMaxCpc }
+
       selector = {
-        :fields => ['Id', 'Name', 'Status'],
+        :fields => select_fields,
         :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }
@@ -139,6 +146,8 @@ module Adapi
           :ads => Ad::TextAd.find(:all, :ad_group_id => ad_group[:id]).map(&:to_hash) 
         )
       end
+
+      ad_groups.map! { |ad_group| AdGroup.new(ad_group) }
 
       first_only ? ad_groups.first : ad_groups
     end
