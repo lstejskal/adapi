@@ -8,7 +8,10 @@ require 'adapi'
 $campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  :bidding_strategy => { :xsi_type => 'BudgetOptimizer', :bid_ceiling => 55 },
+  :bidding_strategy => { 
+    :xsi_type => 'BudgetOptimizer', 
+    :bid_ceiling => 20 
+  },
   :budget => 50,
   :network_setting => {
     :target_google_search => true,

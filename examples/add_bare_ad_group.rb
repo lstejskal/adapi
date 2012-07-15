@@ -14,7 +14,9 @@ $ad_group_data = {
   :status => 'ENABLED',
   :bids => {
     :xsi_type => 'BudgetOptimizerAdGroupBids',
-    :proxy_keyword_max_cpc => 10
+    # FIXME this probably can't be set
+    :proxy_keyword_max_cpc => 15,
+    :proxy_site_max_cpc => 30
   }
 }
  
