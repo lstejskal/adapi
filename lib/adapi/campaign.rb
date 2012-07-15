@@ -7,20 +7,16 @@
 module Adapi
   class Campaign < Api
 
-    # FIXME duplication of attribute keys in attr_accessor, attributes and initalizer
-
     NETWORK_SETTING_KEYS = [ :target_google_search, :target_search_network, 
       :target_content_network, :target_content_contextual, :target_partner_search_network ]
 
-    attr_accessor :name, :status, :serving_status, :start_date, :end_date, :budget,
-      :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups
+    ATTRIBUTES = [ :name, :status, :serving_status, :start_date, :end_date, :budget,
+      :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups ]
+
+    attr_accessor *ATTRIBUTES
 
     def attributes
-      super.merge('name' => name, 'start_date' => start_date, 'end_date' => end_date,
-        'status' => status, 'serving_status' => serving_status,
-        'budget' => budget, 'bidding_strategy' => bidding_strategy,
-        'network_setting' => network_setting, 'campaign_stats' => campaign_stats,
-        'criteria' => criteria, 'ad_groups' => ad_groups)
+      super.merge Hash[ ATTRIBUTES.map { |k| [k, self.send(k)] } ]
     end
 
     validates_presence_of :name, :status
@@ -31,8 +27,7 @@ module Adapi
       
       @xsi_type = 'Campaign'
 
-      [ :name, :status, :serving_status, :start_date, :end_date, :budget, :bidding_strategy,
-      :network_setting, :campaign_stats, :criteria, :ad_groups ].each do |param_name|
+      ATTRIBUTES.each do |param_name|
         self[param_name] = params[param_name]
       end
 

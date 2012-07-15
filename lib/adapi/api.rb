@@ -6,7 +6,7 @@ module Adapi
   class Api
     extend ActiveModel::Naming
     include ActiveModel::Validations
-    include ActiveModel::Serialization
+    include ActiveModel::Serialization # TODO should be obsolete, check and remove
     include ActiveModel::Conversion
 
     LOGGER = Config.setup_logger
@@ -14,6 +14,11 @@ module Adapi
     attr_accessor :adwords, :service, :version, :params,
       :id, :status, :xsi_type
 
+    # Returns hash of attributes for a model instance
+    #
+    # This is an implementation of ActiveRecord::Base#attributes method.
+    # Children of API model customize this method for their own attributes.
+    #
     def attributes
       { 'status' => status, 'xsi_type' => xsi_type }
     end
