@@ -13,10 +13,9 @@ puts "Campaign data:"
 end
 
 puts "\nBudget:"
-%w{ delivery_method period }.each do |param_name|
+%w{ amount period delivery_method }.each do |param_name|
   puts "  %s: %s" % [ param_name.to_s.humanize, $campaign[:budget][param_name.to_sym] ]
 end
-# TODO budget.amount
 
 # TODO bidding strategy
 

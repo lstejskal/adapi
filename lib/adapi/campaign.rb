@@ -214,8 +214,10 @@ module Adapi
       select_fields = [ 'Id', 'Name', 'Status', 'ServingStatus', 'BiddingStrategy', 
         'Clicks', 'Impressions', 'Cost', 'Ctr', 'StartDate', 'EndDate',
         'AdServingOptimizationStatus' ]
-      # PS: NetworkSettings can be only retrieved by listing its individual keys
-      select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize }
+      # retrieve Budget fields
+      select_fields += [ 'Amount', 'Period', 'DeliveryMethod' ] 
+      # retrieve NetworkSetting fields
+      select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize } 
 
       # TODO display the rest of the data
       # TODO get NetworkSetting - setting as in fields doesn't work
