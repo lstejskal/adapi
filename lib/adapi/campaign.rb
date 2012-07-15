@@ -34,45 +34,60 @@ module Adapi
         self.send("#{param_name}=", params[param_name])
       end
 
-      # TODO outsource all this into separate setters and getters
-
-      # convert dates to DateTime object
-      [ :start_date, :end_date ].each do |k| 
-        self[k] = DateTime.parse(params[k]) if params[k].present?
-      end
-
-      # convert bidding_strategy to GoogleApi
-      # can be either string (just xsi_type) or hash (xsi_type with params)
-      # TODO validations for xsi_type
-      # 
-      unless @bidding_strategy.is_a?(Hash)
-        @bidding_strategy = { :xsi_type => @bidding_strategy }
-      end
-
-      if @bidding_strategy[:bid_ceiling] and not @bidding_strategy[:bid_ceiling].is_a?(Hash)
-        @bidding_strategy[:bid_ceiling] = {
-          :micro_amount => Api.to_micro_units(@bidding_strategy[:bid_ceiling])
-        }
-      end
-
-      # convert budget to GoogleApi
-      # TODO validations for budget
-      #
-      # budget can be integer (amount) or hash
-      @budget = { :amount => @budget } unless @budget.is_a?(Hash)
-      @budget[:period] ||= 'DAILY'
-      if @budget[:amount] and not @budget[:amount].is_a?(Hash)
-        @budget[:amount] = { :micro_amount => Api.to_micro_units(@budget[:amount]) }
-      end
-      # PS: not sure if this should be a default. maybe we don't even need it
-      @budget[:delivery_method] ||= 'STANDARD'
-
       # HOTFIX backward compatibility with old field for criteria
       @criteria ||= params[:targets] || {}
 
       @ad_groups ||= []
 
       super(params)
+    end
+
+    def start_date=(a_date)
+      @start_date = parse_date(a_date) if a_date.present?
+    end
+
+    def end_date=(a_date)
+      @end_date = parse_date(a_date) if a_date.present?
+    end
+
+    def parse_date(a_date)
+      case a_date
+        when DateTime, Date, Time then a_date
+        # FIXME distiguish between timestamp and YYYYMMDD string
+        else DateTime.parse(a_date).strftime('%Y%m%d') 
+      end
+    end
+
+    # setter for converting bidding_strategy to google format
+    # can be either string (just xsi_type) or hash (xsi_type with params)
+    # TODO validations for xsi_type
+    # 
+    def bidding_strategy=(params = {})
+      unless params.is_a?(Hash)
+        params = { xsi_type: params }
+      else
+        if params[:bid_ceiling] and not params[:bid_ceiling].is_a?(Hash)
+          params[:bid_ceiling] = {
+            micro_amount: Api.to_micro_units(params[:bid_ceiling])
+          }
+        end
+      end
+
+      @bidding_strategy = params
+    end
+
+    # setter for converting budget to GoogleApi
+    # budget can be integer (amount) or hash
+    #
+    def budget=(params = {})
+      # if it's single value, it's a budget amount
+      params = { amount: params } unless params.is_a?(Hash)
+
+      if params[:amount] and not params[:amount].is_a?(Hash)
+        params[:amount] = { micro_amount: Api.to_micro_units(params[:amount]) }
+      end
+
+      @budget = params.merge( period: 'DAILY', delivery_method: 'STANDARD' ) 
     end
 
     # create campaign with ad_groups and ads
