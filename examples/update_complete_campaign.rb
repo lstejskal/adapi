@@ -5,6 +5,11 @@ require 'adapi'
 # create campaign by single command, with campaing targets, with ad_groups
 # including keywords and ads
 
+$ad_group_names = [
+  "AdGroup 01 #%d" % (Time.new.to_f * 1000).to_i,
+  "AdGroup 02 #%d" % (Time.new.to_f * 1000).to_i
+]
+
 campaign_data = {
   # basic data for campaign
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
@@ -28,7 +33,7 @@ campaign_data = {
 
   :ad_groups => [
     {
-      :name => "AdGroup 01 #%d" % (Time.new.to_f * 1000).to_i,
+      :name => $ad_group_names[0],
       :status => 'ENABLED',
 
       :keywords => [ 'neo', 'dem codez', '"top coder"', "[-code]" ],
@@ -45,7 +50,7 @@ campaign_data = {
     },
 
     {
-      :name => "AdGroup 02 #%d" % (Time.new.to_f * 1000).to_i,
+      :name => $ad_group_names[1],
       :status => 'PAUSED',
 
       :keywords => [ 'dem codez', 'trinity', 'morpheus', '"top coder"', "[-code]" ],
@@ -75,6 +80,65 @@ campaign_data = {
 $campaign = Adapi::Campaign.create(campaign_data)
 p "Created campaign ID #{$campaign.id}"
 
+# ad_groups changes:
+# * delete first ad_group
+# * change second ad_group
+# * add new ad_group
+
+Adapi::Campaign.update(
+  :id => $campaign[:id],
+  :status => 'ACTIVE',
+  :name => "UPDATED #{$campaign[:name]}",
+  # TODO update bidding_strategy, requires special method call
+  # :bidding_strategy => 'ManualCPC',
+  :budget => 75,
+  },
+
+  :ad_groups => [
+    {
+      :name => "FRESH " + $ad_group_names[0],
+      :status => 'ACTIVE',
+
+      :keywords => [ 'neo update', 'dem codezzz', '"top coder"' ],
+
+      :ads => [
+        {
+          :headline => "Update like Neo",
+          :description1 => 'Need mad coding skills?',
+          :description2 => 'Check out my new blog!',
+          :url => 'http://www.demcodez.com',
+          :display_url => 'http://www.demcodez.com'
+        }
+      ]
+    },
+
+    {
+      :name =>  $ad_group_names[0],
+      :status => 'ACTIVE', # from PAUSED
+
+      :keywords => [ 'dem updatez', 'update trinity', 'update morpheus' ],
+
+      :ads => [
+        {
+          :headline => "Update like Trinity",
+          :description1 => 'The power of updates?',
+          :description2 => 'Check out my new blog!',
+          :url => 'http://www.demcodez.com',
+          :display_url => 'http://www.demcodez.com'
+        },
+
+        {
+          :headline => "Update like Morpheus",
+          :description1 => 'Unleash the power of updates',
+          :description2 => 'Check out my new blog',
+          :url => 'http://www.demcodez.com',
+          :display_url => 'http://www.demcodez.com'
+        }        
+      ]
+    }    
+  ]
+)
+
 # reload campaign
 $campaign = Adapi::Campaign.find_complete($campaign.id)
 
@@ -86,4 +150,3 @@ pp "\nBASIC CAMPAIGN DATA:"
 pp $campaign_attributes
 pp "\nAD GROUPS (#{$ad_groups.size}):"
 pp $ad_groups.map(&:attributes)
-
