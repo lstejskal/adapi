@@ -70,26 +70,23 @@ module Adapi
       true
     end
 
-    # params - specify hash of params and values to update
-    # PS: I think it's possible to edit only status, but not headline,
-    # descriptions... instead you should delete existing ad and create a new one
+    # except for status, we cannot edit ad fields
+    # gotta delete an ad and create a new one instead
+    # this means that this method returns new ad id! 
+    # 
+    # REFACTOR this method shpould be removed (but that might break something,
+    # os let's keep it here for the moment)
     #
     def update(params = {})
-      # set params (:status param makes it a little complicated)
-      #
-      updated_params = (params || self.attributes).symbolize_keys
-      updated_status = updated_params.delete(:status)
-      
-      response = self.mutate(
-        :operator => 'SET', 
-        :operand => {
-          :ad_group_id => self.ad_group_id,
-          :ad => updated_params.merge(:id => self.id),
-          :status => updated_status
-        }
-      )
+      # set attributes for the "updated" ad
+      create_attributes = self.attributes.merge(params).symbolize_keys
+      create_attributes.delete(:id)
 
-      (response and response[:value]) ? true : false
+      # delete current ad
+      return false unless self.destroy
+
+      # create new add
+      TextAd.create(create_attributes)
     end
 
     def find # == refresh
