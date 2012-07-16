@@ -45,7 +45,7 @@ result = $ad_group.update(
   :name => "UPDATED #{$ad_group.name}",
   :status => 'ENABLED',
 
-  :keywords => ['dem codez', '"neo coder"', '[-code]' ],
+  :keywords => ['dem updatez', '"neo coder"', '[-trinity]', '[-morpheus]' ],
 
   :ads => [
     {

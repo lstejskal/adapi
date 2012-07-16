@@ -124,6 +124,24 @@ module Adapi
 
       # step 2. update keywords
       # delete everything and create new keywords
+      if params[:keywords] and not params[:keywords].empty?
+        # delete existing keywords
+        # OPTIMIZE should be all in one request
+        Keyword.find(:all, :ad_group_id => @id).keywords.each do |keyword|
+          Keyword.new(:ad_group_id => $ad_group[:id]).delete(keyword[:text][:criterion][:id])
+        end
+
+        # create new keywords
+        result = Adapi::Keyword.create(
+          :ad_group_id => @id,
+          :keywords => params[:keywords]
+        )
+        
+        if (result.errors.size > 0)
+          self.errors.add("[keyword]", result.errors.to_a)
+          return false 
+        end
+      end
 
       # step 3. update ads
       # ads can't be updated, gotta remove them all and add new ads
@@ -150,8 +168,6 @@ module Adapi
       true
     end
  
-    # TODO add support for :stats attributes
-    #
     def self.find(amount = :all, params = {})
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
