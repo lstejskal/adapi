@@ -113,11 +113,11 @@ module Adapi
       # HOTFIX remove :service_name param inserted by initialize method
       params.delete(:service_name)
       # ...and load parsed params back into the hash
-      core_attributes.each { |k| params[k] = ad_group.send(k) if params[k].present? }
+      core_params = Hash[ core_attributes.map { |k| [k, ad_group.send(k)] if params[k].present? }.compact ]
 
       response = ad_group.mutate(
         :operator => 'SET', 
-        :operand => params
+        :operand => core_params.merge( :id => @id, :campaign_id => @campaign_id )
       )
 
       return false unless (response and response[:value])
@@ -126,12 +126,26 @@ module Adapi
       # delete everything and create new keywords
 
       # step 3. update ads
-      # similar loop as in campaign ad_groups
-      # - get ads
-      # - find ad by id or name
-      #   - if found, update and remove from ads
-      #   - if not found, create
-      # - delete original ads that are left 
+      # ads can't be updated, gotta remove them all and add new ads
+      if params[:ads] and not params[:ads].empty?
+        # remove all existing ads
+        self.find_ads.each do |ad| 
+          unless ad.destroy
+            self.errors.add("[ad] \"#{ad.headline}\"", ["cannot be deleted"])
+            return false 
+          end
+        end
+
+        # create new ads
+        params[:ads].each do |ad|
+          ad = Adapi::Ad::TextAd.create( ad.merge(:ad_group_id => @id) )
+
+          if (ad.errors.size > 0)
+            self.errors.add("[ad] \"#{ad.headline}\"", ad.errors.to_a)
+            return false 
+          end
+        end
+      end
 
       true
     end
