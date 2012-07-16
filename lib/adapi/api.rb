@@ -82,6 +82,9 @@ module Adapi
     end
 
     def self.create(params = {})
+      # FIXME deep symbolize_keys, probably through ActiveSupport
+      params.symbolize_keys!
+
       api_instance = self.new(params)
       api_instance.create
       api_instance
@@ -92,6 +95,8 @@ module Adapi
     # class
     #
     def self.update(params = {})
+      params.symbolize_keys!
+
       # PS: updating campaign without finding it is much faster
       api_instance = self.new()
       api_instance.id = params.delete(:id)
