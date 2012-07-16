@@ -80,7 +80,7 @@ campaign_data = {
 $campaign = Adapi::Campaign.create(campaign_data)
 p "Created campaign ID #{$campaign.id}"
 
-# ad_groups changes:
+# PS: changes in ad_groups:
 # * delete first ad_group
 # * change second ad_group
 # * add new ad_group
@@ -92,14 +92,17 @@ Adapi::Campaign.update(
   # TODO update bidding_strategy, requires special method call
   # :bidding_strategy => 'ManualCPC',
   :budget => 75,
-  },
 
   :ad_groups => [
+    # no match here for $ad_group_names[0], so it's going to be deleted
+
+    # this ad_group will be created
     {
       :name => "FRESH " + $ad_group_names[0],
-      :status => 'ACTIVE',
+      :status => 'ENABLED',
 
-      :keywords => [ 'neo update', 'dem codezzz', '"top coder"' ],
+      # FIXME
+      # :keywords => [ 'neo update', 'dem codezzz', '"top coder"' ],
 
       :ads => [
         {
@@ -112,11 +115,13 @@ Adapi::Campaign.update(
       ]
     },
 
+    # this ad_group is going to be updated
     {
-      :name =>  $ad_group_names[0],
-      :status => 'ACTIVE', # from PAUSED
+      :name =>  $ad_group_names[1],
+      :status => 'ENABLED', # from PAUSED
 
-      :keywords => [ 'dem updatez', 'update trinity', 'update morpheus' ],
+      # FIXME
+      # :keywords => [ 'dem updatez', 'update trinity', 'update morpheus' ],
 
       :ads => [
         {
@@ -146,7 +151,8 @@ $campaign_attributes = $campaign.attributes
 $criteria = $campaign_attributes.delete(:criteria)
 $ad_groups = $campaign_attributes.delete(:ad_groups)
 
-pp "\nBASIC CAMPAIGN DATA:"
+puts "\nBASIC CAMPAIGN DATA:"
 pp $campaign_attributes
-pp "\nAD GROUPS (#{$ad_groups.size}):"
+
+puts "\nAD GROUPS (#{$ad_groups.size}):"
 pp $ad_groups.map(&:attributes)

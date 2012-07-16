@@ -168,6 +168,11 @@ module Adapi
       true
     end
  
+    # PS: perhaps also change the ad_group name when deleting
+    def delete
+      update(:status => 'DELETED')  
+    end
+
     def self.find(amount = :all, params = {})
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
