@@ -58,6 +58,8 @@ module Adapi
     # filtered for API calls by default: without :id and :status parameters
     # PS: attributes method always returns all specified attributes
     #
+    # REFACTOR maybe obsolete. Used in TextAd model, but not anymore
+    #
     def data(filtered = true)
       data_hash = self.serializable_hash.symbolize_keys
       

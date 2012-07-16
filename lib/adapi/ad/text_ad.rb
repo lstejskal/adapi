@@ -7,19 +7,23 @@ module Adapi
   #
   class Ad::TextAd < Ad
 
-    attr_accessor :headline, :description1, :description2
+    ATTRIBUTES = [ :headline, :description1, :description2 ]
+
+    attr_accessor *ATTRIBUTES
 
     def attributes
-      super.merge('headline' => headline, 'description1' => description1, 'description2' => description2)
+      super.merge Hash[ ATTRIBUTES.map { |k| [k, self.send(k)] } ]
     end
+
+    alias to_hash attributes
 
     def initialize(params = {})
       params[:service_name] = :AdGroupAdService
 
       @xsi_type = 'TextAd'
 
-      %w{ headline description1 description2 }.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
+      ATTRIBUTES.each do |param_name|
+        self.send("#{param_name}=", params[param_name])
       end
 
       super(params)
@@ -30,12 +34,17 @@ module Adapi
     end
  
     def create
+      operand = self.attributes.delete_if do |k|
+        # skip these attributes
+        [ :campaign_id, :ad_group_id, :id, :status ].include?(k.to_sym)
+      end.symbolize_keys
+
       operation = {
         :operator => 'ADD',
         :operand => {
           :ad_group_id => @ad_group_id,
           :status => @status,
-          :ad => self.data
+          :ad => operand
         }
       }
 
@@ -101,13 +110,12 @@ module Adapi
       # supported condition parameters: ad_group_id and id
       predicates = [ :ad_group_id, :id ].map do |param_name|
         if params[param_name]
-          value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
-          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
+          { :field => param_name.to_s.camelcase, :operator => 'IN', :values => Array( params[param_name] ) }
         end
       end.compact
 
       selector = {
-        :fields => ['Id', 'Headline'],
+        :fields => ['Id', 'AdGroupId', 'Headline' ],
         :ordering => [{:field => 'Id', :sort_order => 'ASCENDING'}],
         :predicates => predicates
       }
@@ -121,21 +129,7 @@ module Adapi
       end
 
       # TODO convert to TextAd instances
-      # PS: we already have ad_group_id parameter
       first_only ? response.first : response
-    end
-
-    # Converts text ad data to hash - of the same structure which is used when
-    # creating a complete campaign.
-    #
-    def to_hash
-      {
-        :headline => self[:headline],
-        :description1 => self[:description1],
-        :description2 => self[:description2],
-        :url => self[:url],
-        :display_url => self[:display_url]
-      }
     end
 
   end

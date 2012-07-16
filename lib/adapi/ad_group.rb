@@ -7,7 +7,7 @@
 module Adapi
   class AdGroup < Api
   
-    ATTRIBUTES = [ :campaign_id, :name, :status, :bids, :keywords, :ads ]
+    ATTRIBUTES = [ :id, :campaign_id, :name, :status, :bids, :keywords, :ads ]
 
     attr_accessor *ATTRIBUTES 
 

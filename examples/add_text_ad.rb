@@ -1,10 +1,9 @@
 
 require 'adapi'
 
-# create ad group
 require_relative 'add_bare_ad_group'
 
-ad = Adapi::Ad::TextAd.create(
+$ad = Adapi::Ad::TextAd.create(
   :ad_group_id => $ad_group[:id],
   :headline => "Code like Neo",
   :description1 => 'Need mad coding skills?',
@@ -14,10 +13,7 @@ ad = Adapi::Ad::TextAd.create(
   :status => 'PAUSED'
 )
 
-if ad
-  p "OK"
-  p ad.data
-else
-  p "ERROR"
-  p ad.errors.messages
-end
+$reloaded_ad = Adapi::Ad::TextAd.find(:first, :ad_group_id => $ad_group.id, :id => $ad.id )
+
+puts "\nCREATED (AND RELOADED) AD:"
+pp $reloaded_ad.attributes

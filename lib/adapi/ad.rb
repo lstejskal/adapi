@@ -6,7 +6,9 @@ module Adapi
   # wraps all types of ads: text ads, image ads...
   class Ad < Api
 
-    attr_accessor :ad_group_id, :url, :display_url, :approval_status,
+    # REFACTOR attributes
+
+    attr_accessor :id, :ad_group_id, :url, :display_url, :approval_status,
       :disapproval_reasons, :trademark_disapproved
 
     validates_presence_of :ad_group_id
@@ -14,7 +16,8 @@ module Adapi
     # PS: create won't work with id and ad_group_id
     # 'id' => id, 'ad_group_id' => ad_group_id, 
     def attributes
-      super.merge('url' => url, 'display_url' => display_url)
+      super.merge( 'id' => id, 'ad_group_id' => ad_group_id, 
+        'url' => url, 'display_url' => display_url )
     end
 
     def initialize(params = {})
