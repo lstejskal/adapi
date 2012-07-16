@@ -13,7 +13,7 @@ $ad = Adapi::Ad::TextAd.create(
   :status => 'PAUSED'
 )
 
-$reloaded_ad = Adapi::Ad::TextAd.find(:first, :ad_group_id => $ad_group.id, :id => $ad.id )
+$ad = Adapi::Ad::TextAd.find(:first, :ad_group_id => $ad_group.id, :id => $ad.id )
 
 puts "\nCREATED (AND RELOADED) AD:"
-pp $reloaded_ad.attributes
+pp $ad.attributes

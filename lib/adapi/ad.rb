@@ -36,14 +36,13 @@ module Adapi
       response = self.mutate(
         :operator => 'REMOVE',
         :operand => {
-          :ad_group_id => self.ad_group_id,
-          :ad => { :id => self.id, :xsi_type => 'Ad' }
+          :ad_group_id => @ad_group_id,
+          :ad => { :id => @id, :xsi_type => 'Ad' }
         }
       )
 
       (response and response[:value]) ? true : false
     end
-
 
     # ad-specific mutate wrapper, deals with PolicyViolations for ads
     #
