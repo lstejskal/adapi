@@ -1,10 +1,7 @@
 require 'adapi'
 
-# create campaign
-require_relative 'add_bare_campaign'
-
-p "ORIGINAL CAMPAIGN:"
-pp $campaign.attributes
+# create campaign with criteria
+require_relative 'add_campaign'
 
 $campaign = Adapi::Campaign.update(
   :id => $campaign.id,
@@ -20,10 +17,27 @@ $campaign = Adapi::Campaign.update(
     # FIXME returns error which is not trapped:
     # TargetError.CANNOT_TARGET_PARTNER_SEARCH_NETWORK 
     # :target_partner_search_network => true
+  },
+
+  # deletes all criteria (except :platform) and create these new ones
+  :criteria => {
+    :language => [ :sk ],
   }
 )
 
+unless $campaign.errors.empty?
+  puts "ERROR WHEN UPDATING CAMPAIGN #{$campaign.id}:"
+  pp $campaign.errors.full_messages
+end
+
+puts "\nUPDATED CAMPAIGN #{$campaign.id}\n"
+
 $campaign = Adapi::Campaign.find($campaign.id)
 
-p "UPDATED CAMPAIGN:"
+puts "\nCAMPAIGN DATA:"
 pp $campaign.attributes
+
+$campaign_criteria = Adapi::CampaignCriterion.find( :campaign_id => $campaign.id )
+
+puts "\nCRITERIA:"
+pp $campaign_criteria

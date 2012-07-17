@@ -20,7 +20,7 @@ campaign_data = {
   },
 
   # PS: :targets key is obsolete, this should be named :criteria, but it still works
-  :targets => {
+  :criteria => {
     :language => [ :en, :cs ],
     # TODO test together with city target
     :geo => { :proximity => { :geo_point => '38.89859,-77.035971', :radius => '10 km' } }
@@ -49,5 +49,12 @@ campaign_data = {
  
 $campaign = Adapi::Campaign.create(campaign_data)
 
-p "Created campaign ID #{$campaign.id}"
-p $campaign.attributes
+$campaign = Adapi::Campaign.find($campaign.id)
+
+p "\nCAMPAIGN #{$campaign.id} DATA:"
+pp $campaign.attributes
+
+$campaign_criterion = Adapi::CampaignCriterion.find( :campaign_id => $campaign.id )
+
+p "\nCAMPAIGN CRITERIA:"
+pp $campaign_criterion

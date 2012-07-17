@@ -92,12 +92,17 @@ Adapi::Campaign.update(
   },
   :budget => 75,
 
+  # deletes all criteria (except :platform) and create these new ones
+  :criteria => {
+    :language => [ :sk ],
+  },
+
   :ad_groups => [
     # no match here for $ad_group_names[0], so it's going to be deleted
 
     # this ad_group will be created
     {
-      :name => "FRESH " + $ad_group_names[0],
+      :name => "UPDATED " + $ad_group_names[0],
       :status => 'ENABLED',
 
       # FIXME
@@ -150,8 +155,13 @@ $campaign_attributes = $campaign.attributes
 $criteria = $campaign_attributes.delete(:criteria)
 $ad_groups = $campaign_attributes.delete(:ad_groups)
 
-puts "\nBASIC CAMPAIGN DATA:"
+puts "\nCAMPAIGN UPDATED\n"
+
+puts "\nCAMPAIGN DATA:"
 pp $campaign_attributes
+
+puts "\nCAMPAIGN CRITERIA:"
+pp $criteria
 
 puts "\nAD GROUPS (#{$ad_groups.size}):"
 pp $ad_groups.map(&:attributes)

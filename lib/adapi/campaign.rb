@@ -153,8 +153,6 @@ module Adapi
     # TODO add transactions
     # 
     def update(params = {})
-      # REFACTOR this params formatting through self.to_google_format method?
-
       # parse the given params by initialize method...
       campaign = Adapi::Campaign.new(params)
       # HOTFIX remove :service_name param inserted byu initialize method
@@ -163,12 +161,15 @@ module Adapi
       params.keys.each { |k| params[k] = campaign.send(k) }
       params[:id] = @id
 
-      ad_groups = params.delete(:ad_groups) || []
+      @criteria = params.delete(:criteria)
+      params.delete(:targers)
+
+      @ad_groups = params.delete(:ad_groups) || []
 
       # we gotta update this separately, using BiddingStrategy operand 
       # REFACTOR this is a temporary hotfix
       # https://developers.google.com/adwords/api/docs/reference/v201109_1/CampaignService.BiddingTransition
-      bidding_strategy = params.delete(:bidding_strategy)
+      @bidding_strategy = params.delete(:bidding_strategy)
 
       operation = { operator: 'SET', operand: params }
 
@@ -176,9 +177,9 @@ module Adapi
       # https://groups.google.com/forum/?fromgroups#!topic/adwords-api/tmRk1m7PbhU
       # Basically, "ManualCPC can transition to anything, and everything else can 
       # only transition to ManualCPC" 
-      if bidding_strategy
+      if @bidding_strategy
         operation[:bidding_transition] = {
-          :target_bidding_strategy => bidding_strategy 
+          target_bidding_strategy: @bidding_strategy
         }
       end
  
@@ -186,11 +187,25 @@ module Adapi
 
       return false unless (response and response[:value])
 
-      # "refresh" original campaign
-      self.bidding_strategy = bidding_strategy
+      # "refresh" campaign basic attributes
       params.each_pair { |k,v| self.send("#{k}=", v) }
 
-      result = self.update_ad_groups!(ad_groups)
+      # update campaign criteria
+      if @criteria.size > 0
+        new_criteria = Adapi::CampaignCriterion.new(
+          :campaign_id => @id,
+          :criteria => @criteria
+        )
+
+        new_criteria.update!
+        
+        if (new_criteria.errors.size > 0)
+          self.errors.add("[campaign criterion]", new_criteria.errors.to_a)
+          return false 
+        end
+      end
+
+      result = self.update_ad_groups!(@ad_groups)
 
       result
     end
@@ -225,7 +240,9 @@ module Adapi
         if ad_group.present?
           ad_group.update(ad_group_data)
 
-          original_ad_groups.remove_if { |ag| ag[k] == v }
+          # TODO check for errors
+
+          original_ad_groups.delete_if { |ag| ag[k] == v }
 
         # if ad_group is not found, create it
         # TODO report error if searching by :id, because such ad_group should exists?
