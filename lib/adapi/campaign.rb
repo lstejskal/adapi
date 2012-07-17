@@ -230,7 +230,7 @@ module Adapi
       original_ad_groups = AdGroup.find(:all, :campaign_id => @id)
 
       ad_groups.each do |ad_group_data|
-        ad_group_data.merge(:campaign_id => @id)
+        ad_group_data[:campaign_id] = @id
 
         # try to find campaign ad_group by id or name 
         k, v = ad_group_data.has_key?(:id) ? [:id, ad_group_data[:id]] : [:name, ad_group_data[:name]] 
