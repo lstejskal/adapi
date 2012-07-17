@@ -165,14 +165,29 @@ module Adapi
 
       ad_groups = params.delete(:ad_groups) || []
 
-      response = campaign.mutate(
-        :operator => 'SET', 
-        :operand => params
-      )
+      # we gotta update this separately, using BiddingStrategy operand 
+      # REFACTOR this is a temporary hotfix
+      # https://developers.google.com/adwords/api/docs/reference/v201109_1/CampaignService.BiddingTransition
+      bidding_strategy = params.delete(:bidding_strategy)
+
+      operation = { operator: 'SET', operand: params }
+
+      # see this post about bidding_transition limitations:
+      # https://groups.google.com/forum/?fromgroups#!topic/adwords-api/tmRk1m7PbhU
+      # Basically, "ManualCPC can transition to anything, and everything else can 
+      # only transition to ManualCPC" 
+      if bidding_strategy
+        operation[:bidding_transition] = {
+          :target_bidding_strategy => bidding_strategy 
+        }
+      end
+ 
+      response = campaign.mutate(operation)
 
       return false unless (response and response[:value])
 
       # "refresh" original campaign
+      self.bidding_strategy = bidding_strategy
       params.each_pair { |k,v| self.send("#{k}=", v) }
 
       result = self.update_ad_groups!(ad_groups)

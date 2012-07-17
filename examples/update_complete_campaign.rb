@@ -14,10 +14,7 @@ campaign_data = {
   # basic data for campaign
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  :bidding_strategy => { 
-    :xsi_type => 'BudgetOptimizer', 
-    :bid_ceiling => 20 
-  },
+  :bidding_strategy => 'ManualCPC',
   :budget => 50,
   :network_setting => {
     :target_google_search => true,
@@ -89,8 +86,10 @@ Adapi::Campaign.update(
   :id => $campaign[:id],
   :status => 'ACTIVE',
   :name => "UPDATED #{$campaign[:name]}",
-  # TODO update bidding_strategy, requires special method call
-  # :bidding_strategy => 'ManualCPC',
+  :bidding_strategy => { 
+    :xsi_type => 'BudgetOptimizer', 
+    :bid_ceiling => 20 
+  },
   :budget => 75,
 
   :ad_groups => [

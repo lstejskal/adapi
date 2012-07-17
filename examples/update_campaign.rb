@@ -6,13 +6,11 @@ require_relative 'add_bare_campaign'
 p "ORIGINAL CAMPAIGN:"
 pp $campaign.attributes
 
-# $updated_campaign = Adapi::Campaign.update(
-$campaign.update(
-#   :id => $campaign[:id],
+$campaign = Adapi::Campaign.update(
+  :id => $campaign.id,
   :status => 'ACTIVE',
   :name => "UPDATED_#{$campaign[:name]}",
-  # TODO update bidding_strategy, requires special method call
-  # :bidding_strategy => 'ManualCPC',
+  :bidding_strategy => 'ManualCPC',
   :budget => 75,
   :network_setting => {
     :target_google_search => false,
@@ -24,6 +22,8 @@ $campaign.update(
     # :target_partner_search_network => true
   }
 )
+
+$campaign = Adapi::Campaign.find($campaign.id)
 
 p "UPDATED CAMPAIGN:"
 pp $campaign.attributes
