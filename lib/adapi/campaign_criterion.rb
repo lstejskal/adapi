@@ -39,7 +39,11 @@ module Adapi
       super(params)
     end
 
-    def create
+    # REFACTOR move criteria parsing to separate method (and remove the operator HOTFIX)
+    #
+    def create(operator = 'ADD')
+      raise 'Invalid operator' unless %{ ADD SET REMOVE }.include?(operator)
+
       # step 1 - convert input hash to new array of criteria
       # example: :language => [ :en, :cs ] -> [ [:language, :en], [:language, :cs] ]
       criteria_array = []
@@ -124,7 +128,7 @@ module Adapi
       # step 2 - convert individual criteria to low-level google params
       operations = criteria_array.map do |criterion_type, criterion_settings|
         {
-          :operator => 'ADD',
+          :operator => operator,
           :operand => {
             :campaign_id => @campaign_id,
             :criterion => CampaignCriterion::create_criterion(criterion_type, criterion_settings)
@@ -135,6 +139,14 @@ module Adapi
       response = self.mutate(operations)
 
       (response and response[:value]) ? true : false
+    end
+
+    def update
+      self.create('SET')
+    end
+
+    def destroy
+      self.create('REMOVE')
     end
   
     def self.find(params = {})
@@ -154,10 +166,8 @@ module Adapi
         end
       end.compact
 
-      # TODO: get more fields - tricky, because value files differ for most types
-      #
+      # TODO list all applicable fields in select fields
       selector = {
-        # HOTFIX added LocationName - and values for other criterion types mysteriously appeared as well!
         :fields => ['Id', 'CriteriaType', 'KeywordText', 'LocationName'],
         :ordering => [{:field => 'Id', :sort_order => 'ASCENDING'}],
         :predicates => predicates

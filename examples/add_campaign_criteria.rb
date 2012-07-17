@@ -23,5 +23,5 @@ $campaign_criterion = Adapi::CampaignCriterion.new(
 
 $campaign_criterion.create
 
-p $campaign_criterion.attributes
+pp $campaign_criterion.attributes
 
