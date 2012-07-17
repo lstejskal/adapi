@@ -39,11 +39,7 @@ module Adapi
       super(params)
     end
 
-    # REFACTOR move criteria parsing to separate method (and remove the operator HOTFIX)
-    #
     def create(operator = 'ADD')
-      raise 'Invalid operator' unless %{ ADD SET REMOVE }.include?(operator)
-
       # step 1 - convert input hash to new array of criteria
       # example: :language => [ :en, :cs ] -> [ [:language, :en], [:language, :cs] ]
       criteria_array = []
@@ -141,14 +137,47 @@ module Adapi
       (response and response[:value]) ? true : false
     end
 
-    def update
-      self.create('SET')
+    # custom update method, which delete all current criteria and adds new ones
+    #
+    def update!
+      result = self.delete_all!
+
+      # TODO return error if result == false
+
+      self.create
     end
 
+    # REFACTOR
     def destroy
       self.create('REMOVE')
     end
   
+    # Deletes all current campaign criteria
+    #
+    def delete_all!
+      # find all current criteria and extract operand params from them 
+      original_criteria = CampaignCriterion.find(:campaign_id => @campaign_id).map do |criterion|
+        criterion.select { |k,v| [ :xsi_type, :id ].include?(k) }
+      end
+
+      # HOTFIX temporarily remove platforms, adwords api throws error on no platforms
+      original_criteria.delete_if { |c| c[:xsi_type] == "Platform" }
+
+      operations = original_criteria.map do |criterion|
+        {
+          :operator => 'REMOVE',
+          :operand => {
+            :campaign_id => @campaign_id,
+            :criterion => criterion
+          }
+        }
+      end
+      
+      response = self.mutate(operations)
+
+      (response and response[:value]) ? true : false
+    end
+
     def self.find(params = {})
       params.symbolize_keys!
       

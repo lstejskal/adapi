@@ -6,14 +6,14 @@ require 'adapi'
 require_relative 'add_bare_campaign'
 
 $campaign_criterion = Adapi::CampaignCriterion.new(
-  :campaign_id => $campaign[:id],
+  :campaign_id => $campaign.id,
   :targets => { #  obsolete, use :criteria instead
     :language => %w{ en cs },
 
     :location => { 
-      :id => 21137
+      # :id => 21137
       # :name => { :city => 'Prague', :region => 'CZ-PR', :country => 'CZ' }
-      # :proximity => { :geo_point => '50.083333,14.366667', :radius => '50 km' }
+      :proximity => { :geo_point => '50.083333,14.366667', :radius => '50 km' }
     },
 
     # add custom platform criteria
@@ -23,5 +23,5 @@ $campaign_criterion = Adapi::CampaignCriterion.new(
 
 $campaign_criterion.create
 
-pp $campaign_criterion.attributes
-
+$campaign_criterion = Adapi::CampaignCriterion.find( :campaign_id => $campaign.id)
+pp $campaign_criterion
