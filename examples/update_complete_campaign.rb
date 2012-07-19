@@ -105,8 +105,7 @@ Adapi::Campaign.update(
       :name => "UPDATED " + $ad_group_names[0],
       :status => 'ENABLED',
 
-      # FIXME
-      # :keywords => [ 'neo update', 'dem codezzz', '"top coder"' ],
+      :keywords => [ 'neo update', 'dem codezzz', '"top coder"' ],
 
       :ads => [
         {
@@ -124,8 +123,7 @@ Adapi::Campaign.update(
       :name =>  $ad_group_names[1],
       :status => 'ENABLED', # from PAUSED
 
-      # FIXME
-      # :keywords => [ 'dem updatez', 'update trinity', 'update morpheus' ],
+      :keywords => [ 'dem updatez', 'update trinity', 'update morpheus' ],
 
       :ads => [
         {

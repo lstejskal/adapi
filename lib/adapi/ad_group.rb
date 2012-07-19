@@ -128,7 +128,7 @@ module Adapi
         # delete existing keywords
         # OPTIMIZE should be all in one request
         Keyword.find(:all, :ad_group_id => @id).keywords.each do |keyword|
-          Keyword.new(:ad_group_id => $ad_group[:id]).delete(keyword[:text][:criterion][:id])
+          Keyword.new(:ad_group_id => @id).delete(keyword[:text][:criterion][:id])
         end
 
         # create new keywords
