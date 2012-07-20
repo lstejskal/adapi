@@ -31,8 +31,8 @@ module Adapi
 
       context " / data method" do
         should "return params in hash" do
-          assert @ad_group.data.is_a?(Hash)
-          assert_equal @ad_group.name, @ad_group.data[:name]
+          assert @ad_group.attributes.is_a?(Hash)
+          assert_equal @ad_group.name, @ad_group.attributes[:name]
         end
       end
 

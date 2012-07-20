@@ -44,7 +44,7 @@ module Adapi
         @location = Adapi::Location.find( :country => "CZ", :province => "CZ-JM" )
         assert_not_nil @location
         assert_equal 20219, @location[:id]
-        assert_equal "South Moravia", @location[:location_name]
+        assert_equal "South Moravian Region", @location[:location_name]
         assert_equal "Region", @location[:display_type]
      end
 
