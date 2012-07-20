@@ -224,7 +224,7 @@ module Adapi
       # check if every ad_group has either :id or :name parameter
       ad_groups.each do |ag|
         if ag[:id].blank? && ag[:name].blank?
-          self.errors.add("[ad group] update", ["required parameter (:id or :name) is missing"])
+          self.errors.add("AdGroup", "required parameter (:id or :name) is missing")
           return false
         end
       end
@@ -243,24 +243,31 @@ module Adapi
         if ad_group.present?
           ad_group.update(ad_group_data)
 
-          # TODO check for errors
-
           original_ad_groups.delete_if { |ag| ag[k] == v }
 
-        # if ad_group is not found, create it
+        # create non-existent ad_group
         # TODO report error if searching by :id, because such ad_group should exists?
         else
           ad_group_data.delete(:id)
-          AdGroup.create(ad_group_data)
+          ad_group = AdGroup.create(ad_group_data)
+        end
+
+        unless ad_group.errors.empty?
+          self.store_errors(ad_group, "AdGroup #{ad_group[:id] || ad_group[:name]}") and return false
         end
       end
 
-      # delete original ad_groups (these that haven't been updated)
-      original_ad_groups.each { |ag| ag.delete }
+      # delete ad_groups which haven't been updated
+      original_ad_groups.each do |ag| 
+        unless ag.delete
+          self.errors.add("AdGroup #{ag[:id]}", "could not be deleted")
+          self.store_errors(ad_group, "AdGroup #{ag[:id]}")
+          return false
+        end
+      end
 
       true
     end
-
 
     # Shortcut for pattern used in Campaign#update method 
     # When partial update fails, store errors in main campaign instance 
@@ -271,10 +278,10 @@ module Adapi
       error_prefix ||= failed_instance.respond_to?(:xsi_type) ? failed_instance.xsi_type : nil
 
       failed_instance.errors.messages.each_pair do |k, v|
-          k = "#{error_prefix}::#{k}" if error_prefix and not k == :base
+          k = "#{error_prefix}::#{k}" if error_prefix and (k != :base)
 
           Array(v).each do |x| 
-            self.errors.add((error_prefix || :base), x)
+            self.errors.add(k, x)
           end
       end
     end
