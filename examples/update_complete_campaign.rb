@@ -146,20 +146,32 @@ Adapi::Campaign.update(
   ]
 )
 
-# reload campaign
-$campaign = Adapi::Campaign.find_complete($campaign.id)
+unless $campaign.errors.empty?
 
-$campaign_attributes = $campaign.attributes
-$criteria = $campaign_attributes.delete(:criteria)
-$ad_groups = $campaign_attributes.delete(:ad_groups)
+  puts "ERROR WHEN UPDATING AD GROUPS:"
+  puts $campaign.errors.full_messages.join("\n")
 
-puts "\nCAMPAIGN UPDATED\n"
+else
 
-puts "\nCAMPAIGN DATA:"
-pp $campaign_attributes
+  # reload campaign
+  $campaign = Adapi::Campaign.find_complete($campaign.id)
 
-puts "\nCAMPAIGN CRITERIA:"
-pp $criteria
+  $campaign_attributes = $campaign.attributes
+  $criteria = $campaign_attributes.delete(:criteria)
+  $ad_groups = $campaign_attributes.delete(:ad_groups)
 
-puts "\nAD GROUPS (#{$ad_groups.size}):"
-pp $ad_groups.map(&:attributes)
+  puts "\nCAMPAIGN UPDATED\n"
+
+  puts "\nCAMPAIGN DATA:"
+  pp $campaign_attributes
+
+  puts "\nCAMPAIGN CRITERIA:"
+  pp $criteria
+
+  puts "\nAD GROUPS (#{$ad_groups.size}):"
+  $ad_groups.each_with_index do |ad_group, i| 
+    puts "\nAD GROUP #{i + 1}:\n"
+    pp ad_group.attributes
+  end
+
+end
