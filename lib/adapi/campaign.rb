@@ -154,6 +154,10 @@ module Adapi
     # 
     def update(params = {})
       # parse the given params by initialize method...
+      # REFACTOR for the moment, we use separate campaign object just to prepare and execute 
+      # campaign update request. This is kinda ugly and should be eventually refactored (if
+      # only because of weird transfer of potential errors later when dealing with response). 
+      #
       campaign = Adapi::Campaign.new(params)
       # HOTFIX remove :service_name param inserted byu initialize method
       params.delete(:service_name)
@@ -185,7 +189,14 @@ module Adapi
  
       response = campaign.mutate(operation)
 
-      return false unless (response and response[:value])
+      unless (response and response[:value])
+        # HOTFIX move errors from update object to relevant object
+        campaign.errors.messages.each_pair do |k,v|
+          Array(v).each { |x| self.errors.add(k,x) }
+        end
+
+        return false 
+      end
 
       # "refresh" campaign basic attributes
       params.each_pair { |k,v| self.send("#{k}=", v) }
