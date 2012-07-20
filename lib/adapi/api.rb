@@ -122,14 +122,18 @@ module Adapi
       
       begin    
         response = @service.mutate(operation)
-    
+
+      # trap exceptions raised by adwords_api
+      rescue AdsCommon::Errors::ApiException => e
+        self.errors.add(:base, e.message)
+
       rescue AdsCommon::Errors::HttpError => e
         self.errors.add(:base, e.message)
 
-      # traps any exceptions raised by AdWords API
+      # this exception type might be already obsolete
       rescue AdwordsApi::Errors::ApiException => e
-        error_key = "[#{self.xsi_type.underscore}]"
-  
+        error_key = self.xsi_type.to_s.underscore rescue :base
+
         self.errors.add(error_key, e.message)
       end
       
