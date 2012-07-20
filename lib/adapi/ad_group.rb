@@ -176,10 +176,12 @@ module Adapi
     def self.find(amount = :all, params = {})
       params.symbolize_keys!
       first_only = (amount.to_sym == :first)
+      # by default, exclude ad_groups with status DELETED
+      params[:status] ||= %w{ ENABLED PAUSED }
 
       raise "Campaign ID is required" unless params[:campaign_id]
       
-      predicates = [ :campaign_id, :id, :name ].map do |param_name|
+      predicates = [ :campaign_id, :id, :name, :status ].map do |param_name|
         if params[param_name].present?
           {:field => param_name.to_s.camelcase, :operator => 'IN', :values => Array( params[param_name] ) }
         end
