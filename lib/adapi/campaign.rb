@@ -195,7 +195,7 @@ module Adapi
       end
 
       # update campaign criteria
-      if @criteria.size > 0
+      if @criteria && @criteria.size > 0
         new_criteria = Adapi::CampaignCriterion.new(
           :campaign_id => @id,
           :criteria => @criteria
