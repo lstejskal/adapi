@@ -166,7 +166,7 @@ module Adapi
       params[:id] = @id
 
       @criteria = params.delete(:criteria)
-      params.delete(:targers)
+      params.delete(:targets)
 
       @ad_groups = params.delete(:ad_groups) || []
 
@@ -190,15 +190,10 @@ module Adapi
       response = campaign.mutate(operation)
 
       unless (response and response[:value])
-        # HOTFIX move errors from update object to relevant object
-        campaign.errors.messages.each_pair do |k,v|
-          Array(v).each { |x| self.errors.add(k,x) }
-        end
-
-        return false 
+        self.store_errors(campaign) and return false
       end
 
-      # "refresh" campaign basic attributes
+      # REFACTOR refreshing basic campaign attributes
       params.each_pair { |k,v| self.send("#{k}=", v) }
 
       # update campaign criteria
@@ -268,6 +263,25 @@ module Adapi
 
       true
     end
+
+
+    # Shortcut for pattern used in Campaign#update method 
+    # When partial update fails, store errors in main campaign instance 
+    #
+    def store_errors(failed_instance, error_prefix = nil)
+      raise "Campaign#store_errors: Invalid object instance" unless failed_instance.respond_to?(:errors)
+
+      error_prefix ||= failed_instance.respond_to?(:xsi_type) ? failed_instance.xsi_type : nil
+
+      failed_instance.errors.messages.each_pair do |k, v|
+          k = "#{error_prefix}::#{k}" if error_prefix and not k == :base
+
+          Array(v).each do |x| 
+            self.errors.add((error_prefix || :base), x)
+          end
+      end
+    end
+
 
     def activate; update(:status => 'ACTIVE'); end
     def pause; update(:status => 'PAUSED'); end

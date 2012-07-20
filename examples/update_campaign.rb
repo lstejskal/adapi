@@ -26,18 +26,22 @@ $campaign = Adapi::Campaign.update(
 )
 
 unless $campaign.errors.empty?
+
   puts "ERROR WHEN UPDATING CAMPAIGN #{$campaign.id}:"
   pp $campaign.errors.full_messages
+
+else
+
+  puts "\nUPDATED CAMPAIGN #{$campaign.id}\n"
+
+  $campaign = Adapi::Campaign.find($campaign.id)
+
+  puts "\nCAMPAIGN DATA:"
+  pp $campaign.attributes
+
+  $campaign_criteria = Adapi::CampaignCriterion.find( :campaign_id => $campaign.id )
+
+  puts "\nCRITERIA:"
+  pp $campaign_criteria
+
 end
-
-puts "\nUPDATED CAMPAIGN #{$campaign.id}\n"
-
-$campaign = Adapi::Campaign.find($campaign.id)
-
-puts "\nCAMPAIGN DATA:"
-pp $campaign.attributes
-
-$campaign_criteria = Adapi::CampaignCriterion.find( :campaign_id => $campaign.id )
-
-puts "\nCRITERIA:"
-pp $campaign_criteria
