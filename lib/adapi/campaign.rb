@@ -146,17 +146,22 @@ module Adapi
       true
     end
 
-    # Sets campaign data en masse, including ad_groups, keywords and ads
+    # Sets campaign data en masse, including criteria and ad_groups with keywords and ads
+    #
+    # Warning: campaign data are not refreshed after update! We'd have to do it by get method
+    # and that would slow us down. If you want to see latest data, you have to fetch them again
+    # manually: Campaign#find or Campaign#find_complete
     #
     # TODO implement primarily as class method, instance will be just a redirect with campaign_id
     # 
-    # TODO add transactions
-    # 
     def update(params = {})
-      # parse the given params by initialize method...
       # REFACTOR for the moment, we use separate campaign object just to prepare and execute 
       # campaign update request. This is kinda ugly and should be eventually refactored (if
       # only because of weird transfer of potential errors later when dealing with response). 
+      #
+      # campaign basic data workflow: 
+      # parse given params by loading them into Campaign.new and reading them back, parsed
+      # REFACTOR should be parsed by separate Campaign class method
       #
       campaign = Adapi::Campaign.new(params)
       # HOTFIX remove :service_name param inserted byu initialize method
@@ -167,34 +172,27 @@ module Adapi
 
       @criteria = params.delete(:criteria)
       params.delete(:targets)
-
       @ad_groups = params.delete(:ad_groups) || []
 
-      # we gotta update this separately, using BiddingStrategy operand 
-      # REFACTOR this is a temporary hotfix
-      # https://developers.google.com/adwords/api/docs/reference/v201109_1/CampaignService.BiddingTransition
       @bidding_strategy = params.delete(:bidding_strategy)
 
       operation = { operator: 'SET', operand: params }
 
-      # see this post about bidding_transition limitations:
+      # BiddingStrategy update has slightly different DSL from other params 
+      # https://developers.google.com/adwords/api/docs/reference/v201109_1/CampaignService.BiddingTransition
+      #
+      # See this post about BiddingTransition limitations:
       # https://groups.google.com/forum/?fromgroups#!topic/adwords-api/tmRk1m7PbhU
-      # Basically, "ManualCPC can transition to anything, and everything else can 
-      # only transition to ManualCPC" 
+      # "ManualCPC can transition to anything and everything else can only transition to ManualCPC" 
       if @bidding_strategy
-        operation[:bidding_transition] = {
-          target_bidding_strategy: @bidding_strategy
-        }
+        operation[:bidding_transition] = { target_bidding_strategy: @bidding_strategy }
       end
  
-      response = campaign.mutate(operation)
+      campaign.mutate(operation)
 
-      unless (response and response[:value])
+      unless campaign.errors.empty?
         self.store_errors(campaign) and return false
       end
-
-      # REFACTOR refreshing basic campaign attributes
-      params.each_pair { |k,v| self.send("#{k}=", v) }
 
       # update campaign criteria
       if @criteria.size > 0
@@ -205,9 +203,8 @@ module Adapi
 
         new_criteria.update!
         
-        if (new_criteria.errors.size > 0)
-          self.errors.add("[campaign criterion]", new_criteria.errors.to_a)
-          return false 
+        unless new_criteria.errors.empty?
+          self.store_errors(new_criteria) and return false
         end
       end
 
