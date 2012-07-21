@@ -10,6 +10,12 @@ module Adapi
 
     LOGGER = Config.setup_logger
 
+    API_EXCEPTIONS = [
+      AdsCommon::Errors::ApiException, 
+      AdsCommon::Errors::HttpError, 
+      AdwordsApi::Errors::ApiException
+    ]
+
     attr_accessor :adwords, :service, :version, :params,
       :id, :status, :xsi_type
 
@@ -103,18 +109,12 @@ module Adapi
       begin    
         response = @service.mutate(operation)
 
-      # trap exceptions raised by adwords_api
-      rescue AdsCommon::Errors::ApiException => e
+      rescue *API_EXCEPTIONS => e
+        # TODO probably obsolete. keep or remove?
+        # error_key = self.xsi_type.to_s.underscore rescue :base
+        # self.errors.add(error_key, e.message)
+
         self.errors.add(:base, e.message)
-
-      rescue AdsCommon::Errors::HttpError => e
-        self.errors.add(:base, e.message)
-
-      # this exception type might be already obsolete
-      rescue AdwordsApi::Errors::ApiException => e
-        error_key = self.xsi_type.to_s.underscore rescue :base
-
-        self.errors.add(error_key, e.message)
       end
       
       response
