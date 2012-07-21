@@ -2,13 +2,16 @@
 
 require 'rubygems'
 require 'adwords_api'
+# TODO use for optional logging of general activity
+# currently we only load communication with adwords-api
+# in form of complete SOAP requests
 # require 'logger'
 require 'yaml'
 require 'pp'
 
 require 'active_model'
-# TODO require only ActiveSupport parts that we actually use
-require 'active_support/all'
+# load only ActiveSupport core extensions
+require 'active_support/core_ext'
 
 require 'adapi/version'
 require 'adapi/config'
