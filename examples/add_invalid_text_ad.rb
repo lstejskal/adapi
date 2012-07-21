@@ -1,7 +1,7 @@
 
 require 'adapi'
 
-# PolicyViolations will appread only in production, not in sandbox
+# PolicyViolations will appear only in production, not in sandbox
 #
 #Adapi::Config.load_settings
 #Adapi::Config.set(:production_settings)

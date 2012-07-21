@@ -52,7 +52,7 @@ module Adapi
       # check for PolicyViolationErrors, set exemptions and try again
       # TODO for now, this is only done once. how about setting a number of retries?
       unless self.errors[:PolicyViolationError].empty?
-        operation[:exemption_requests] = errors[:PolicyViolationError].map do |error_key|
+        operation[:exemption_requests] = self.errors[:PolicyViolationError].map do |error_key|
           { :key => error_key }
         end
 

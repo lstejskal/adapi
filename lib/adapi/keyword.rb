@@ -84,11 +84,70 @@ module Adapi
 
       response = self.mutate(operations)
 
-      return false unless (response and response[:value])
+      # check for PolicyViolationErrors, set exemptions and try again
+      # TODO for now, this is only done once. how about setting a number of retries?
+      unless self.errors[:PolicyViolationError].empty?
+        # FIXME this works, but add exemptions_requests only for related keyword if possible 
+        operations.each_with_index do |operation, i|
+          operations[i][:exemption_requests] = self.errors[:PolicyViolationError].map do |error_key|
+            { :key => error_key }
+          end
+        end
+
+        self.errors.clear
+
+        response = self.mutate(operations)
+      end
+
+      return false unless self.errors.empty?
       
       self.keywords = response[:value].map { |keyword| keyword[:criterion] }
 
       true
+    end
+
+    # keywords mutate wrapper, deals with PolicyViolations for ads
+    #
+    # REFACTOR use just one mutate method in Api class
+    #
+    def mutate(operation)
+      operation = [operation] unless operation.is_a?(Array)
+      
+      # fix to save space during specifyng operations
+      operation = operation.map do |op|
+        op[:operand].delete(:status) if op[:operand][:status].nil?
+        op
+      end
+      
+      begin
+        
+        response = @service.mutate(operation)
+
+      rescue *API_EXCEPTIONS => e
+
+        # return PolicyViolations in specific format so they can be sent again
+        # see adwords-api gem example for details: handle_policy_violation_error.rb
+        e.errors.each do |error|
+          # error[:xsi_type] seems to be broken, so using also alternative key
+          # also could try: :"@xsi:type" (but api_error_type seems to be more robust)
+          if (error[:xsi_type] == 'PolicyViolationError') || (error[:api_error_type] == 'PolicyViolationError')
+            if error[:is_exemptable]
+              self.errors.add(:PolicyViolationError, error[:key])
+            end
+
+            # return also exemptable errors, operation may fail even with them
+            self.errors.add(:base, "violated %s policy: \"%s\" on \"%s\"" % [
+              error[:is_exemptable] ? 'exemptable' : 'non-exemptable', 
+              error[:key][:policy_name], 
+              error[:key][:violating_text]
+            ])
+          else
+            self.errors.add(:base, e.message)
+          end
+        end # of errors.each
+      end
+
+      response
     end
 
     def self.find(amount = :all, params = {})
