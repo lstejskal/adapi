@@ -58,10 +58,13 @@ module Adapi
       begin    
         response = @service.mutate(operation)
     
+      # trap exceptions raised by adwords_api
+      rescue AdsCommon::Errors::ApiException => e
+        self.errors.add(:base, e.message)
+
       rescue AdsCommon::Errors::HttpError => e
         self.errors.add(:base, e.message)
 
-      # traps any exceptions raised by AdWords API
       rescue AdwordsApi::Errors::ApiException => e
         # return PolicyViolations so they can be sent again
         e.errors.each do |error|
