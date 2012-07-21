@@ -55,28 +55,34 @@ module Adapi
         op
       end
       
-      begin    
+      begin
+        
         response = @service.mutate(operation)
-    
-      # trap exceptions raised by adwords_api
-      rescue AdsCommon::Errors::ApiException => e
-        self.errors.add(:base, e.message)
 
-      rescue AdsCommon::Errors::HttpError => e
-        self.errors.add(:base, e.message)
+      rescue *API_EXCEPTIONS => e
 
-      rescue AdwordsApi::Errors::ApiException => e
-        # return PolicyViolations so they can be sent again
+        # return PolicyViolations in specific format so they can be sent again
+        # see adwords-api gem example for details: handle_policy_violation_error.rb
         e.errors.each do |error|
-          if (error[:api_error_type] == 'PolicyViolationError') && error[:is_exemptable]
-            self.errors.add(error[:api_error_type], error[:key])
-          else 
-            # otherwise, just report the errors
-            self.errors.add( "[#{self.xsi_type.underscore}]", "#{error[:error_string]} @ #{error[:field_path]}")
+          # error[:xsi_type] seems to be broken, so using also alternative key
+          # also could try: :"@xsi:type" (but api_error_type seems to be more robust)
+          if (error[:xsi_type] == 'PolicyViolationError') || (error[:api_error_type] == 'PolicyViolationError')
+            if error[:is_exemptable]
+              self.errors.add(:PolicyViolationError, error[:key])
+            end
+
+            # return also exemptable errors, operation may fail even with them
+            self.errors.add(:base, "violated %s policy: \"%s\" on \"%s\"" % [
+              error[:is_exemptable] ? 'exemptable' : 'non-exemptable', 
+              error[:key][:policy_name], 
+              error[:key][:violating_text]
+            ])
+          else
+            self.errors.add(:base, e.message)
           end
-        end
+        end # of errors.each
       end
-      
+
       response
     end
 

@@ -22,7 +22,8 @@ $ad = Adapi::Ad::TextAd.create(
 
 if $ad.errors.empty?
   puts "OK"
-  pp $ad.attributes
+  $fresh_ad = Adapi::Ad::TextAd.find(:first, :id => $ad.id, :ad_group_id => $ad_group[:id])
+  pp $fresh_ad.attributes
 else
   puts "ERROR"
   puts $ad.errors.full_messages.join("\n")

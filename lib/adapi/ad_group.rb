@@ -137,7 +137,7 @@ module Adapi
           :keywords => params[:keywords]
         )
         
-        if (result.errors.size > 0)
+        unless result.errors.empty?
           self.errors.add("Keyword", result.errors.to_a)
           return false 
         end
@@ -158,7 +158,7 @@ module Adapi
         params[:ads].each do |ad|
           ad = Adapi::Ad::TextAd.create( ad.merge(:ad_group_id => @id) )
 
-          if (ad.errors.size > 0)
+          unless ad.errors.empty?
             self.errors.add("Ad \"#{ad.headline}\"", ad.errors.to_a)
             return false 
           end

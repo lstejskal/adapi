@@ -35,7 +35,6 @@ module Adapi
  
     def create
       operand = self.attributes.delete_if do |k|
-        # skip these attributes
         [ :campaign_id, :ad_group_id, :id, :status ].include?(k.to_sym)
       end.symbolize_keys
 
@@ -49,22 +48,22 @@ module Adapi
       }
 
       response = self.mutate(operation)
- 
-      # check for PolicyViolationError(s)
-      # PS: check google-adwords-api/examples/handle_policy_violation_error.rb
-      if (self.errors['PolicyViolationError'].size > 0)
-        # set exemptions and try again
-        operation[:exemption_requests] = errors['PolicyViolationError'].map do |error|
-          { :key => error }
+
+      # check for PolicyViolationErrors, set exemptions and try again
+      # TODO for now, this is only done once. how about setting a number of retries?
+      unless self.errors[:PolicyViolationError].empty?
+        operation[:exemption_requests] = errors[:PolicyViolationError].map do |error_key|
+          { :key => error_key }
         end
 
         self.errors.clear
 
-        response = self.mutate(operation)  
+        response = self.mutate(operation)
       end
 
-      return false unless (response and response[:value])
-  
+      return false unless self.errors.empty?
+          
+      # set ad id
       self.id = response[:value].first[:ad][:id] rescue nil
   
       true
