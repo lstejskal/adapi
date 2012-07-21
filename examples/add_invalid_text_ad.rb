@@ -8,7 +8,6 @@ require 'adapi'
 #
 #pp "Running in #{Adapi::Config.read[:service][:environment]}"
 
-# create ad group
 require_relative 'add_bare_ad_group'
 
 $ad = Adapi::Ad::TextAd.create(
@@ -22,9 +21,9 @@ $ad = Adapi::Ad::TextAd.create(
 )
 
 if $ad.errors.empty?
-  p "OK"
-  p $ad.data
+  puts "OK"
+  pp $ad.attributes
 else
-  p "ERROR"
-  p $ad.errors.messages
+  puts "ERROR"
+  puts $ad.errors.full_messages.join("\n")
 end

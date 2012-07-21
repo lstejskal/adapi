@@ -6,7 +6,6 @@ module Adapi
   class Api
     extend ActiveModel::Naming
     include ActiveModel::Validations
-    include ActiveModel::Serialization # TODO should be obsolete, check and remove
     include ActiveModel::Conversion
 
     LOGGER = Config.setup_logger
@@ -54,26 +53,7 @@ module Adapi
       self.send("#{k}=", v)
     end
 
-    # return parameters in hash
-    # filtered for API calls by default: without :id and :status parameters
-    # PS: attributes method always returns all specified attributes
-    #
-    # REFACTOR maybe obsolete. Used in TextAd model, but not anymore
-    #
-    def data(filtered = true)
-      data_hash = self.serializable_hash.symbolize_keys
-      
-      if filtered
-        data_hash.delete(:id)
-        data_hash.delete(:status)
-      end
-      
-      data_hash
-    end
-
-    # alias to instance method: data
-    # 
-    alias :to_hash :data
+    alias :to_hash :attributes
 
     # detects whether the instance has been saved already
     #

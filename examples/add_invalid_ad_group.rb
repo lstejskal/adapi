@@ -4,10 +4,7 @@
 
 require 'adapi'
 
-# create campaign
 require_relative 'add_bare_campaign'
-
-# create ad group
 
 ad_group_data = {
   :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
@@ -31,8 +28,9 @@ ad_group_data = {
 $ad_group = Adapi::AdGroup.create(ad_group_data)
 
 if $ad_group.errors.empty?
-  p $ad_group.data
+  puts "OK"
+  pp $ad_group.attributes
 else
-  p "ERRORS:"
-  p $ad_group.errors.to_a
+  puts "ERROR:"
+  puts $ad_group.errors.full_messages.join("\n")
 end
