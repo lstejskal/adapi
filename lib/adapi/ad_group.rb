@@ -138,7 +138,7 @@ module Adapi
         )
         
         if (result.errors.size > 0)
-          self.errors.add("[keyword]", result.errors.to_a)
+          self.errors.add("Keyword", result.errors.to_a)
           return false 
         end
       end
@@ -149,7 +149,7 @@ module Adapi
         # remove all existing ads
         self.find_ads.each do |ad| 
           unless ad.destroy
-            self.errors.add("[ad] \"#{ad.headline}\"", ["cannot be deleted"])
+            self.errors.add("Ad \"#{ad.headline}\"", ["cannot be deleted"])
             return false 
           end
         end
@@ -159,7 +159,7 @@ module Adapi
           ad = Adapi::Ad::TextAd.create( ad.merge(:ad_group_id => @id) )
 
           if (ad.errors.size > 0)
-            self.errors.add("[ad] \"#{ad.headline}\"", ad.errors.to_a)
+            self.errors.add("Ad \"#{ad.headline}\"", ad.errors.to_a)
             return false 
           end
         end

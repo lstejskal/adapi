@@ -253,7 +253,7 @@ module Adapi
         end
 
         unless ad_group.errors.empty?
-          self.store_errors(ad_group, "AdGroup #{ad_group[:id] || ad_group[:name]}") and return false
+          self.store_errors(ad_group, "AdGroup \"#{ad_group[:id] || ad_group[:name]}\"") and return false
         end
       end
 
