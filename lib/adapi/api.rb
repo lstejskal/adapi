@@ -112,6 +112,11 @@ module Adapi
 
       rescue *API_EXCEPTIONS => e
 
+        unless e.respond_to?(:errors)
+          self.errors.add(:base, e.message)
+          return false
+        end
+
         # return PolicyViolations in specific format so they can be sent again
         # see adwords-api gem example for details: handle_policy_violation_error.rb
         e.errors.each do |error|
@@ -129,10 +134,12 @@ module Adapi
               error[:key][:violating_text]
             ])
           else
-            self.errors.add(:base, e.message)
+            # FIXME or e.message? but then e.errors would fail
+            self.errors.add(:base, error.message)
           end
         end # of errors.each
-        
+
+        false
       end
       
       response
