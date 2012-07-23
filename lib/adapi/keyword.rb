@@ -106,50 +106,6 @@ module Adapi
       true
     end
 
-    # keywords mutate wrapper, deals with PolicyViolations for ads
-    #
-    # REFACTOR use just one mutate method in Api class
-    #
-    def mutate(operation)
-      operation = [operation] unless operation.is_a?(Array)
-      
-      # fix to save space during specifyng operations
-      operation = operation.map do |op|
-        op[:operand].delete(:status) if op[:operand][:status].nil?
-        op
-      end
-      
-      begin
-        
-        response = @service.mutate(operation)
-
-      rescue *API_EXCEPTIONS => e
-
-        # return PolicyViolations in specific format so they can be sent again
-        # see adwords-api gem example for details: handle_policy_violation_error.rb
-        e.errors.each do |error|
-          # error[:xsi_type] seems to be broken, so using also alternative key
-          # also could try: :"@xsi:type" (but api_error_type seems to be more robust)
-          if (error[:xsi_type] == 'PolicyViolationError') || (error[:api_error_type] == 'PolicyViolationError')
-            if error[:is_exemptable]
-              self.errors.add(:PolicyViolationError, error[:key])
-            end
-
-            # return also exemptable errors, operation may fail even with them
-            self.errors.add(:base, "violated %s policy: \"%s\" on \"%s\"" % [
-              error[:is_exemptable] ? 'exemptable' : 'non-exemptable', 
-              error[:key][:policy_name], 
-              error[:key][:violating_text]
-            ])
-          else
-            self.errors.add(:base, e.message)
-          end
-        end # of errors.each
-      end
-
-      response
-    end
-
     def self.find(amount = :all, params = {})
       params[:format] ||= :google # default, don't do anything with the data from google
       

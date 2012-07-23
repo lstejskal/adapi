@@ -106,15 +106,33 @@ module Adapi
         op
       end
       
-      begin    
+      begin
+
         response = @service.mutate(operation)
 
       rescue *API_EXCEPTIONS => e
-        # TODO probably obsolete. keep or remove?
-        # error_key = self.xsi_type.to_s.underscore rescue :base
-        # self.errors.add(error_key, e.message)
 
-        self.errors.add(:base, e.message)
+        # return PolicyViolations in specific format so they can be sent again
+        # see adwords-api gem example for details: handle_policy_violation_error.rb
+        e.errors.each do |error|
+          # error[:xsi_type] seems to be broken, so using also alternative key
+          # also could try: :"@xsi:type" (but api_error_type seems to be more robust)
+          if (error[:xsi_type] == 'PolicyViolationError') || (error[:api_error_type] == 'PolicyViolationError')
+            if error[:is_exemptable]
+              self.errors.add(:PolicyViolationError, error[:key])
+            end
+
+            # return also exemptable errors, operation may fail even with them
+            self.errors.add(:base, "violated %s policy: \"%s\" on \"%s\"" % [
+              error[:is_exemptable] ? 'exemptable' : 'non-exemptable', 
+              error[:key][:policy_name], 
+              error[:key][:violating_text]
+            ])
+          else
+            self.errors.add(:base, e.message)
+          end
+        end # of errors.each
+        
       end
       
       response
