@@ -423,4 +423,5 @@ Example of logger configuration:
 
 ## Author ##
 
-2011-2012 Lukas Stejskal
+2011-2012 Lukas Stejskal, Ataxo Interactive, a.s.
+
