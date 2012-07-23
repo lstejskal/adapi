@@ -126,7 +126,6 @@ module Adapi
         
         if (criterion.errors.size > 0)
           self.errors.add("[campaign criterion]", criterion.errors.to_a)
-          self.rollback
           return false 
         end
       end
@@ -138,7 +137,6 @@ module Adapi
 
         if (ad_group.errors.size > 0)
           self.errors.add("[ad group] \"#{ad_group.name}\"", ad_group.errors.to_a)
-          self.rollback
           return false 
         end
       end
@@ -288,19 +286,16 @@ module Adapi
 
 
     def activate; update(:status => 'ACTIVE'); end
+    
     def pause; update(:status => 'PAUSED'); end
 
-    # Deletes campaign - which means, sets its status to deleted (because
-    # AdWords campaigns are never really deleted.)
+    # Deletes campaign - which means simply setting its status to deleted
     #
     def delete; update(:status => 'DELETED'); end
 
     def rename(new_name); update(:name => new_name); end
 
-    # when Campaign#create fails, "delete" campaign
-
-    # Deletes campaign if it's not already deleted. For more information about
-    # "deleted" campaigns, see `delete` method
+    # Deletes campaign (if not already deleted). This is usually done 
     #
     def rollback
       if (@status == 'DELETED')
