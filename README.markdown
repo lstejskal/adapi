@@ -1,6 +1,6 @@
-# Adapi # [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/lstejskal/adapi)
+# Adapi [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/lstejskal/adapi)
 
-## Description ##
+## Description
 
 Adapi (ADwords API) is a Ruby library for easy and painless work with Google
 Adwords API. Its users shouldn't bother with SOAP and tangle of XML- and
@@ -21,11 +21,11 @@ come from there, but adapi takes it several steps further:
 Adapi is *still in development* and not nearly done yet! Version 1.0.0 should
 have all planned functionality.
 
-## Installation ##
+## Installation
 
 `gem install adapi`
 
-### from git repository ###
+### from git repository
 
 ```
 git clone git@github.com:lstejskal/adapi.git
@@ -34,17 +34,17 @@ bundle install
 rake install
 ```
 
-## Configuration ##
+## Configuration
 
 This section explains how to connect to specific AdWords account and client.
 There are several options to choose from:
 
-#### Configuration by adwords_api.yml ####
+#### Configuration by adwords_api.yml
 
 If you already have `google-adwords-api` gem configured and use just one account,
 the same configuration will also work for adapi: `~/adwords_api.yml`
 
-#### Single account set directly in code ####
+#### Single account set directly in code
 
 ```ruby
 Adapi::Config.load_settings(:in_hash => {
@@ -66,7 +66,7 @@ Adapi::Config.load_settings(:in_hash => {
 Adapi::Config.set(:sandbox)
 ```
 
-#### Multiple accounts set directly in code ####
+#### Multiple accounts set directly in code
 
 You can set many AdWords accounts to connect to and switch between while running
 the application. You can even update single values of the settings on-the-fly.
@@ -110,7 +110,7 @@ Adapi::Config.set(:coca_cola, :client_customer_id => '777-666-5555')
 # do some stuff here...
 ```
 
-#### Configuration by `adapi.yml` ####
+#### Configuration by `adapi.yml`
 
 Stored in `~/adapi.yml`. Supports multiple accounts, which are identifed by
 aliases. Example:
@@ -149,7 +149,7 @@ Adapi::Config.set(:sandbox)
 `:default` account available, you have to manually set account alias to
 `Adapi::Config`.
 
-### Authentication workflow ###
+### Authentication workflow
 
 * try to load configuration from `~/adapi.yml`
 * if `~/adapi.yml`doesn't exist, try to load configuration from
@@ -157,7 +157,7 @@ Adapi::Config.set(:sandbox)
 * if there are no configuration files available, set configuration directly to
   `Adapi::Config` (overrides previous settings)
 
-## API Version Support ##
+## API Version Support
 
 Adapi does not support several AdWords API versions at the same time, only the
 latest version: *v201109_1* at the moment.
@@ -166,7 +166,7 @@ However, support for the older versions is still available in earlier versions
 of adapi (adapi 0.0.7 for *v201109*). Latest revision for specific AdWords API
 version is marked by a tag.
 
-## Unsupported AdWords services ##
+## Unsupported AdWords services
 
 Following AdWords services are not supported by adapi at the moment. However,
 they will be implemented (this also serves as TODO list):
@@ -188,18 +188,18 @@ they will be implemented (this also serves as TODO list):
   * MutateJobService
   * BulkMutateJobService
 
-## Examples ##
+## Examples
 
 Examples are available in [examples directory](./master/examples/). For now, they
 are mostly just uninspired rewrites of examples from `google-adwords-api` gem,
 but that's going to change when proper UI to AdWords models will be implemented.
 
-### Getting started ###
+### Getting started
 
 Here are some examples to get you started with adapi. (All this is also
 available in [examples directory](./master/examples/).)
 
-#### Create complete campaign ###
+#### Create complete campaign
 
 Creates a campaign with ad_groups and ad_texts from hash - by single method call.
 
@@ -246,7 +246,7 @@ campaign = Adapi::Campaign.create(
 )
 ```
 
-#### Create campaign step by step ###
+#### Create campaign step by step
 
 Creates a campaign with ad_groups and ad_texts step by step.
 
@@ -295,7 +295,7 @@ new_campaign = Adapi::Campaign.find_complete(campaign.id)
 puts new_campaign.to_hash.inspect
 ```
 
-#### Create campaign criteria ###
+#### Create campaign criteria
 
 Campaign criteria (formerly targets) have been rewritten from the scratch for
 *v201109*. The goal is to provide a simple DSL for criteria so user doesn't have
@@ -303,7 +303,7 @@ to deal with somewhat convoluted AdWords API syntax made for machines, not
 humans. So far, this has been done only for *language* and *location* criterion.
 You can use any other criteria, you just have to enter them in AdWords format.
 
-##### Language #####
+##### Language
 
 ```ruby
 Adapi::CampaignCriterion.create(
@@ -317,7 +317,7 @@ Adapi::CampaignCriterion.create(
 `:language` parameter accepts string or symbols for single language target or
 array of strings/symbols for several language targets.
 
-##### Location #####
+##### Location
 
 ```ruby
 Adapi::CampaignCriterion.create(
@@ -384,7 +384,7 @@ Adapi::CampaignCriterion.create(
 )
 ```
 
-##### Criterion in AdWords format #####
+##### Criterion in AdWords format
 
 Convenient shortcuts for other criteria besides *language* and *location* are
 not yet implemented. However, you can use any other criteria, you just have to
@@ -399,7 +399,7 @@ Adapi::CampaignCriterion.create(
 )
 ```
 
-## Logging ##
+## Logging
 
 By default, communication with AdWords API is not logged. In order to log
 messages of certain log level or above, set `library/log_level` in configuration
@@ -421,7 +421,7 @@ Example of logger configuration:
     :log_pretty_format: true
 ```
 
-## Author ##
+## Author
 
 2011-2012 Lukas Stejskal, Ataxo Interactive, a.s.
 
