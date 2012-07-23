@@ -101,6 +101,7 @@ module Adapi
     def create
       return false unless self.valid?      
       
+      # create basic campaign attributes
       operand = Hash[
         [ :name, :status, :start_date, :end_date,
           :budget, :bidding_strategy, :network_setting ].map do |k|
@@ -108,36 +109,35 @@ module Adapi
         end.compact
       ]
 
-      response = self.mutate(
-        :operator => 'ADD', 
-        :operand => operand
+      self.mutate( 
+        operator: 'ADD', 
+        operand: operand
       )
-      
-      return false unless (response and response[:value])
-      
+
+      return false unless campaign.errors.empty?
+
       self.id = response[:value].first[:id] rescue nil
       
-      # create criteria (former targets) if they are available
-      if criteria.size > 0
-        criterion = Adapi::CampaignCriterion.create(
-          :campaign_id => @id,
-          :criteria => criteria
+      if criteria && criteria.size > 0
+        new_criteria = Adapi::CampaignCriterion.create(
+          campaign_id: @id,
+          criteria: criteria
         )
-        
-        if (criterion.errors.size > 0)
-          self.errors.add("[campaign criterion]", criterion.errors.to_a)
-          return false 
+
+        unless new_criteria.errors.empty?
+          self.store_errors(new_criteria)
+          return false
         end
       end
 
       ad_groups.each do |ad_group_data|
         ad_group = Adapi::AdGroup.create(
-          ad_group_data.merge(:campaign_id => @id)
+          ad_group_data.merge( campaign_id: @id )
         )
 
-        if (ad_group.errors.size > 0)
-          self.errors.add("[ad group] \"#{ad_group.name}\"", ad_group.errors.to_a)
-          return false 
+        unless ad_group.errors.empty?
+          self.store_errors(ad_group, "AdGroup \"#{ad_group[:id] || ad_group[:name]}\"")
+          return false
         end
       end
 
@@ -174,7 +174,10 @@ module Adapi
 
       @bidding_strategy = params.delete(:bidding_strategy)
 
-      operation = { operator: 'SET', operand: params }
+      operation = { 
+        operator: 'SET', 
+        operand: params
+      }
 
       # BiddingStrategy update has slightly different DSL from other params 
       # https://developers.google.com/adwords/api/docs/reference/v201109_1/CampaignService.BiddingTransition
@@ -286,7 +289,7 @@ module Adapi
 
 
     def activate; update(:status => 'ACTIVE'); end
-    
+
     def pause; update(:status => 'PAUSED'); end
 
     # Deletes campaign - which means simply setting its status to deleted
