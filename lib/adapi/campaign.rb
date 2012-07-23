@@ -14,6 +14,8 @@ module Adapi
       :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups,
       :ad_serving_optimization_status ]
 
+    class CampaignError < Exception; end
+
     attr_accessor *ATTRIBUTES
 
     def attributes
@@ -96,6 +98,17 @@ module Adapi
       @budget = params.merge( period: 'DAILY', delivery_method: 'STANDARD' ) 
     end
 
+    def check_for_errors(adapi_instance, options = {})
+      options[:store_errors] ||= true
+      options[:raise_errors] ||= true
+
+      unless adapi_instance.errors.empty?
+        store_errors(adapi_instance, options[:prefix]) if options[:store_errors]
+
+        raise CampaignError if options[:raise_errors]
+      end
+    end
+
     # create campaign with ad_groups and ads
     #
     def create
@@ -109,12 +122,12 @@ module Adapi
         end.compact
       ]
 
-      self.mutate( 
+      response = self.mutate( 
         operator: 'ADD', 
         operand: operand
       )
 
-      return false unless campaign.errors.empty?
+      check_for_errors(self, :store_errors => false)
 
       self.id = response[:value].first[:id] rescue nil
       
@@ -124,10 +137,7 @@ module Adapi
           criteria: criteria
         )
 
-        unless new_criteria.errors.empty?
-          self.store_errors(new_criteria)
-          return false
-        end
+        check_for_errors(new_criteria)
       end
 
       ad_groups.each do |ad_group_data|
@@ -135,13 +145,13 @@ module Adapi
           ad_group_data.merge( campaign_id: @id )
         )
 
-        unless ad_group.errors.empty?
-          self.store_errors(ad_group, "AdGroup \"#{ad_group[:id] || ad_group[:name]}\"")
-          return false
-        end
+        check_for_errors(ad_group, :prefix => "AdGroup \"#{ad_group[:id] || ad_group[:name]}\"")
       end
 
       true
+
+    rescue CampaignError => e
+      false
     end
 
     # Sets campaign data en masse, including criteria and ad_groups with keywords and ads
@@ -191,9 +201,7 @@ module Adapi
  
       campaign.mutate(operation)
 
-      unless campaign.errors.empty?
-        self.store_errors(campaign) and return false
-      end
+      check_for_errors(campaign)
 
       # update campaign criteria
       if @criteria && @criteria.size > 0
@@ -203,15 +211,16 @@ module Adapi
         )
 
         new_criteria.update!
-        
-        unless new_criteria.errors.empty?
-          self.store_errors(new_criteria) and return false
-        end
+
+        check_for_errors(new_criteria)        
       end
 
       result = self.update_ad_groups!(@ad_groups)
 
       result
+
+    rescue CampaignError => e
+      false
     end
 
     # helper method that updates ad_groups. called from Campaign#update method
@@ -253,9 +262,7 @@ module Adapi
           ad_group = AdGroup.create(ad_group_data)
         end
 
-        unless ad_group.errors.empty?
-          self.store_errors(ad_group, "AdGroup \"#{ad_group[:id] || ad_group[:name]}\"") and return false
-        end
+        check_for_errors(ad_group, :prefix => "AdGroup \"#{ad_group[:id] || ad_group[:name]}\"")
       end
 
       # delete ad_groups which haven't been updated
@@ -268,6 +275,9 @@ module Adapi
       end
 
       true
+
+    rescue CampaignError => e
+      false
     end
 
     # Shortcut for pattern used in Campaign#update method 
