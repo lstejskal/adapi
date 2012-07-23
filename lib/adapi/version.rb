@@ -1,9 +1,18 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.0.8"
+  VERSION = "0.0.9"
 
   # CHANGELOG:
+  #
+  # 0.0.9
+  # added Campaign#update method - updates campaign, criteria and ad groups by a single method call
+  # fixed PolicyViolation exemptions for keywords and ads
+  # fixed and refactored error handling for most models
+  # refactored AdWords model attributes structure, simplify the code
+  # update find methods for most models to display all attributes
+  # updated gem dependencies (i.e. google-adwords-api to 0.6.2)
+  # refactor SOAP logging - get rid of monkeypatch
   #
   # 0.0.8
   # updated to AdWords API version v201109_1
