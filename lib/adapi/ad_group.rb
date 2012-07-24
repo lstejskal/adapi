@@ -95,7 +95,7 @@ module Adapi
         check_for_errors(ad, :prefix => "Ad \"#{ad.headline}\"")
       end
 
-      true
+      self.errors.empty?
 
     rescue AdGroupError => e
       false
@@ -156,7 +156,7 @@ module Adapi
         end
       end
 
-      true
+      self.errors.empty?
 
     rescue AdGroupError => e
       false

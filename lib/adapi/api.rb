@@ -140,8 +140,7 @@ module Adapi
               error[:key][:violating_text]
             ])
           else
-            # FIXME or e.message? but then e.errors would fail
-            self.errors.add(:base, error.message)
+            self.errors.add(:base, e.message)
           end
         end # of errors.each
 

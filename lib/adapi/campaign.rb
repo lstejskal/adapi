@@ -135,7 +135,7 @@ module Adapi
         check_for_errors(ad_group, :prefix => "AdGroup \"#{ad_group[:id] || ad_group[:name]}\"")
       end
 
-      true
+      self.errors.empty?
 
     rescue CampaignError => e
       false
@@ -202,9 +202,9 @@ module Adapi
         check_for_errors(new_criteria)        
       end
 
-      result = self.update_ad_groups!(@ad_groups)
+      self.update_ad_groups!(@ad_groups)
 
-      result
+      self.errors.empty?
 
     rescue CampaignError => e
       false
@@ -263,7 +263,7 @@ module Adapi
         end
       end
 
-      true
+      self.errors.empty?
 
     rescue CampaignError => e
       false
