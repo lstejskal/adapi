@@ -14,8 +14,6 @@ module Adapi
       :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups,
       :ad_serving_optimization_status ]
 
-    class CampaignError < Exception; end
-
     attr_accessor *ATTRIBUTES
 
     def attributes
@@ -270,41 +268,6 @@ module Adapi
     rescue CampaignError => e
       false
     end
-
-    # Deals with campaign exceptions encountered during complex operations over AdWords API
-    # 
-    # Parameters:
-    # store_errors (default: true) - add errors to self.error collection
-    # raise_errors (default: false) - raises exception CampaignError (after optional saving errors)
-    #
-    def check_for_errors(adapi_instance, options = {})
-      options[:store_errors] ||= true
-      options[:raise_errors] ||= false
-
-      unless adapi_instance.errors.empty?
-        store_errors(adapi_instance, options[:prefix]) if options[:store_errors]
-
-        raise CampaignError if options[:raise_errors]
-      end
-    end
-
-    # Shortcut for pattern used in Campaign#update method 
-    # When partial update fails, store errors in main campaign instance 
-    #
-    def store_errors(failed_instance, error_prefix = nil)
-      raise "Campaign#store_errors: Invalid object instance" unless failed_instance.respond_to?(:errors)
-
-      error_prefix ||= failed_instance.respond_to?(:xsi_type) ? failed_instance.xsi_type : nil
-
-      failed_instance.errors.messages.each_pair do |k, v|
-          k = "#{error_prefix}::#{k}" if error_prefix and (k != :base)
-
-          Array(v).each do |x| 
-            self.errors.add(k, x)
-          end
-      end
-    end
-
 
     def activate; update(:status => 'ACTIVE'); end
 

@@ -16,6 +16,13 @@ module Adapi
       AdwordsApi::Errors::ApiException
     ]
 
+    # these exceptions help to control program flow
+    # during complex operations over campaigns and ad_groups
+    # 
+    class ApiError < Exception; end
+    class CampaignError < Exception; end
+    class AdGroupError < Exception; end
+
     attr_accessor :adwords, :service, :version, :params,
       :id, :status, :xsi_type
 
@@ -92,7 +99,6 @@ module Adapi
       api_instance
     end
 
-
     # wrap AdWords add/update/destroy actions and deals with errors
     # PS: Keyword and Ad models have their own wrappers because of
     # PolicyViolations
@@ -143,6 +149,48 @@ module Adapi
       end
       
       response
+    end
+
+    # Deals with campaign exceptions encountered during complex operations over AdWords API
+    # 
+    # Parameters:
+    # store_errors (default: true) - add errors to self.error collection
+    # raise_errors (default: false) - raises exception CampaignError (after optional saving errors)
+    #
+    def check_for_errors(adapi_instance, options = {})
+      options[:store_errors] ||= true
+      options[:raise_errors] ||= false
+
+      unless adapi_instance.errors.empty?
+        store_errors(adapi_instance, options[:prefix]) if options[:store_errors]
+
+        if options[:raise_errors]
+          exception_type = case adapi_instance.xsi_type
+            when "Campaign" then CampaignError
+            when "AdGroup" then AdGroupError
+            else ApiError
+          end
+
+          raise exception_type
+        end
+      end
+    end
+
+    # Shortcut for pattern used in Campaign#update method 
+    # When partial update fails, store errors in main campaign instance 
+    #
+    def store_errors(failed_instance, error_prefix = nil)
+      raise "#{failed_instance.xsi_type}#store_errors: Invalid object instance" unless failed_instance.respond_to?(:errors)
+
+      error_prefix ||= failed_instance.respond_to?(:xsi_type) ? failed_instance.xsi_type : nil
+
+      failed_instance.errors.messages.each_pair do |k, v|
+          k = "#{error_prefix}::#{k}" if error_prefix and (k != :base)
+
+          Array(v).each do |x| 
+            self.errors.add(k, x)
+          end
+      end
     end
 
     # convert number to micro units (unit * one million)
