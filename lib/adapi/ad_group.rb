@@ -76,7 +76,7 @@ module Adapi
         :operand => operand
       )
 
-      check_for_errors(self, :store_errors => false)
+      check_for_errors(self)
       
       self.id = response[:value].first[:id] rescue nil
       

@@ -157,8 +157,11 @@ module Adapi
     # raise_errors (default: false) - raises exception CampaignError (after optional saving errors)
     #
     def check_for_errors(adapi_instance, options = {})
-      options[:store_errors] ||= true
-      options[:raise_errors] ||= false
+      options.merge( store_errors: true, raise_errors: false )
+
+      # don't store errors in this case, because errors are already there
+      # and loop in store_errors method would cause application to hang
+      options[:store_errors] = false if (adapi_instance == self)
 
       unless adapi_instance.errors.empty?
         store_errors(adapi_instance, options[:prefix]) if options[:store_errors]
