@@ -27,10 +27,14 @@ ad_group_data = {
  
 $ad_group = Adapi::AdGroup.create(ad_group_data)
 
-if $ad_group.errors.empty?
-  puts "OK"
-  pp $ad_group.attributes
+unless $ad_group.errors.empty?
+
+  puts "ERROR WHEN CREATING AD GROUP:"
+  pp $ad_group.errors.full_messages
+
 else
-  puts "ERROR:"
-  puts $ad_group.errors.full_messages.join("\n")
+
+  puts "AD GROUP #{$ad_group[:id]} CREATED"
+  pp $ad_group.attributes
+
 end

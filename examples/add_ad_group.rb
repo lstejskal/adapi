@@ -2,12 +2,9 @@
 
 require 'adapi'
 
-# create campaign
 require_relative 'add_bare_campaign'
 
-# create ad group
-
-ad_group_data = {
+$ad_group_data = {
   :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'ENABLED',
   :campaign_id => $campaign[:id],
@@ -25,7 +22,16 @@ ad_group_data = {
   ]
 }
  
-$ad_group = Adapi::AdGroup.create(ad_group_data)
+$ad_group = Adapi::AdGroup.create($ad_group_data)
 
-p "Created ad_group ID #{$ad_group.id} for campaign ID #{$ad_group.campaign_id}"
-p $ad_group.attributes
+unless $ad_group.errors.empty?
+
+  puts "ERROR WHEN CREATING AD GROUP:"
+  pp $ad_group.errors.full_messages
+
+else
+
+  puts "\nCREATED AD GROUP #{$ad_group[:id]} FOR CAMPAIGN #{$ad_group[:campaign_id]}\n"
+  pp $ad_group.attributes
+
+end

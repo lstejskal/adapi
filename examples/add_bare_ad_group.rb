@@ -2,7 +2,6 @@
 
 require 'adapi'
 
-# create campaign
 require_relative 'add_bare_campaign'
 
 # create ad group with basic data only
@@ -14,7 +13,6 @@ $ad_group_data = {
   :status => 'ENABLED',
   :bids => {
     :xsi_type => 'BudgetOptimizerAdGroupBids',
-    # FIXME this probably can't be set
     :proxy_keyword_max_cpc => 15,
     :proxy_site_max_cpc => 30
   }
@@ -22,5 +20,14 @@ $ad_group_data = {
  
 $ad_group = Adapi::AdGroup.create($ad_group_data)
 
-p "Created ad_group ID #{$ad_group.id} for campaign ID #{$ad_group.campaign_id}"
-p $ad_group.attributes
+unless $ad_group.errors.empty?
+
+  puts "ERROR WHEN CREATING AD GROUP:"
+  pp $ad_group.errors.full_messages
+
+else
+
+  puts "\nCREATED AD GROUP #{$ad_group[:id]} FOR CAMPAIGN #{$ad_group[:campaign_id]}\n"
+  pp $ad_group.attributes
+
+end

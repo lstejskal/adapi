@@ -22,9 +22,7 @@ $campaign_data = {
   }
 }
 
-$campaign = Adapi::Campaign.new($campaign_data)
-
-$campaign.create
+$campaign = Adapi::Campaign.create($campaign_data)
 
 unless $campaign.errors.empty?
 

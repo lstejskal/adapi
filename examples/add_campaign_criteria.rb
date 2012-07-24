@@ -2,12 +2,11 @@
 
 require 'adapi'
 
-# create campaign
 require_relative 'add_bare_campaign'
 
-$campaign_criterion = Adapi::CampaignCriterion.new(
-  :campaign_id => $campaign.id,
-  :targets => { #  obsolete, use :criteria instead
+$campaign_criteria_data = {
+  :campaign_id => $campaign[:id],
+  :criteria => {
     :language => %w{ en cs },
 
     :location => { 
@@ -19,9 +18,24 @@ $campaign_criterion = Adapi::CampaignCriterion.new(
     # add custom platform criteria
     :platform => [ { :id => 30001} ]
   }
-)
+}
 
-$campaign_criterion.create
+$campaign_criteria = Adapi::CampaignCriterion.new($campaign_criteria_data)
 
-$campaign_criterion = Adapi::CampaignCriterion.find( :campaign_id => $campaign.id)
-pp $campaign_criterion
+$campaign_criteria.create
+
+unless $campaign_criteria.errors.empty?
+
+  puts "ERROR WHEN CREATING CAMPAIGN CRITERIA FOR CAMPAIGN #{$campaign[:id]}:"
+  pp $campaign_criteria.errors.full_messages
+
+else
+
+  puts "\nCREATED CAMPAIGN CRITERIA FOR CAMPAIGN #{$campaign[:id]}\n"
+
+  $campaign_criteria = Adapi::CampaignCriterion.find( :campaign_id => $campaign[:id] )
+
+  puts "\nCRITERIA:"
+  pp $campaign_criteria
+
+end
