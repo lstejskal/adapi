@@ -98,17 +98,6 @@ module Adapi
       @budget = params.merge( period: 'DAILY', delivery_method: 'STANDARD' ) 
     end
 
-    def check_for_errors(adapi_instance, options = {})
-      options[:store_errors] ||= true
-      options[:raise_errors] ||= true
-
-      unless adapi_instance.errors.empty?
-        store_errors(adapi_instance, options[:prefix]) if options[:store_errors]
-
-        raise CampaignError if options[:raise_errors]
-      end
-    end
-
     # create campaign with ad_groups and ads
     #
     def create
@@ -245,7 +234,7 @@ module Adapi
       ad_groups.each do |ad_group_data|
         ad_group_data[:campaign_id] = @id
 
-        # try to find campaign ad_group by id or name 
+        # find ad_group by id or name 
         k, v = ad_group_data.has_key?(:id) ? [:id, ad_group_data[:id]] : [:name, ad_group_data[:name]] 
         ad_group = original_ad_groups.find { |ag| ag[k] == v } 
 
@@ -255,8 +244,8 @@ module Adapi
 
           original_ad_groups.delete_if { |ag| ag[k] == v }
 
-        # create non-existent ad_group
-        # TODO report error if searching by :id, because such ad_group should exists?
+        # create new ad_group
+        # FIXME report error if searching by :id, because such ad_group should exists
         else
           ad_group_data.delete(:id)
           ad_group = AdGroup.create(ad_group_data)
@@ -268,6 +257,8 @@ module Adapi
       # delete ad_groups which haven't been updated
       original_ad_groups.each do |ag| 
         unless ag.delete
+          # FIXME storing error twice for the moment because neither
+          # of these errors says all the needed information
           self.errors.add("AdGroup #{ag[:id]}", "could not be deleted")
           self.store_errors(ad_group, "AdGroup #{ag[:id]}")
           return false
@@ -278,6 +269,23 @@ module Adapi
 
     rescue CampaignError => e
       false
+    end
+
+    # Deals with campaign exceptions encountered during complex operations over AdWords API
+    # 
+    # Parameters:
+    # store_errors (default: true) - add errors to self.error collection
+    # raise_errors (default: false) - raises exception CampaignError (after optional saving errors)
+    #
+    def check_for_errors(adapi_instance, options = {})
+      options[:store_errors] ||= true
+      options[:raise_errors] ||= false
+
+      unless adapi_instance.errors.empty?
+        store_errors(adapi_instance, options[:prefix]) if options[:store_errors]
+
+        raise CampaignError if options[:raise_errors]
+      end
     end
 
     # Shortcut for pattern used in Campaign#update method 
@@ -308,7 +316,8 @@ module Adapi
 
     def rename(new_name); update(:name => new_name); end
 
-    # Deletes campaign (if not already deleted). This is usually done 
+    # Deletes campaign if not already deleted. This is usually done after 
+    # unsuccessfull complex operation (create/update complete campaign)
     #
     def rollback
       if (@status == 'DELETED')
@@ -322,15 +331,21 @@ module Adapi
       )
     end
 
-    def find # == refresh
+    # Shortcut method, often used for refreshing campaign after create/update
+    # REFACTOR into :refresh method
+    #
+    def find
       Campaign.find(:first, :id => @id)
     end
 
-    # if nothing else than single number or string at the input, assume it's an
-    # id and we want to find campaign by id
+    # Searches for campaign/s according to given parameters
+    #
+    # Input parameters are dynamic.
+    # Special case: single number or string on input is considered to be id
+    # and we want to search for a single campaign by id
     #
     def self.find(amount = :all, params = {})
-      # find campaign by id - related syntactic sugar
+      # find single campaign by id
       if params.empty? and not amount.is_a?(Symbol)
         params[:id] = amount.to_i
         amount = :first
@@ -343,7 +358,7 @@ module Adapi
         if params[param_name]
           # convert to array
           value = Array.try_convert(params[param_name]) ? params_param_name : [params[param_name]]
-          {:field => param_name.to_s.camelcase, :operator => 'IN', :values => value }
+          { field: param_name.to_s.camelcase, operator: 'IN', values: value }
         end
       end.compact
 
@@ -355,13 +370,13 @@ module Adapi
       # retrieve Budget fields
       select_fields += %w{ Amount Period DeliveryMethod } 
       # retrieve BiddingStrategy fields
-       select_fields += %w{ BiddingStrategy BidCeiling EnhancedCpcEnabled }
+      select_fields += %w{ BiddingStrategy BidCeiling EnhancedCpcEnabled }
       # retrieve NetworkSetting fields
       select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize } 
 
       selector = {
         :fields => select_fields,
-        :ordering => [{:field => 'Name', :sort_order => 'ASCENDING'}],
+        :ordering => [ { field: 'Name', sort_order: 'ASCENDING' } ],
         :predicates => predicates
       }
 
