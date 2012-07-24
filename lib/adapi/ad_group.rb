@@ -76,7 +76,7 @@ module Adapi
         :operand => operand
       )
 
-      return false unless (response and response[:value])
+      check_for_errors(self, :store_errors => false)
       
       self.id = response[:value].first[:id] rescue nil
       
@@ -86,22 +86,19 @@ module Adapi
           :keywords => @keywords
         )
         
-        if (keyword.errors.size > 0)
-          self.errors.add("[keyword]", keyword.errors.to_a)
-          return false 
-        end
+        check_for_errors(keyword, :prefix => "Keyword")
       end
 
       @ads.each do |ad_data|
         ad = Adapi::Ad::TextAd.create( ad_data.merge(:ad_group_id => @id) )
 
-        if (ad.errors.size > 0)
-          self.errors.add("[ad] \"#{ad.headline}\"", ad.errors.to_a)
-          return false 
-        end
+        check_for_errors(ad, :prefix => "Ad \"#{ad.headline}\"")
       end
 
       true
+
+    rescue AdGroupError => e
+      false
     end
 
     def update(params = {})
@@ -120,7 +117,7 @@ module Adapi
         :operand => core_params.merge( :id => @id, :campaign_id => @campaign_id )
       )
 
-      return false unless (response and response[:value])
+      check_for_errors(ad_group, :store_errors => false)
 
       # step 2. update keywords
       # delete everything and create new keywords
@@ -136,11 +133,8 @@ module Adapi
           :ad_group_id => @id,
           :keywords => params[:keywords]
         )
-        
-        unless result.errors.empty?
-          self.errors.add("Keyword", result.errors.to_a)
-          return false 
-        end
+
+        check_for_errors(result, :prefix => "Keyword")        
       end
 
       # step 3. update ads
@@ -158,14 +152,14 @@ module Adapi
         params[:ads].each do |ad|
           ad = Adapi::Ad::TextAd.create( ad.merge(:ad_group_id => @id) )
 
-          unless ad.errors.empty?
-            self.errors.add("Ad \"#{ad.headline}\"", ad.errors.to_a)
-            return false 
-          end
+          check_for_errors(ad, :prefix => "Ad \"#{ad.headline}\"")
         end
       end
 
       true
+
+    rescue AdGroupError => e
+      false
     end
  
     # PS: perhaps also change the ad_group name when deleting
