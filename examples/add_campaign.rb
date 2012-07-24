@@ -46,15 +46,28 @@ campaign_data = {
   ]
 
 }
- 
-$campaign = Adapi::Campaign.create(campaign_data)
 
-$campaign = Adapi::Campaign.find($campaign.id)
+$campaign = Adapi::Campaign.new(campaign_data)
 
-p "\nCAMPAIGN #{$campaign.id} DATA:"
-pp $campaign.attributes
+$campaign.create
 
-$campaign_criterion = Adapi::CampaignCriterion.find( :campaign_id => $campaign.id )
+unless $campaign.errors.empty?
 
-p "\nCAMPAIGN CRITERIA:"
-pp $campaign_criterion
+  puts "ERROR WHEN CREATING CAMPAIGN:"
+  pp $campaign.errors.full_messages
+
+else
+
+  puts "\nCREATED CAMPAIGN #{$campaign[:id]}\n"
+
+  $campaign = Adapi::Campaign.find($campaign[:id])
+
+  puts "\nCAMPAIGN DATA:"
+  pp $campaign.attributes
+
+  $campaign_criteria = Adapi::CampaignCriterion.find( :campaign_id => $campaign[:id] )
+
+  puts "\nCRITERIA:"
+  pp $campaign_criteria
+
+end

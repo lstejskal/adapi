@@ -21,8 +21,19 @@ $campaign_data = {
     :target_partner_search_network => false
   }
 }
- 
-$campaign = Adapi::Campaign.create($campaign_data)
 
-p "Created campaign ID #{$campaign.id}"
-p $campaign.attributes
+$campaign = Adapi::Campaign.new($campaign_data)
+
+$campaign.create
+
+unless $campaign.errors.empty?
+
+  puts "ERROR WHEN CREATING CAMPAIGN:"
+  pp $campaign.errors.full_messages
+
+else
+
+  puts "\nCREATED CAMPAIGN #{$campaign[:id]}\n"
+  pp $campaign.attributes
+
+end
