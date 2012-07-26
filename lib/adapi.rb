@@ -30,6 +30,7 @@ require 'adapi/constant_data/language'
 require 'adapi/constant_data/country'
 require 'adapi/constant_data/province'
 require 'adapi/location'
+require 'adapi/account'
 
 # monkeypatch that hardcodes HTTP timeout to 5 minutes
 require 'httpi_monkeypatch'
