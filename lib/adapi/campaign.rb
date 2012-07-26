@@ -288,7 +288,9 @@ module Adapi
         return false
       end
 
-      update(
+      self.errors.clear
+
+      self.update(
         :name => "#{@name}_DELETED_#{(Time.now.to_f * 1000).to_i}",
         :status => 'DELETED'
       )
