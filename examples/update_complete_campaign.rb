@@ -82,7 +82,7 @@ p "Created campaign ID #{$campaign.id}"
 # * change second ad_group
 # * add new ad_group
 
-Adapi::Campaign.update(
+$campaign.update(
   :id => $campaign[:id],
   :status => 'ACTIVE',
   :name => "UPDATED #{$campaign[:name]}",
