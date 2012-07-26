@@ -282,7 +282,7 @@ module Adapi
     # Deletes campaign if not already deleted. This is usually done after 
     # unsuccessfull complex operation (create/update complete campaign)
     #
-    def rollback
+    def rollback!
       if (@status == 'DELETED')
         self.errors.add(:base, 'Campaign is already deleted.')
         return false

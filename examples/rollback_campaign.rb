@@ -55,7 +55,7 @@ unless $campaign.errors.empty?
 
   puts "\nROLLBACKING CAMPAIGN #{$campaign.id}\n"
 
-  $campaign.rollback
+  $campaign.rollback!
 
   unless $campaign.errors.empty?
 
