@@ -10,7 +10,6 @@ require 'adapi'
 campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  # Automatic CPC: BudgetOptimizer or ManualCPC
   :bidding_strategy => { :xsi_type => 'BudgetOptimizer', :bid_ceiling => 100 },
   :budget => { :amount => 50, :delivery_method => 'STANDARD' },
 
@@ -46,12 +45,38 @@ campaign_data = {
   ]
 
 }
- 
+
 $campaign = Adapi::Campaign.create(campaign_data)
 
-p "Campaign ID #{$campaign.id} created"
-p "with status DELETED and changed name"
-pp $campaign.attributes
+unless $campaign.errors.empty?
 
-p "with errors:"
-pp $campaign.errors.to_a
+  puts "\nERRORS WHEN UPDATING CAMPAIGN #{$campaign.id}:"
+  pp $campaign.errors.full_messages
+
+  puts "\nROLLBACKING CAMPAIGN #{$campaign.id}\n"
+
+  $campaign.rollback
+
+  unless $campaign.errors.empty?
+
+    puts "\nERRORS WHEN ROLLBACKING CAMPAIGN #{$campaign.id}:"
+    pp $campaign.errors.full_messages
+
+  else
+
+    puts "\nOK, ROLLBACKED CAMPAIGN #{$campaign.id}"
+
+    $campaign = Adapi::Campaign.find($campaign.id)
+
+    puts "\nCAMPAIGN DATA:"
+    pp $campaign.attributes
+
+  end
+
+else
+
+  puts "\nCREATED CAMPAIGN #{$campaign.id}"
+
+  puts "\nSOMETHING IS WRONG, THIS SHOULDN'T HAPPEN!"
+
+end
