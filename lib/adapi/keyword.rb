@@ -132,11 +132,9 @@ module Adapi
       selector = {
         :fields => ['Id', 'CriteriaType', 'KeywordText'],
         :ordering => [{ :field => 'AdGroupId', :sort_order => 'ASCENDING' }],
-        :predicates => predicates,
-        :paging => {
-          :start_index => 0,
-          :number_results => 10
-        }
+        :predicates => predicates
+        # obsolete, not needed in newer versions of AdWords API 
+        # :paging => { :start_index => 0, :number_results => 10 }
       }
 
       response = Keyword.new.service.get(selector)
