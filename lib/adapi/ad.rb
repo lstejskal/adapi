@@ -30,6 +30,7 @@ module Adapi
     end
 
     # deletes ad
+    # TODO call by delete method
     #
     def destroy
       response = self.mutate(
@@ -39,6 +40,23 @@ module Adapi
           :ad => { :id => @id, :xsi_type => 'Ad' }
         }
       )
+
+      (response and response[:value]) ? true : false
+    end
+
+    # FIXME add validations
+    def delete(params = {})
+      operations = params[:ad_ids].map do |ad_id|
+        {
+          :operator => 'REMOVE',
+          :operand => {
+            :ad_group_id => params[:ad_group_id],
+            :ad => { :id => ad_id, :xsi_type => 'Ad' }
+          }
+        }
+      end
+
+      response = self.mutate(operations)
 
       (response and response[:value]) ? true : false
     end

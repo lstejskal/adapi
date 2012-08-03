@@ -140,14 +140,28 @@ module Adapi
       # step 3. update ads
       # ads can't be updated, gotta remove them all and add new ads
       if params[:ads] and not params[:ads].empty?
-        # OPTIMIZE remove all existing ads
+        # remove all existing ads
+        # TODO change into class method
+        existing_ads = self.find_ads
+        ad = existing_ads.first.delete(
+          :ad_group_id => @id,
+          :ad_ids => existing_ads.map { |ad| ad.id }
+        )
+
+        unless ad
+          # REFACTOR
+          self.errors.add(:base, add.errors.full_messages)
+          return false 
+        end
+
+=begin
         self.find_ads.each do |ad| 
           unless ad.destroy
             self.errors.add("Ad \"#{ad.headline}\"", ["cannot be deleted"])
             return false 
           end
         end
-
+=end
         # create new ads
         ad = Adapi::Ad::TextAd.create( :ads => params[:ads].map { |ad_data| ad_data.merge(:ad_group_id => @id) } )
 
