@@ -21,7 +21,7 @@ module Adapi
     attr_accessor :keywords
 
     def attributes
-      super.merge('keywords' => keywords)
+      super.merge( keywords: keywords )
     end
 
     def initialize(params = {})

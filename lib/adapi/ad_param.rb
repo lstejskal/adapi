@@ -2,22 +2,22 @@
 
 module Adapi
   class AdParam < Api
-    attr_accessor :ad_group_id, :criterion_id, :insertion_text, :param_index
+
+    ATTRIBUTES = [ :ad_group_id, :criterion_id, :insertion_text, :param_index ]
+
+    attr_accessor *ATTRIBUTES 
 
     validates_presence_of :ad_group_id, :criterion_id
 
     def attributes
-      super.merge(
-        'ad_group_id' => ad_group_id, 'criterion_id' => criterion_id,
-        'insertion_text' => insertion_text, 'param_index' => param_index
-      )
+      super.merge Hash[ ATTRIBUTES.map { |k| [k, self.send(k)] } ]
     end
 
     def initialize(params = {})
       params[:service_name] = :AdParamService
 
-      %w{ ad_group_id criterion_id insertion_text param_index }.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
+      ATTRIBUTES.each do |param_name|
+        self.send "#{param_name}=", params[param_name]
       end
 
       super(params)
@@ -77,6 +77,7 @@ module Adapi
       response
     end
 
+    # REFACTOR
     def serializable_hash
       {
         :ad_group_id    => ad_group_id,

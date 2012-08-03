@@ -9,7 +9,7 @@ module Adapi
     attr_accessor :ad_group_id, :criterion_use
 
     def attributes
-      super.merge('ad_group_id' => ad_group_id)
+      super.merge(ad_group_id: ad_group_id)
     end
 
     def initialize(params = {})

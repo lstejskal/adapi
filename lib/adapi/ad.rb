@@ -16,8 +16,7 @@ module Adapi
     # PS: create won't work with id and ad_group_id
     # 'id' => id, 'ad_group_id' => ad_group_id, 
     def attributes
-      super.merge( 'id' => id, 'ad_group_id' => ad_group_id, 
-        'url' => url, 'display_url' => display_url )
+      super.merge( id: id, ad_group_id: ad_group_id, url: url, display_url: display_url )
     end
 
     def initialize(params = {})

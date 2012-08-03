@@ -14,7 +14,7 @@ module Adapi
     validates_presence_of :campaign_id
 
     def attributes
-      super.merge( 'campaign_id' => campaign_id, 'targets' => targets )
+      super.merge( campaign_id: campaign_id, targets: targets )
     end
 
     def initialize(params = {})

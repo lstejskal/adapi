@@ -16,7 +16,7 @@ module Adapi
       :criterion_user_list, :vertical ]
 
     def attributes
-      super.merge( 'campaign_id' => campaign_id, 'criteria' => criteria )
+      super.merge( campaign_id: campaign_id, criteria: criteria )
     end
 
     def initialize(params = {})

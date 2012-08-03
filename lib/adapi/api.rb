@@ -32,7 +32,7 @@ module Adapi
     # Children of API model customize this method for their own attributes.
     #
     def attributes
-      { 'status' => status, 'xsi_type' => xsi_type }
+      { status: status, xsi_type: xsi_type }
     end
 
     def initialize(params = {})
