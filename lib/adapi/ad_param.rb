@@ -26,7 +26,7 @@ module Adapi
     def create
       operation = {
         :operator => 'SET',
-        :operand => serializable_hash
+        :operand => self.attributes
       }
 
       begin
@@ -77,14 +77,5 @@ module Adapi
       response
     end
 
-    # REFACTOR
-    def serializable_hash
-      {
-        :ad_group_id    => ad_group_id,
-        :criterion_id   => criterion_id,
-        :param_index    => param_index,
-        :insertion_text => insertion_text
-      }
-    end
   end
 end
