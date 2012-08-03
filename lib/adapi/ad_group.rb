@@ -89,8 +89,8 @@ module Adapi
         check_for_errors(keyword, :prefix => "Keyword")
       end
 
-      @ads.each do |ad_data|
-        ad = Adapi::Ad::TextAd.create( ad_data.merge(:ad_group_id => @id) )
+      if @ads.size > 0
+        ad = Adapi::Ad::TextAd.create( :ads => @ads.map { |ad_data| ad_data.merge(:ad_group_id => @id) } )
 
         check_for_errors(ad, :prefix => "Ad \"#{ad.headline}\"")
       end
