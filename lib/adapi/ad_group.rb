@@ -89,7 +89,7 @@ module Adapi
         check_for_errors(keyword, :prefix => "Keyword")
       end
 
-      if @ads.size > 0
+      if not @ads.empty?
         ad = Adapi::Ad::TextAd.create( :ads => @ads.map { |ad_data| ad_data.merge(:ad_group_id => @id) } )
 
         check_for_errors(ad, :prefix => "Ad \"#{ad.headline}\"")
@@ -140,7 +140,7 @@ module Adapi
       # step 3. update ads
       # ads can't be updated, gotta remove them all and add new ads
       if params[:ads] and not params[:ads].empty?
-        # remove all existing ads
+        # OPTIMIZE remove all existing ads
         self.find_ads.each do |ad| 
           unless ad.destroy
             self.errors.add("Ad \"#{ad.headline}\"", ["cannot be deleted"])
@@ -149,11 +149,9 @@ module Adapi
         end
 
         # create new ads
-        params[:ads].each do |ad|
-          ad = Adapi::Ad::TextAd.create( ad.merge(:ad_group_id => @id) )
+        ad = Adapi::Ad::TextAd.create( :ads => params[:ads].map { |ad_data| ad_data.merge(:ad_group_id => @id) } )
 
-          check_for_errors(ad, :prefix => "Ad \"#{ad.headline}\"")
-        end
+        check_for_errors(ad, :prefix => "Ad \"#{ad.headline}\"")
       end
 
       self.errors.empty?

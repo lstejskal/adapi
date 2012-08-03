@@ -171,7 +171,7 @@ else
   puts "\nAD GROUPS (#{$ad_groups.size}):"
   $ad_groups.each_with_index do |ad_group, i| 
     puts "\nAD GROUP #{i + 1}:\n"
-    pp ad_group.attributes
+    pp ad_group
   end
 
 end
