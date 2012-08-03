@@ -80,7 +80,7 @@ module Adapi
 
     def self.create(params = {})
       # FIXME deep symbolize_keys, probably through ActiveSupport
-      params.symbolize_keys!
+      params.symbolize_keys! if params.is_a?(Hash)
 
       api_instance = self.new(params)
       api_instance.create

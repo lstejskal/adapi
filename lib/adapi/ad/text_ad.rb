@@ -1,13 +1,17 @@
 # encoding: utf-8
 
 module Adapi
+  # http://code.google.com/apis/adwords/docs/reference/latest/AdGroupAdService.TextAd.html
+  #
   # Ad::TextAd == AdGroupAd::TextAd
   #
-  # http://code.google.com/apis/adwords/docs/reference/latest/AdGroupAdService.TextAd.html
+  # This model supports both individual and batch create/update of ads.
+  # If :ads parameter is not nil, it is considered as array of ads to
+  # be updated in batch.
   #
   class Ad::TextAd < Ad
 
-    ATTRIBUTES = [ :headline, :description1, :description2 ]
+    ATTRIBUTES = [ :headline, :description1, :description2, :ads ]
 
     attr_accessor *ATTRIBUTES
 
@@ -34,21 +38,31 @@ module Adapi
     end
  
     def create
-      operand = self.attributes.delete_if do |k|
-        [ :campaign_id, :ad_group_id, :id, :status ].include?(k.to_sym)
-      end.symbolize_keys
+      @ads = [ self.attributes ] unless @ads 
 
-      operation = {
-        :operator => 'ADD',
-        :operand => {
-          :ad_group_id => @ad_group_id,
-          :status => @status,
-          :ad => operand
+      operations = []
+
+      @ads.each do |ad_params|
+
+        ad = TextAd.new(ad_params)
+
+        operand = ad.attributes.delete_if do |k|
+          [ :campaign_id, :ad_group_id, :id, :status, :ads ].include?(k.to_sym)
+        end.symbolize_keys
+
+        operations << {
+          :operator => 'ADD',
+          :operand => {
+            :ad_group_id => ad.ad_group_id,
+            :status => ad.status,
+            :ad => operand
+          }
         }
-      }
+      end
 
-      response = self.mutate(operation)
+      response = self.mutate(operations)
 
+=begin
       # check for PolicyViolationErrors, set exemptions and try again
       # TODO for now, this is only done once. how about setting a number of retries?
       unless self.errors[:PolicyViolationError].empty?
@@ -60,11 +74,12 @@ module Adapi
 
         response = self.mutate(operation)
       end
+=end
 
       return false unless self.errors.empty?
-          
-      # set ad id
-      self.id = response[:value].first[:ad][:id] rescue nil
+
+      # FIXME set ad id
+      # self.id = response[:value].first[:ad][:id] rescue nil
   
       true
     end
