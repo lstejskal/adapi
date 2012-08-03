@@ -371,7 +371,7 @@ module Adapi
       
       campaign[:criteria] = CampaignCriterion.find(:campaign_id => campaign.to_param)
 
-      campaign[:ad_groups] = AdGroup.find(:all, :campaign_id => campaign.to_param)
+      campaign[:ad_groups] = AdGroup.find(:all, :campaign_id => campaign.to_param).map { |ag| ag.to_hash }
 
       campaign
     end
