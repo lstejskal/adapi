@@ -9,12 +9,14 @@ module Adapi
   #
   class CampaignTarget < Api
 
-    attr_accessor :campaign_id, :targets
+    ATTRIBUTES = [ :campaign_id, :targets ]
+
+    attr_accessor *ATTRIBUTES 
 
     validates_presence_of :campaign_id
 
     def attributes
-      super.merge( campaign_id: campaign_id, targets: targets )
+      super.merge Hash[ ATTRIBUTES.map { |k| [k, self.send(k)] } ]
     end
 
     def initialize(params = {})
@@ -22,8 +24,8 @@ module Adapi
 
       @xsi_type = 'CampaignTarget'
 
-      %w{ campaign_id targets }.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
+      ATTRIBUTES.each do |param_name|
+        self.send "#{param_name}=", params[param_name]
       end
 
       super(params)

@@ -6,7 +6,9 @@ module Adapi
   #
   class CampaignCriterion < Api
 
-    attr_accessor :campaign_id, :criteria
+    ATTRIBUTES = [ :campaign_id, :criteria ]
+
+    attr_accessor *ATTRIBUTES 
 
     validates_presence_of :campaign_id
 
@@ -16,7 +18,7 @@ module Adapi
       :criterion_user_list, :vertical ]
 
     def attributes
-      super.merge( campaign_id: campaign_id, criteria: criteria )
+      super.merge Hash[ ATTRIBUTES.map { |k| [k, self.send(k)] } ]
     end
 
     def initialize(params = {})
@@ -29,8 +31,8 @@ module Adapi
         'CampaignCriterion'
       end
 
-      %w{ campaign_id criteria }.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
+      ATTRIBUTES.each do |param_name|
+        self.send "#{param_name}=", params[param_name]
       end
 
       # HOTFIX backward compatibility with old field for criteria

@@ -2,6 +2,10 @@
 
 # Basic adapi class, parent of all service classes
 
+# TODO create universal Api.attributes method (instead of having the same method in all subclasses)
+# TODO create universal Api.initialize method (some subclasses don't have to have their own initialize method)
+# TODO move common methods into separate Common class or module
+
 module Adapi
   class Api
     extend ActiveModel::Naming

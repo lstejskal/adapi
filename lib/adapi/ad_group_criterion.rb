@@ -6,10 +6,13 @@ module Adapi
   #
   class AdGroupCriterion < Api
 
-    attr_accessor :ad_group_id, :criterion_use
+    ATTRIBUTES = [ :ad_group_id, :criterion_use ]
 
+    attr_accessor *ATTRIBUTES 
+
+    # FIXME why we don't use :criterion_use parameter here?
     def attributes
-      super.merge(ad_group_id: ad_group_id)
+      super.merge( ad_group_id: ad_group_id )
     end
 
     def initialize(params = {})
@@ -17,8 +20,8 @@ module Adapi
 
       @xsi_type = 'AdGroupCriterion'
 
-      %w{ ad_group_id criterion_use }.each do |param_name|
-        self.send "#{param_name}=", params[param_name.to_sym]
+      ATTRIBUTES.each do |param_name|
+        self.send "#{param_name}=", params[param_name]
       end
 
       super(params)
