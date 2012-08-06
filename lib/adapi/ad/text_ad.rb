@@ -60,25 +60,25 @@ module Adapi
         }
       end
 
-      response = self.mutate(operations)
+      self.mutate(operations)
 
-=begin
       # check for PolicyViolationErrors, set exemptions and try again
-      # TODO for now, this is only done once. how about setting a number of retries?
-      unless self.errors[:PolicyViolationError].empty?
-        operation[:exemption_requests] = self.errors[:PolicyViolationError].map do |error_key|
-          { :key => error_key }
+      # do it only once. from my experience with AdWords API, multiple retries are bad practice
+      if self.errors[:PolicyViolationError].any?
+
+        self.errors[:PolicyViolationError].each do |e|
+          i = e.delete(:operation_index) 
+          operations[i][:exemption_requests] = [ { :key => e } ]
         end
 
         self.errors.clear
 
-        response = self.mutate(operation)
+        self.mutate(operations)
       end
-=end
 
-      return false unless self.errors.empty?
+      return false if self.errors.any?
 
-      # FIXME set ad id
+      # FIXME return ids of newly created ads
       # self.id = response[:value].first[:ad][:id] rescue nil
   
       true
