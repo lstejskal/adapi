@@ -127,17 +127,18 @@ module Adapi
           return false
         end
 
-        # return PolicyViolations in specific format so they can be sent again
-        # see adwords-api gem example for details: handle_policy_violation_error.rb
         e.errors.each do |error|
-          # error[:xsi_type] seems to be broken, so using also alternative key
-          # also could try: :"@xsi:type" (but api_error_type seems to be more robust)
           if (error[:xsi_type] == 'PolicyViolationError') || (error[:api_error_type] == 'PolicyViolationError')
+            # return exemptable PolicyViolations errors in custom format so we can request exemptions
+            # see adwords-api gem example for details: handle_policy_violation_error.rb
+            # so far, this applies only for keywords and ads
             if error[:is_exemptable]
-              self.errors.add(:PolicyViolationError, error[:key])
+              self.errors.add( :PolicyViolationError, error[:key].merge(
+                :operation_index => AdwordsApi::Utils.operation_index_for_error(error)
+              ) )
             end
 
-            # return also exemptable errors, operation may fail even with them
+            # besides PolicyViolations errors in custom format, return all errors also in regular format
             self.errors.add(:base, "violated %s policy: \"%s\" on \"%s\"" % [
               error[:is_exemptable] ? 'exemptable' : 'non-exemptable', 
               error[:key][:policy_name], 

@@ -85,13 +85,12 @@ module Adapi
       response = self.mutate(operations)
 
       # check for PolicyViolationErrors, set exemptions and try again
-      # TODO for now, this is only done once. how about setting a number of retries?
-      unless self.errors[:PolicyViolationError].empty?
-        # FIXME this works, but add exemptions_requests only for related keyword if possible 
-        operations.each_with_index do |operation, i|
-          operations[i][:exemption_requests] = self.errors[:PolicyViolationError].map do |error_key|
-            { :key => error_key }
-          end
+      # do it only once. from my experience with AdWords API, multiple retries are bad practice
+      if self.errors[:PolicyViolationError].any?
+
+        self.errors[:PolicyViolationError].each do |e|
+          i = e.delete(:operation_index) 
+          operations[i][:exemption_requests] = [ { :key => e } ]
         end
 
         self.errors.clear
@@ -99,7 +98,7 @@ module Adapi
         response = self.mutate(operations)
       end
 
-      return false unless self.errors.empty?
+      return false if self.errors.any?
       
       self.keywords = response[:value].map { |keyword| keyword[:criterion] }
 

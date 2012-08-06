@@ -10,17 +10,28 @@ $keywords = Adapi::Keyword.new(
   :keywords => [ 'dem codez', '"top coder"', '[-code]' ]
 )
 
-$r = $keywords.create
+$keywords.create
 
-# get array of keywords from Keyword instance
-$google_keywords = Adapi::Keyword.find(:all, :ad_group_id => $ad_group[:id]).keywords
+if $keywords.errors.any?
 
-$params_keywords = Adapi::Keyword.parameterized($google_keywords)
+  puts "\nERRORS:"
+  pp $keywords.errors.messages
 
-$short_keywords = Adapi::Keyword.shortened($google_keywords)
+else
 
-p "PARAMS:"
-pp $params_keywords
+  puts "\nKEYWORDS CREATED\n"
 
-p "\nSHORT:"
-pp $short_keywords
+  # get array of keywords from Keyword instance
+  $google_keywords = Adapi::Keyword.find(:all, :ad_group_id => $ad_group[:id]).keywords
+
+  $params_keywords = Adapi::Keyword.parameterized($google_keywords)
+
+  $short_keywords = Adapi::Keyword.shortened($google_keywords)
+
+  puts "DETAILED:"
+  pp $params_keywords
+
+  puts "\nSHORT:"
+  pp $short_keywords
+
+end
