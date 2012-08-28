@@ -30,17 +30,17 @@ Gem::Specification.new do |s|
   s.add_dependency "google-ads-common", "0.8.0"
   s.add_dependency "google-adwords-api", "0.7.0"
 
-  s.add_dependency "activemodel", "~> 3.0"
-  s.add_dependency "activesupport", "~> 3.0"
+  s.add_dependency "activemodel", "~> 3.2"
+  s.add_dependency "activesupport", "~> 3.2"
   s.add_dependency "rake", "~> 0.9.2"
-  s.add_dependency "curb", "~> 0.8.0"
+  s.add_dependency "curb", "~> 0.8.1"
 
-  s.add_development_dependency "yard", "~> 0.7"
+  s.add_development_dependency "yard", "~> 0.8"
   s.add_development_dependency "rcov", "~> 0.9"
   s.add_development_dependency "turn", "~> 0.9.6"
-  s.add_development_dependency "shoulda"
-  s.add_development_dependency "fakeweb"
-  s.add_development_dependency "factory_girl", "~> 3.3.0"
-  s.add_development_dependency "minitest"
+  s.add_development_dependency "shoulda", "~> 3.1"
+  s.add_development_dependency "fakeweb", "~> 1.3"
+  s.add_development_dependency "factory_girl", "~> 3.3"
+  s.add_development_dependency "minitest", "~> 3.3"
 
 end
