@@ -8,10 +8,10 @@ module Adapi
       attr_accessor :dir, :filename
     end
 
-    self.dir = ENV['HOME']
+    self.dir = ENV['HOME'] || '.'
     self.filename = 'adapi.yml'
 
-    DEFAULT_LOG_PATH = File.join(ENV['HOME'], 'adapi.log')
+    DEFAULT_LOG_PATH = File.join(self.dir, 'adapi.log')
 
     # display hash of all account settings
     #
