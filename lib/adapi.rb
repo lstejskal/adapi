@@ -46,7 +46,7 @@ HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
 
 module Adapi
-  API_VERSION = :v201109_1
+  API_VERSION = :v201206
 end
 
 if RUBY_VERSION < '1.9'
