@@ -12,11 +12,7 @@ $campaign = Adapi::Campaign.update(
   :network_setting => {
     :target_google_search => false,
     :target_search_network => false,
-    :target_content_network => true,
-    :target_content_contextual => true
-    # FIXME returns error which is not trapped:
-    # TargetError.CANNOT_TARGET_PARTNER_SEARCH_NETWORK 
-    # :target_partner_search_network => true
+    :target_content_network => true
   },
 
   # deletes all criteria (except :platform) and create these new ones

@@ -16,9 +16,7 @@ $campaign_data = {
   :network_setting => {
     :target_google_search => true,
     :target_search_network => true,
-    :target_content_network => false,
-    :target_content_contextual => false,
-    :target_partner_search_network => false
+    :target_content_network => false
   }
 }
 
