@@ -12,7 +12,7 @@ module Adapi
 
     ATTRIBUTES = [ :name, :status, :serving_status, :start_date, :end_date, :budget,
       :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups,
-      :ad_serving_optimization_status ]
+      :ad_serving_optimization_status, :settings ]
 
     attr_accessor *ATTRIBUTES
 
@@ -96,6 +96,22 @@ module Adapi
       @budget = params.merge( period: 'DAILY', delivery_method: 'STANDARD' ) 
     end
 
+    # setter for campaign settings (array of hashes)
+    #
+    def settings=(setting_options = [])
+      # for arrays, set in raw form 
+      @settings = if setting_options.is_a?(Array)
+        setting_options
+      # set optional shortcuts for settings
+      # :keyword_match_setting => { :opt_in => false } # =>
+      # { :xsi_type => 'KeywordMatchSetting', :opt_in => false }
+     elsif setting_options.is_a?(Hash)
+        setting_options.map do |key, values|
+          { :xsi_type => key.to_s.camelcase }.merge(values).symbolize_keys
+        end
+      end
+    end
+
     # create campaign with ad_groups and ads
     #
     def create
@@ -104,10 +120,17 @@ module Adapi
       # create basic campaign attributes
       operand = Hash[
         [ :name, :status, :start_date, :end_date,
-          :budget, :bidding_strategy, :network_setting ].map do |k|
+          :budget, :bidding_strategy, :network_setting, :settings ].map do |k|
           [ k.to_sym, self.send(k) ] if self.send(k)
         end.compact
       ]
+
+      # set default values for settings (for create only - should we set it also for update?)
+      # PS: KeywordMatchSetting is required since 201206
+      operand[:settings] ||= []
+      unless operand[:settings].map { |s| s[:xsi_type] }.include?('KeywordMatchSetting')
+        operand[:settings] << { :xsi_type => 'KeywordMatchSetting', :opt_in => false }
+      end
 
       response = self.mutate( 
         operator: 'ADD', 
