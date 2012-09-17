@@ -6,7 +6,6 @@ module Adapi
   class CampaignCreateTest < Test::Unit::TestCase
     context "non-existent campaign" do
       should "not be found" do
-        # FIXME randomly generated id, but it might actually exist        
         assert_nil Adapi::Campaign.find(Time.new.to_i)
       end
     end
@@ -37,7 +36,6 @@ module Adapi
         @campaign = Adapi::Campaign.find(c.id)
       end
 
-      # this basically tests creating bare campaign
       should "be found" do
         assert_not_nil @campaign
 
