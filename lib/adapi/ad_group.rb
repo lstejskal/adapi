@@ -50,7 +50,7 @@ module Adapi
         end
     
         # convert bid amounts to micro_amounts
-        [ :proxy_keyword_max_cpc, :proxy_site_max_cpc ].each do |k|          
+        [ :proxy_keyword_max_cpc ].each do |k|          
           if @bids[k] and not @bids[k].is_a?(Hash)
             @bids[k] = {
               :amount => {
@@ -195,8 +195,7 @@ module Adapi
 
       select_fields = %w{ Id CampaignId Name Status } 
       # add Bids atributes
-      select_fields += %w{ EnhancedCpcEnabled 
-        ProxyKeywordMaxCpc ProxySiteMaxCpc 
+      select_fields += %w{ EnhancedCpcEnabled ProxyKeywordMaxCpc 
         KeywordMaxCpc KeywordContentMaxCpc }
 
       selector = {
