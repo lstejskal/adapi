@@ -21,6 +21,8 @@ come from there, but adapi takes it several steps further:
 Adapi is *still in development* and not nearly done yet! Version 1.0.0 should
 have all planned functionality.
 
+Adapi supports the latest version of AdWords API: *v201206*. 
+
 ## Installation
 
 `gem install adapi`
@@ -159,12 +161,18 @@ Adapi::Config.set(:sandbox)
 
 ## API Version Support
 
-Adapi does not support several AdWords API versions at the same time, only the
-latest version: *v201109_1* at the moment.
+Adapi supports the latest version of AdWords API: *v201206*. 
 
-However, support for the older versions is still available in earlier versions
-of adapi (adapi 0.0.7 for *v201109*). Latest revision for specific AdWords API
-version is marked by a tag.
+For support of earlier versions of AdWords API, downgrade to earlier 
+versions of adapi: 0.0.9 for *v201109_1*, 0.07 for *v201109*. 
+(You shoudn't need it though, because older versions of AdWords API are 
+eventually shut down.) Latest revision for specific AdWords API version 
+is also marked by a tag.
+
+Adapi tries to not to bother users with AdWords API low-level specifics as much 
+as possible, if you're upgrading to newer version of AdWords API, please be cautious, 
+check the [release notes](https://developers.google.com/adwords/api/docs/reference/)
+and update your code accordingly. Adapi won't accept obsolete attributes etc. 
 
 ## Unsupported AdWords services
 
