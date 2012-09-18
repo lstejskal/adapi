@@ -1,9 +1,15 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.0.9"
+  VERSION = "0.1.0"
 
   # CHANGELOG:
+  #
+  # 0.1.0
+  # updated to AdWords API version v201206
+  # updated gem dependencies (including google-adwords-api to 0.7.0)
+  # improved and debugged error handling for complex create/update methods
+  # optimized batch creating of ads
   #
   # 0.0.9
   # added Campaign#update method - updates campaign, criteria and ad groups by a single method call
