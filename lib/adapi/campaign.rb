@@ -85,6 +85,8 @@ module Adapi
     # setter for converting budget to GoogleApi
     # budget can be integer (amount) or hash
     #
+    # TODO return error for missing :amount 
+    #
     def budget=(params = {})
       # if it's single value, it's a budget amount
       params = { amount: params } unless params.is_a?(Hash)
@@ -93,7 +95,7 @@ module Adapi
         params[:amount] = { micro_amount: Api.to_micro_units(params[:amount]) }
       end
 
-      @budget = params.reverse_merge( period: 'DAILY', delivery_method: 'STANDARD' )
+      @budget = params.clone
     end
 
     # setter for campaign settings (array of hashes)
@@ -117,6 +119,9 @@ module Adapi
     def create
       return false unless self.valid?      
       
+      # set defaults for budget for campaign.create only
+      self.budget = budget.reverse_merge( period: 'DAILY', delivery_method: 'STANDARD' )
+
       # create basic campaign attributes
       operand = Hash[
         [ :name, :status, :start_date, :end_date,
