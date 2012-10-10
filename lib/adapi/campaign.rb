@@ -93,7 +93,7 @@ module Adapi
         params[:amount] = { micro_amount: Api.to_micro_units(params[:amount]) }
       end
 
-      @budget = params.merge( period: 'DAILY', delivery_method: 'STANDARD' ) 
+      @budget = params.reverse_merge( period: 'DAILY', delivery_method: 'STANDARD' )
     end
 
     # setter for campaign settings (array of hashes)
