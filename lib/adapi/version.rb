@@ -1,9 +1,12 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.1.0"
+  VERSION = "0.1.1"
 
   # CHANGELOG:
+  #
+  # 0.1.1
+  # fixed bug in campaign.budget settings
   #
   # 0.1.0
   # updated to AdWords API version v201206
