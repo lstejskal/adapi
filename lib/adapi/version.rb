@@ -1,9 +1,13 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.1.2"
+  VERSION = "0.1.3"
 
   # CHANGELOG:
+  #
+  # 0.1.3
+  # added ManagedAccount service
+  # added BudgetOrder service
   #
   # 0.1.2
   # fixed bug in campaign.update
