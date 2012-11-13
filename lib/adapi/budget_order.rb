@@ -49,9 +49,6 @@ module Adapi
         operand[:spending_limit] = { micro_amount: Api.to_micro_units(self.send(:spending_limit)) }
       end
 
-
-      pp operand
-
       response = self.mutate( 
         operator: 'ADD', 
         operand: operand
@@ -63,7 +60,6 @@ module Adapi
     end
 
     def update(params = {})
-
       return false unless self.valid?      
       
       operand = {
@@ -72,19 +68,19 @@ module Adapi
         :start_date_time => fix_time(self.send(:start_date_time)),
         :end_date_time => fix_time(self.send(:end_date_time))
       }
+
       if self.send(:spending_limit).is_a?(Hash)
         operand[:spending_limit] = self.send(:spending_limit)
       else
         operand[:spending_limit] = { micro_amount: Api.to_micro_units(self.send(:spending_limit)) }
       end
 
-      pp operand
       response = self.mutate(
         operator: 'SET', 
         operand: operand
       )      
-      check_for_errors(self)
 
+      check_for_errors(self)
     end
 
     def self.find
@@ -108,8 +104,9 @@ module Adapi
       response[:entries].collect{|e| BudgetOrder.new(e)}
     end
 
-    def fix_time time
-      Time.parse(time.to_s).strftime("%Y%m%d %H%M%S Europe/Prague")
+    # TODO this is potentially brittle. update and add tests
+    def fix_time(a_time)
+      Time.parse(a_time.to_s).strftime("%Y%m%d %H%M%S Europe/Prague")
     end
 
   end
