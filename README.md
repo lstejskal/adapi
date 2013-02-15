@@ -1,5 +1,7 @@
 # Adapi [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/lstejskal/adapi)
 
+*NEWS:* adapi ~> 0.1.4 with support for AdWords API v201209 and test accounts will be released before the end of February 2013.
+
 ## Description
 
 Adapi (ADwords API) is a Ruby library for easy and painless work with Google
