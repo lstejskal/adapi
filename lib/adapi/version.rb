@@ -1,9 +1,12 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.1.3"
+  VERSION = "0.1.4"
 
   # CHANGELOG:
+  #
+  # 0.1.4
+  # updated gems (which fixed the "bundle install" infinite loop) 
   #
   # 0.1.3
   # added ManagedAccount service
