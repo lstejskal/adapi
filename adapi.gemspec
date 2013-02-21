@@ -30,8 +30,8 @@ Gem::Specification.new do |s|
   s.add_dependency "google-ads-common", "0.9.2"
   s.add_dependency "google-adwords-api", "0.8.1"
 
-  s.add_dependency "activemodel", "~> 3.2"
-  s.add_dependency "activesupport", "~> 3.2"
+  s.add_dependency "activemodel", "~> 3.2.12"
+  s.add_dependency "activesupport", "~> 3.2.12"
   s.add_dependency "rake", "~> 0.9.6"
   s.add_dependency "curb", "~> 0.8.3"
 
