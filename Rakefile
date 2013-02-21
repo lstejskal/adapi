@@ -40,13 +40,6 @@ Rake::TestTask.new(:"test:integration") do |test|
   test.verbose = true
 end
 
-require 'rcov/rcovtask'
-Rcov::RcovTask.new do |t|
-  t.libs << "test"
-  t.pattern = 'test/*/*_test.rb'
-  t.rcov_opts << '--exclude /gems/'
-end
-
 ### Documentation ### 
 
 require 'yard'
