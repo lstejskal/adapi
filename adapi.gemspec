@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
   # versions of both gems are freezed, because both gems change a lot and
   # automatic updates through '~>' can (and already did) break something
   #
-  s.add_dependency "google-ads-common", "0.8.0"
-  s.add_dependency "google-adwords-api", "0.7.0"
+  s.add_dependency "google-ads-common", "0.9.2"
+  s.add_dependency "google-adwords-api", "0.8.1"
 
   s.add_dependency "activemodel", "~> 3.2"
   s.add_dependency "activesupport", "~> 3.2"
