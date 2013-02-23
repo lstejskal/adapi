@@ -37,6 +37,10 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency "yard", "~> 0.8"
   s.add_development_dependency "turn", "~> 0.9.6"
+  # if this breaks budnle, run: bundle update shoulda-matchers
+  # this is a HOTFIX, can be removed when this bug is resolved:
+  # https://github.com/thoughtbot/shoulda-matchers/issues/235
+  s.add_development_dependency "shoulda-matchers", "1.4.1"
   s.add_development_dependency "shoulda", "~> 3.1"
   s.add_development_dependency "fakeweb", "~> 1.3"
   s.add_development_dependency "factory_girl", "~> 3.3"
