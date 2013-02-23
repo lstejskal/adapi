@@ -8,7 +8,7 @@ module Adapi
   class Campaign < Api
 
     NETWORK_SETTING_KEYS = [ :target_google_search, :target_search_network, 
-      :target_content_network, :target_content_contextual, :target_partner_search_network ]
+      :target_content_network, :target_partner_search_network ]
 
     ATTRIBUTES = [ :name, :status, :serving_status, :start_date, :end_date, :budget,
       :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups,
