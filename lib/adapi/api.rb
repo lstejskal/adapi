@@ -44,9 +44,31 @@ module Adapi
 
       raise "Missing Service Name" unless params[:service_name]
 
-      # if params[:api_login] in nil, default login data are used
-      # from ~/adwords_api.yml
-      @adwords = params[:adwords_api_instance] || AdwordsApi::Api.new(Adapi::Config.read)
+      @adwords = params[:adwords_api_instance]
+
+      # REFACTOR
+      unless @adwords
+        @adwords = AdwordsApi::Api.new(Adapi::Config.read)
+
+        authentication_method = Adapi::Config.read[:authentication][:method].to_s.upcase
+
+        case authentication_method
+        when "CLIENTLOGIN", "OAUTH"
+          warn "#{authentication_method} is nearly obsolete, please update to OAuth2"
+        when "OAUTH2_JWT"
+          raise "OAUTH2_JWT is not yet implemented, please use OAUTH2 instead"
+        # authorize to oauth2
+        when "OAUTH2"
+          oauth2_token = Adapi::Config.read[:authentication][:oauth2_token]
+
+          if oauth2_token.nil? || oauth2_token.class != Hash 
+            raise "Missing or invalid OAuth2 token"
+          end
+
+          @adwords.authorize({:oauth2_verification_code => $token})
+        end
+      end
+
       @adwords.logger = LOGGER if LOGGER
       @version = API_VERSION
       @service = @adwords.service(params[:service_name].to_sym, @version)
