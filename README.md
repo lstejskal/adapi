@@ -1,6 +1,6 @@
 # Adapi [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/lstejskal/adapi)
 
-*NEWS:* new version with support for AdWords API v201209 and test accounts will be released before the end of February 2013.
+*NEWS:* beta version with support for AdWords API v201209 is available in branch 0-2-0
 
 ## Description
 
@@ -23,7 +23,7 @@ come from there, but adapi takes it several steps further:
 Adapi is *still in development* and not nearly done yet! Version 1.0.0 should
 have all planned functionality.
 
-Adapi supports the latest version of AdWords API: *v201206*. 
+Adapi supports the latest version of AdWords API: *v201209*. 
 
 ## Installation
 
@@ -40,34 +40,38 @@ rake install
 
 ## Configuration
 
-This section explains how to connect to specific AdWords account and client.
+This section explains how to connect to specific AdWords account and client. The configuration
+structure is quite similar to the configuration of `google-adwords-api` gem.
+
 There are several options to choose from:
-
-#### Configuration by adwords_api.yml
-
-If you already have `google-adwords-api` gem configured and use just one account,
-the same configuration will also work for adapi: `~/adwords_api.yml`
 
 #### Single account set directly in code
 
 ```ruby
-Adapi::Config.load_settings(:in_hash => {
-  :sandbox => {   
-      :authentication => {
-        :method               => "ClientLogin"
-        :email                => "sandbox_email@gmail.com",
-        :password             => "sandbox_password",
-        :developer_token      => "sandbox_token",
-        :client_customer_id   => "555-666-7777",
-        :user_agent           => "Adwords API Test"
+Adapi::Config.load_settings( in_hash: {
+  production: {
+    authentication: {
+      method:                 "OAuth2",
+      oauth2_client_id:       "abc",
+      oauth2_client_secret:   "def",
+      oauth2_token: {
+        access_token:         "123",
+        refresh_token:        "456",
+        issued_at:            "2013-03-03 13:33:39.734203841 +01:00",
+        expires_in:           3600,
+        id_token:             nil
       },
-      :service => {
-        :environment          => "SANDBOX"
-      }
+      developer_token:        "789",
+      user_agent:             "My Adwords API Client",
+      client_customer_id:     "555-666-7777"
+    },
+    service: {
+      environment: "PRODUCTION"
+    }
   }
 })
 
-Adapi::Config.set(:sandbox)
+Adapi::Config.set(:production)
 ```
 
 #### Multiple accounts set directly in code
@@ -76,31 +80,9 @@ You can set many AdWords accounts to connect to and switch between while running
 the application. You can even update single values of the settings on-the-fly.
 
 ```ruby 
-Adapi::Config.load_settings(:in_hash => {
-  :coca_cola => {
-    :authentication => {
-      :method => 'ClientLogin',
-      :email => 'coca_cola_email@gmail.com',
-      :password => 'coca_cola_password',
-      :developer_token => 'coca_cola_developer_token',
-      :user_agent => 'Coca-Cola Adwords API Test'
-    },
-    :service => {
-      :environment => 'SANDBOX'
-    }
-  },
- :pepsi => {
-    :authentication => {
-      :method => 'ClientLogin',
-      :email => 'pepsi_email@gmail.com',
-      :password => 'pepsi_password',
-      :developer_token => 'pepsi_developer_token',
-      :user_agent => 'Pepsi Adwords API Test'
-    },
-    :service => {
-      :environment => 'SANDBOX'
-    }
-  }
+Adapi::Config.load_settings( in_hash: {
+  coca_cola:  config_hash_for_coca_cola,
+  pepsi:      config_hash_for_pepsi
 })
 
 # set to pepsi and specific client       
@@ -120,33 +102,34 @@ Stored in `~/adapi.yml`. Supports multiple accounts, which are identifed by
 aliases. Example:
 
 ```
+
 :default:
   :authentication:
-    :method: ClientLogin
-    :email: default_email@gmail.com
-    :password: default_password
-    :developer_token: default_token
-    :client_customer_id: 777-666-5555
+    :method: OAuth2
+    :oauth2_client_id: "abc"
+    :oauth2_client_secret: "def"
+    :oauth2_token:
+        :access_token: "123"
+        :refresh_token: "456"
+        :issued_at: 2013-03-03 13:33:39.734203841 +01:00
+        :expires_in: 3600
+        :id_token:
+    :developer_token: "789"
     :user_agent: My Adwords API Client
+    :client_customer_id: 555-666-7777
   :service:
     :environment: PRODUCTION
+  :library:
+    :log_level: WARN
+    :log_path: /tmp/adapi.log
+    :log_pretty_format: true
 
-:sandbox:
-  :authentication:
-    :method: ClientLogin
-    :email: sandbox_email@gmail.com
-    :password: sandbox_password
-    :developer_token: sandbox_token
-    :client_customer_id: 555-666-7777
-    :user_agent: Adwords API Test
-  :service:
-    :environment: SANDBOX
 ```
 
 To tell adapi which account to use:
 
 ```ruby
-Adapi::Config.set(:sandbox)
+Adapi::Config.set(:production)
 ```
 
 `:default` account is, as name implies, used by default. If you don't have
@@ -156,18 +139,15 @@ Adapi::Config.set(:sandbox)
 ### Authentication workflow
 
 * try to load configuration from `~/adapi.yml`
-* if `~/adapi.yml`doesn't exist, try to load configuration from
-  `~/adwords_api.yml` (used by adwords-api gem)
-* if there are no configuration files available, set configuration directly to
-  `Adapi::Config` (overrides previous settings)
+* if no configuration is available, set configuration directly to `Adapi::Config`
 
 ## API Version Support
 
-Adapi supports the latest version of AdWords API: *v201206*. 
+Adapi supports the latest version of AdWords API: *v201209*. 
 
 For support of earlier versions of AdWords API, downgrade to earlier 
-versions of adapi: 0.0.9 for *v201109_1*, 0.07 for *v201109*. 
-(You shoudn't need it though, because older versions of AdWords API are 
+versions of adapi: 0.1.5 for *v201206*, 0.0.9 for *v201109_1*, 0.07 for *v201109*. 
+(You shoudn't need it though, older versions of AdWords API are 
 eventually shut down.) Latest revision for specific AdWords API version 
 is also marked by a tag.
 
@@ -178,8 +158,8 @@ and update your code accordingly. Adapi won't accept obsolete attributes etc.
 
 ## Unsupported AdWords services
 
-Following AdWords services are not supported by adapi at the moment. However,
-they will be implemented (this also serves as TODO list):
+Following AdWords services are not supported by adapi at the moment, and exist
+only on my TODO list:
 
 * Campaign Data Management
   * ConversionTrackerService
@@ -433,5 +413,5 @@ Example of logger configuration:
 
 ## Author
 
-2011-2012 Lukas Stejskal, Ataxo Interactive, a.s.
+2011-2013 Lukas Stejskal, Ataxo Interactive, a.s.
 
