@@ -1,30 +1,21 @@
 
 :default:
   :authentication:
-    :method: ClientLogin
-    :email: default_email@gmail.com
-    :password: default_password
-    :developer_token: default_token
-    :client_customer_id: 555-666-7777
+    :method: OAuth2
+    :oauth2_client_id: "abc"
+    :oauth2_client_secret: "def"
+    :oauth2_token:
+        :access_token: "123"
+        :refresh_token: "456"
+        :issued_at: 2013-03-03 13:33:39.734203841 +01:00
+        :expires_in: 3600
+        :id_token:
+    :developer_token: "789"
     :user_agent: My Adwords API Client
+    :client_customer_id: 555-666-7777
   :service:
     :environment: PRODUCTION
   :library:
     :log_level: WARN
-    :log_path: /tmp/adapi_production.log
-#   :log_pretty_format is set to :false by default
-
-:sandbox:
-  :authentication:
-    :method: ClientLogin
-    :email: sandbox_email@gmail.com
-    :password: sandbox_password
-    :developer_token: sandbox_token
-    :client_customer_id: 555-666-7777
-    :user_agent: Adwords API Test
-  :service:
-    :environment: SANDBOX
-  :library:
-    :log_level: DEBUG
-    :log_path: /tmp/adapi_sandbox.log
+    :log_path: /tmp/adapi.log
     :log_pretty_format: true

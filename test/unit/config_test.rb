@@ -12,8 +12,7 @@ module Adapi
         @settings                     = Adapi::Config.settings(true)
 
         assert_equal '555-666-7777', @settings[:default][:authentication][:client_customer_id]
-        assert_equal 'default_email@gmail.com', @settings[:default][:authentication][:email]
-        assert_equal 'sandbox_email@gmail.com', @settings[:sandbox][:authentication][:email]
+        assert_instance_of Hash, @settings[:default][:authentication][:oauth2_token]
       end
     end
 
