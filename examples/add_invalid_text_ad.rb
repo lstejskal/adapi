@@ -1,15 +1,8 @@
 
 require 'adapi'
 
-# PolicyViolations will appear only in production, not in sandbox
-#
-# Adapi performs exemption requests on receiving policy violation errors.
+# PS: adapi performs exemption requests on receiving policy violation errors.
 # If text_ad errors are exemptable, they will eventually pass.
-#
-#Adapi::Config.load_settings
-#Adapi::Config.set(:production_settings)
-#
-#pp "Running in #{Adapi::Config.read[:service][:environment]}"
 
 require_relative 'add_bare_ad_group'
 
