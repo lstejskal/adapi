@@ -136,10 +136,34 @@ Adapi::Config.set(:production)
 `:default` account available, you have to manually set account alias to
 `Adapi::Config`.
 
-### Authentication workflow
+### How to get OAuth2 token
 
-* try to load configuration from `~/adapi.yml`
-* if no configuration is available, set configuration directly to `Adapi::Config`
+* get `oauth2_client_id` and `oauth2_client_secret`: [https://code.google.com/p/google-api-ads-ruby/wiki/OAuth2][https://code.google.com/p/google-api-ads-ruby/wiki/OAuth2]
+
+* put them into adapi configuration file
+
+* run following script:
+
+```ruby
+require 'adapi'
+require 'yaml'
+
+adapi_object = Adapi::Location.new() # load any adapi object
+adwords_api = adapi_object.adwords # get adwords object
+
+# got to url and paste verification code to the script
+oauth2_token = adwords.authorize() do |auth_url|
+  puts "Go to URL:\n\t%s" % auth_url
+  print 'log in and type the verification code: '
+  gets.chomp
+end
+
+puts oauth2_token.to_yaml 
+```
+
+* put `oauth2_token` hash adapi configuration file
+
+Code taken from this google-adwords-api example: [https://code.google.com/p/google-api-ads-ruby/source/browse/adwords_api/examples/v201209/misc/use_oauth2.rb][https://code.google.com/p/google-api-ads-ruby/source/browse/adwords_api/examples/v201209/misc/use_oauth2.rb]
 
 ## API Version Support
 
