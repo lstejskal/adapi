@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'test_helper'
+require 'integration_test_helper'
 
 module Adapi
   class CampaignCreateTest < Test::Unit::TestCase
