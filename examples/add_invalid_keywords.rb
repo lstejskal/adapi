@@ -2,8 +2,10 @@
 
 require 'adapi'
 
-# PS: adapi performs exemption requests on receiving policy violation errors.
-# If keyword errors are exemptable, they will eventually pass.
+# Example work-flow:
+# * try to add keywords which will trigger policy violation errors (PolicyViolationError)
+# * adapi will perform exemption requests (check the adapi log for more details)
+# * if keyword errors are exemptable, they will be eventually added
 
 # create ad group
 require_relative 'add_bare_ad_group'

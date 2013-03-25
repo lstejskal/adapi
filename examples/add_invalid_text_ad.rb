@@ -1,14 +1,12 @@
 
 require 'adapi'
 
-# PS: adapi performs exemption requests on receiving policy violation errors.
-# If text_ad errors are exemptable, they will eventually pass.
-
 require_relative 'add_bare_ad_group'
 
-# PS: exemptable PolicyViolationError is triggered by "ho":
-# legimitateword in Czech, but suspicious word in English
-#
+# Example workflow:
+# * "ho", which is suspicious word in English, will trigger exemptable PolicyViolationError
+# * adapi performs exemption request(s) and text_ad will eventually pass
+
 $ad = Adapi::Ad::TextAd.create(
   :ad_group_id => $ad_group[:id],
   :headline => "Neo Blog - poznej ho",
