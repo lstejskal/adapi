@@ -4,11 +4,6 @@ require 'test_helper'
 
 module Adapi
   class AdGroupTest < Test::Unit::TestCase
-    # include ActiveModel::Lint::Tests
-
-    def setup
-      @model = AdGroup.new
-    end
 
     context "valid new instance" do
       setup do

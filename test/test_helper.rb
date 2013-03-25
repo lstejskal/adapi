@@ -9,6 +9,7 @@ require 'turn'
 require 'shoulda'
 require 'fakeweb'
 require 'factory_girl'
+require 'mocha/setup'
 
 # always test the latest version of the gem
 # TODO make it an option only through ENV variable switch
@@ -19,6 +20,11 @@ Dir[ File.join(File.dirname(__FILE__), 'factories', '*.rb') ].each { |f| require
 
 class Test::Unit::TestCase
   FakeWeb.allow_net_connect = false
+
+  def setup
+    # omit OAuth2 authorization for tests
+    AdwordsApi::Api.any_instance.stubs(:authorize).returns(nil)
+  end
 
   # many integration tests need to use campaign or ad group
   # instead of creating them in every test, we do it here  
