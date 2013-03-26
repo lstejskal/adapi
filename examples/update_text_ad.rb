@@ -4,7 +4,7 @@ require 'adapi'
 require_relative 'add_text_ad'
 
 $new_ad = $ad.update(
-  :status => 'ACTIVE',
+  :status => 'ENABLED',
   :headline => "Code like Trinity",
   :description1 => 'Need mad update skills?',
   :description2 => 'Check out my updates!',
