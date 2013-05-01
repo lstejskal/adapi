@@ -1,5 +1,20 @@
 # Adapi [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/lstejskal/adapi)
 
+**This gem is no longer under active development.**
+
+I have decided to stop developing this gem. To give you some time to adapt, I will maintain version 0.2 until the sunset of *v201209* in June 2013. I will not update adapi to *v201302*, so in June 2013 this gem will become effectively obsolete.
+
+Reasons:
+
+* Lately, AdWords API has been changing rapidly. This is a problem for me because I'm trying to create high-level abstraction for easy work with 
+AdWords API and that's frustrating to do when the API keeps changing under my hands.
+
+* This project originally started as an abstraction of my work project. Since then, I've changed jobs, so I don't work professionaly with AdWords API anymore and I want to dedicate my free time to other projects.
+
+* This project stopped being fun. It was, at the start. But since then AdWords API has begun changing a lot and it's not fun keeping track with new API versions. Also, [SOAP](https://twitter.com/adron/status/296787545746964480). 
+
+If you're interested in maintaining this gem, please contact me. 
+
 ## Description
 
 Adapi (ADwords API) is a Ruby library for easy and painless work with Google
@@ -17,9 +32,6 @@ come from there, but adapi takes it several steps further:
   `campaign.pause!` (pauses campaign).
 
 * Adapi enables you to easily work with multiple AdWords accounts at the same time.
-
-Adapi is *still in development* and not nearly done yet! Version 1.0.0 should
-have all planned functionality.
 
 Adapi supports the latest version of AdWords API: *v201209*. 
 
