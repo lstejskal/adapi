@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Lukas Stejskal"]
   s.email       = ["lucastej@gmail.com"]
   s.homepage    = "https://github.com/lstejskal/adapi"
-  s.summary     = %q{User-friendly interface to Google Adwords API}
-  s.description = %q{This gem provides user-friendly interface to Google Adwords API.}
+  s.summary     = %q{User-friendly interface to Google Adwords API v201209}
+  s.description = %q{This gem provides user-friendly interface to Google Adwords API v201209.}
 
   s.rubyforge_project = "adapi"
 
