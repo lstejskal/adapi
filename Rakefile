@@ -1,6 +1,17 @@
 require 'bundler/gem_tasks'
 require 'rake'
 
+desc "run all examples using current gem environment"
+task :all_examples do
+  Dir['examples/*.rb'].each do |file|
+    puts "-"*80
+    puts "Running example: #{file}"
+    puts "-"*80
+
+    ruby file
+  end
+end
+
 task :default do
   # run examples using current gem environment
   # example: rake example=find_campaigns
