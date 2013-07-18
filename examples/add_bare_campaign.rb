@@ -12,7 +12,10 @@ $campaign_data = {
     :xsi_type => 'BudgetOptimizer', 
     :bid_ceiling => 20 
   },
-  :budget => 50,
+
+  # Specify delivery Method
+  :budget => {:amount => 50, :delivery_method => 'ACCELERATED' }, 
+
   :network_setting => {
     :target_google_search => true,
     :target_search_network => true,

@@ -137,6 +137,12 @@ module Adapi
         operand[:settings] << { :xsi_type => 'KeywordMatchSetting', :opt_in => false }
       end
 
+      budget =  Adapi::Budget.create(operand.delete(:budget).merge(:name => "#{self.name} - #{Time.now}"))
+
+      check_for_errors(budget)
+
+      operand[:budget] = { :budget_id => budget.budget_id }
+
       response = self.mutate( 
         operator: 'ADD', 
         operand: operand
