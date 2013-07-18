@@ -24,10 +24,10 @@ module Adapi
           :operator => 'ADD', 
           :operand => {
             :xsi_type => 'Budget',
-            :period => self.period,
+            :period => self.period || "DAILY",
             :amount => self.amount,
             :name => self.name,
-            :delivery_method => self.delivery_method,
+            :delivery_method => self.delivery_method || "STANDARD",
           }
         }
 

@@ -244,6 +244,15 @@ module Adapi
         params[:bidding_strategy_configuration] = campaign.bidding_strategy_configuration
       end
 
+      if params[:budget]
+        budget =  Adapi::Budget.create(params.delete(:budget).merge(:name => "#{campaign.name} - #{Time.now}"))
+
+        check_for_errors(budget)
+
+        params[:budget] = { :budget_id => budget.budget_id }
+      end
+
+
       params[:id] = @id
 
       @criteria = params.delete(:criteria)
