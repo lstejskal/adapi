@@ -7,7 +7,7 @@
 module Adapi
   class AdGroup < Api
   
-    ATTRIBUTES = [ :id, :campaign_id, :name, :status, :bids, :keywords, :ads ]
+    ATTRIBUTES = [ :id, :campaign_id, :name, :status, :bids, :bidding_strategy_configuration, :keywords, :ads ]
 
     attr_accessor *ATTRIBUTES 
 
@@ -26,7 +26,7 @@ module Adapi
       @xsi_type = 'AdGroup'
 
       ATTRIBUTES.each do |param_name|
-        self.send("#{param_name}=", params[param_name])
+        self.send("#{param_name}=", params[param_name]) if params.has_key?(param_name)
       end
 
       @keywords ||= []
@@ -36,6 +36,8 @@ module Adapi
       super(params)
     end
 
+
+
     # convert bids to GoogleApi format
     #
     # can be either string (just xsi_type) or hash (xsi_type with params)
@@ -44,21 +46,32 @@ module Adapi
     def bids=(params = {})
       @bids = params
 
+      warn "Deprecated - Use bidding_strategy_configuration instead"
+
+      name_translation = {
+        "BudgetOptimizerAdGroupBids" => "CpcBid",
+        "ConversionOptimizerAdGroupBids" => "CpaBid",
+        "ManualCPCAdGroupBids" => "CpcBid",
+        "ManualCPMAdGroupBids" => "CpmBid",
+        "PercentCPAAdGroupBids" => "PercentCpaBid",
+      }
+
       if @bids
-        unless @bids.is_a?(Hash)
-          @bids = { :xsi_type => @bids }
-        end
-    
-        # convert bid amounts to micro_amounts
-        [ :proxy_keyword_max_cpc ].each do |k|          
-          if @bids[k] and not @bids[k].is_a?(Hash)
-            @bids[k] = {
-              :amount => {
-                :micro_amount => Api.to_micro_units(@bids[k])
-              }
+
+        money = Api.to_micro_units(@bids[:proxy_keyword_max_cpc])
+  
+        @bidding_strategy_configuration = { 
+          :bids => [
+            {
+              # The 'xsi_type' field allows you to specify the xsi:type of the
+              # object being created. It's only necessary when you must provide
+              # an explicit type that the client library can't infer.
+              :xsi_type => name_translation[@bids[:xsi_type]],
+              :bid => {:micro_amount => money},
+              :content_bid => {:micro_amount => money}
             }
-          end
-        end
+          ]
+        }
       end
     end
 
@@ -66,7 +79,7 @@ module Adapi
       return false unless self.valid?
       
       operand = Hash[
-        [:campaign_id, :name, :status, :bids].map do |k|
+        [:campaign_id, :name, :status, :bidding_strategy_configuration].map do |k|
           [ k.to_sym, self.send(k) ] if self.send(k)
         end.compact
       ]
