@@ -5,11 +5,11 @@ require "adapi/version"
 Gem::Specification.new do |s|
   s.name        = "adapi"
   s.version     = Adapi::VERSION
-  s.authors     = ["Lukas Stejskal"]
-  s.email       = ["lucastej@gmail.com"]
+  s.authors     = ["Lukas Stejskal", "Ondrej Bartas"]
+  s.email       = ["lucastej@gmail.com", "ondrej@bartas.cz"]
   s.homepage    = "https://github.com/lstejskal/adapi"
-  s.summary     = %q{User-friendly interface to Google Adwords API v201209}
-  s.description = %q{This gem provides user-friendly interface to Google Adwords API v201209.}
+  s.summary     = %q{User-friendly interface to Google Adwords API v201306}
+  s.description = %q{This gem provides user-friendly interface to Google Adwords API v201306.}
 
   s.rubyforge_project = "adapi"
 
