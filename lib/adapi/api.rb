@@ -59,13 +59,18 @@ module Adapi
           raise "OAUTH2_JWT is not yet implemented, please use OAUTH2 instead"
         # authorize to oauth2
         when "OAUTH2"
-          oauth2_token = Adapi::Config.read[:authentication][:oauth2_token]
 
-          if oauth2_token.nil? || oauth2_token.class != Hash 
-            raise "Missing or invalid OAuth2 token"
+          if Adapi::Config.read[:authentication][:oauth2_refresh_token]
+            RefreshToken.get_access_token Adapi::Config.read
+            @adwords = AdwordsApi::Api.new(Adapi::Config.read)
+          else
+            oauth2_token = Adapi::Config.read[:authentication][:oauth2_token]
+            if oauth2_token.nil? || oauth2_token.class != Hash 
+              raise "Missing or invalid OAuth2 token"
+            end
+
+            @adwords.authorize({:oauth2_verification_code => $token})
           end
-
-          @adwords.authorize({:oauth2_verification_code => $token})
         end
       end
 

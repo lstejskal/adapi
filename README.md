@@ -84,6 +84,29 @@ Adapi::Config.load_settings( in_hash: {
 Adapi::Config.set(:production)
 ```
 
+#### Single account set by refresh token
+
+```ruby
+Adapi::Config.load_settings( in_hash: {
+  production: {
+    authentication: {
+      method:                 "OAuth2",
+      oauth2_client_id:       "abc",
+      oauth2_client_secret:   "def",
+      oauth2_refresh_token:   "456",
+      developer_token:        "789",
+      user_agent:             "My Adwords API Client",
+      client_customer_id:     "555-666-7777"
+    },
+    service: {
+      environment: "PRODUCTION"
+    }
+  }
+})
+
+Adapi::Config.set(:production)
+```
+
 #### Multiple accounts set directly in code
 
 You can set many AdWords accounts to connect to and switch between while running

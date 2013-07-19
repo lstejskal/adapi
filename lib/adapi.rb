@@ -16,6 +16,7 @@ require 'active_support/core_ext'
 
 require 'adapi/version'
 require 'adapi/config'
+require 'adapi/refresh_token'
 require 'adapi/api'
 require 'adapi/campaign'
 require 'adapi/campaign_criterion'
