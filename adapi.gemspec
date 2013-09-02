@@ -5,11 +5,11 @@ require "adapi/version"
 Gem::Specification.new do |s|
   s.name        = "adapi"
   s.version     = Adapi::VERSION
-  s.authors     = ["Lukas Stejskal"]
-  s.email       = ["lucastej@gmail.com"]
+  s.authors     = ["Lukas Stejskal", "Ondrej Bartas"]
+  s.email       = ["lucastej@gmail.com", "ondrej@bartas.cz"]
   s.homepage    = "https://github.com/lstejskal/adapi"
-  s.summary     = %q{User-friendly interface to Google Adwords API v201209}
-  s.description = %q{This gem provides user-friendly interface to Google Adwords API v201209.}
+  s.summary     = %q{User-friendly interface to Google Adwords API v201306}
+  s.description = %q{This gem provides user-friendly interface to Google Adwords API v201306.}
 
   s.rubyforge_project = "adapi"
 
@@ -27,8 +27,8 @@ Gem::Specification.new do |s|
   # versions of both gems are freezed, because both gems change a lot and
   # automatic updates through '~>' can (and already did) break something
   #
-  s.add_dependency "google-ads-common", "0.9.2"
-  s.add_dependency "google-adwords-api", "0.8.1"
+  s.add_dependency "google-ads-common", "0.9.3"
+  s.add_dependency "google-adwords-api", "0.9.3"
 
   s.add_dependency "activemodel", "~> 3.2.12"
   s.add_dependency "activesupport", "~> 3.2.12"

@@ -8,11 +8,18 @@ require 'adapi'
 $campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
-  :bidding_strategy => { 
-    :xsi_type => 'BudgetOptimizer', 
-    :bid_ceiling => 20 
+
+  # NEW Bidding strategy
+  :bidding_strategy_configuration => { 
+    :bidding_scheme => {
+      :bid_ceiling => {:micro_amount=>20000000},
+      :xsi_type => 'BudgetOptimizerBiddingScheme',
+    }
   },
-  :budget => 50,
+
+  # Specify delivery Method
+  :budget => {:amount => 50, :delivery_method => 'ACCELERATED' }, 
+
   :network_setting => {
     :target_google_search => true,
     :target_search_network => true,

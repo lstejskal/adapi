@@ -17,11 +17,21 @@ module Adapi
       should "parse :bids correctly" do
         ag = AdGroup.new( :bids => { :xsi_type => 'ManualCPCAdGroupBids', :proxy_keyword_max_cpc => 10 } )
 
-        assert_equal ag.bids,
-        {
-          :xsi_type => 'ManualCPCAdGroupBids',
-          :proxy_keyword_max_cpc => { :amount => { :micro_amount => 10000000 } }
-        }
+        assert_equal ag.bidding_strategy_configuration,
+        {:bids=>
+            [{:xsi_type=>"CpcBid",
+              :bid=>{:micro_amount=>10000000},
+              :content_bid=>{:micro_amount=>10000000}}]}
+      end
+
+      should "parse :bidding_strategy_configuration correctly" do
+        ag = AdGroup.new( :bidding_strategy_configuration => {:bids=>[{:xsi_type=>"CpcBid",:bid=>{:micro_amount=>10000000},:content_bid=>{:micro_amount=>10000000}}]} )
+
+        assert_equal ag.bidding_strategy_configuration,
+        {:bids=>
+            [{:xsi_type=>"CpcBid",
+              :bid=>{:micro_amount=>10000000},
+              :content_bid=>{:micro_amount=>10000000}}]}
       end
 
       context " / data method" do

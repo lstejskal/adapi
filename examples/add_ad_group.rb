@@ -9,6 +9,20 @@ $ad_group_data = {
   :status => 'ENABLED',
   :campaign_id => $campaign[:id],
 
+  #NEW WAY
+  :bidding_strategy_configuration =>  { 
+    :bids => [
+      {
+        # The 'xsi_type' field allows you to specify the xsi:type of the
+        # object being created. It's only necessary when you must provide
+        # an explicit type that the client library can't infer.
+        :xsi_type => 'CpcBid',
+        :bid => {:micro_amount => 10000000},
+        :content_bid => {:micro_amount => 2000000}
+      }
+    ]
+  },
+
   :keywords => [ 'dem codez', '"top coder"', '[-code]' ],
 
   :ads => [

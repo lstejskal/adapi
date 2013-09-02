@@ -11,7 +11,8 @@ module Adapi
       :target_content_network, :target_partner_search_network ]
 
     ATTRIBUTES = [ :name, :status, :serving_status, :start_date, :end_date, :budget,
-      :bidding_strategy, :network_setting, :campaign_stats, :criteria, :ad_groups,
+      :bidding_strategy_configuration, :bidding_strategy, 
+      :network_setting, :campaign_stats, :criteria, :ad_groups,
       :ad_serving_optimization_status, :settings ]
 
     attr_accessor *ATTRIBUTES
@@ -33,7 +34,7 @@ module Adapi
       @xsi_type = 'Campaign'
 
       ATTRIBUTES.each do |param_name|
-        self.send("#{param_name}=", params[param_name])
+        self.send("#{param_name}=", params[param_name]) if params.has_key?(param_name)
       end
 
       # HOTFIX backward compatibility with old field for criteria
@@ -68,7 +69,8 @@ module Adapi
     # "to modify an existing campaign's bidding strategy, use 
     # CampaignOperation.biddingTransition" 
     #
-    def bidding_strategy=(params = {})
+    def bidding_strategy_configuration=(params = {})
+
       unless params.is_a?(Hash)
         params = { xsi_type: params }
       else
@@ -79,7 +81,44 @@ module Adapi
         end
       end
 
-      @bidding_strategy = params
+      @bidding_strategy_configuration = params
+    end
+
+    # DEPRECATED!
+    # setter for converting bidding_strategy to google format
+    # can be either string (just xsi_type) or hash (xsi_type with params)
+    # TODO validations for xsi_type
+    # 
+    # TODO watch out when doing update. according to documentation:
+    # "to modify an existing campaign's bidding strategy, use 
+    # CampaignOperation.biddingTransition" 
+    #
+    def bidding_strategy=(params = {})
+
+      warn "Deprecated - Use bidding_strategy_configuration instead"
+
+      name_translation = {
+        "manualcpc" => "ManualCpcBiddingScheme",
+        "manualcpm" => "ManualCpmBiddingScheme",
+        "percentcpa" => "PercentCpaBiddingScheme",
+        "budgetoptimizer" => "BudgetOptimizerBiddingScheme",
+        "conversionoptimizer" => "ConversionOptimizerBiddingScheme",
+      }
+
+      if params.is_a?(String)
+        @bidding_strategy_configuration = { 
+          :bidding_scheme => {
+            :xsi_type => name_translation[params.to_s.downcase],
+          }
+        }
+      else
+        @bidding_strategy_configuration = { 
+          :bidding_scheme => {
+            :bid_ceiling => {:micro_amount=>Api.to_micro_units(params[:bid_ceiling])},
+            :xsi_type => name_translation[params[:xsi_type].to_s.downcase],
+          }
+        }
+      end
     end
 
     # setter for converting budget to GoogleApi
@@ -125,7 +164,7 @@ module Adapi
       # create basic campaign attributes
       operand = Hash[
         [ :name, :status, :start_date, :end_date,
-          :budget, :bidding_strategy, :network_setting, :settings ].map do |k|
+          :budget, :bidding_strategy_configuration, :network_setting, :settings ].map do |k|
           [ k.to_sym, self.send(k) ] if self.send(k)
         end.compact
       ]
@@ -136,6 +175,12 @@ module Adapi
       unless operand[:settings].map { |s| s[:xsi_type] }.include?('KeywordMatchSetting')
         operand[:settings] << { :xsi_type => 'KeywordMatchSetting', :opt_in => false }
       end
+
+      budget =  Adapi::Budget.create(operand.delete(:budget).merge(:name => "#{self.name} - #{Time.now}"))
+
+      check_for_errors(budget)
+
+      operand[:budget] = { :budget_id => budget.budget_id }
 
       response = self.mutate( 
         operator: 'ADD', 
@@ -191,28 +236,34 @@ module Adapi
       params.delete(:service_name)
       # ...and load parsed params back into the hash
       params.keys.each { |k| params[k] = campaign.send(k) }
+
+      # DEPRECATED 
+      # load data from new bidding strategy
+      if params.has_key?(:bidding_strategy)
+        params.delete(:bidding_strategy)
+        params[:bidding_strategy_configuration] = campaign.bidding_strategy_configuration
+      end
+
+      if params[:budget]
+        if self.budget && self.budget[:budget_id]
+          budget =  Adapi::Budget.update(params.delete(:budget).reverse_merge(self.budget))
+        else
+          budget =  Adapi::Budget.create(params.delete(:budget).merge(:name => "#{params[:name] || self.name} - #{Time.now}"))
+        end
+
+        params[:budget] = { :budget_id => budget.budget_id }
+      end
+
       params[:id] = @id
 
       @criteria = params.delete(:criteria)
       params.delete(:targets)
       @ad_groups = params.delete(:ad_groups) || []
 
-      @bidding_strategy = params.delete(:bidding_strategy)
-
       operation = { 
         operator: 'SET', 
         operand: params
       }
-
-      # BiddingStrategy update has slightly different DSL from other params 
-      # https://developers.google.com/adwords/api/docs/reference/v201109_1/CampaignService.BiddingTransition
-      #
-      # See this post about BiddingTransition limitations:
-      # https://groups.google.com/forum/?fromgroups#!topic/adwords-api/tmRk1m7PbhU
-      # "ManualCPC can transition to anything and everything else can only transition to ManualCPC" 
-      if @bidding_strategy
-        operation[:bidding_transition] = { target_bidding_strategy: @bidding_strategy }
-      end
  
       campaign.mutate(operation)
 
@@ -363,7 +414,7 @@ module Adapi
       # retrieve Budget fields
       select_fields += %w{ Amount Period DeliveryMethod } 
       # retrieve BiddingStrategy fields
-      select_fields += %w{ BiddingStrategy BidCeiling EnhancedCpcEnabled }
+      select_fields += %w{ BudgetId IsBudgetExplicitlyShared BiddingStrategy BidCeiling EnhancedCpcEnabled }
       # retrieve NetworkSetting fields
       select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize } 
 

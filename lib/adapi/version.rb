@@ -1,9 +1,19 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.2.0"
+  VERSION = "0.3.1"
 
   # CHANGELOG:
+  #
+  # 0.3.1
+  # fix budget update, don't create new one just update it
+  #
+  # 0.3.0
+  # updated to AdWords API version v201306
+  # automatically refresh access token by refresh token OAuth2
+  # updated README
+  # updated bidding strategy configuration (Campaign)
+  # updated bids on AdGroups
   #
   # 0.2.0
   # updated to AdWords API version v201209

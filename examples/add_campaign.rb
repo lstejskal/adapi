@@ -9,8 +9,11 @@ campaign_data = {
   :name => "Campaign #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'PAUSED',
   # Automatic CPC: BudgetOptimizer or ManualCPC
+  #OLD METHOD 
   :bidding_strategy => { :xsi_type => 'BudgetOptimizer', :bid_ceiling => 100 },
-  :budget => { :amount => 50, :delivery_method => 'STANDARD' },
+
+  #Plain budget
+  :budget => 50,
 
   :network_setting => {
     :target_google_search => true,

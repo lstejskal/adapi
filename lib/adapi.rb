@@ -16,6 +16,7 @@ require 'active_support/core_ext'
 
 require 'adapi/version'
 require 'adapi/config'
+require 'adapi/refresh_token'
 require 'adapi/api'
 require 'adapi/campaign'
 require 'adapi/campaign_criterion'
@@ -33,6 +34,9 @@ require 'adapi/constant_data/province'
 require 'adapi/location'
 require 'adapi/managed_customer'
 require 'adapi/budget_order'
+require 'adapi/budget'
+
+
 
 # monkeypatch that hardcodes HTTP timeout to 5 minutes
 require 'httpi_monkeypatch'
@@ -47,7 +51,7 @@ HTTPI.adapter = :curb
 HTTPI.log = false # supress HTTPI output
 
 module Adapi
-  API_VERSION = :v201209
+  API_VERSION = :v201306
 end
 
 if RUBY_VERSION < '1.9'

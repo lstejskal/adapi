@@ -11,6 +11,8 @@ $ad_group_data = {
   :campaign_id => $campaign[:id],
   :name => "AdGroup #%d" % (Time.new.to_f * 1000).to_i,
   :status => 'ENABLED',
+
+  #OLD WAY
   :bids => {
     :xsi_type => 'BudgetOptimizerAdGroupBids',
     :proxy_keyword_max_cpc => 15
