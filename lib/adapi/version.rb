@@ -1,9 +1,12 @@
 # encoding: utf-8
 
 module Adapi
-  VERSION = "0.3.0"
+  VERSION = "0.3.1"
 
   # CHANGELOG:
+  #
+  # 0.3.1
+  # fix budget update, don't create new one just update it
   #
   # 0.3.0
   # updated to AdWords API version v201306

@@ -2,13 +2,14 @@ require 'adapi'
 
 # create campaign with criteria
 require_relative 'add_campaign'
+$campaign = Adapi::Campaign.find($campaign.id)
 
-$campaign = Adapi::Campaign.update(
-  :id => $campaign.id,
+
+$campaign.update(
   :status => 'ACTIVE',
   :name => "UPDATED_#{$campaign[:name]}",
   :bidding_strategy => 'ManualCPC',
-  :budget => 75,
+  :budget => {:amount => 75, :delivery_method => 'ACCELERATED' },
   :network_setting => {
     :target_google_search => false,
     :target_search_network => false,

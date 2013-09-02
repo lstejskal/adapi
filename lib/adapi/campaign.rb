@@ -245,13 +245,14 @@ module Adapi
       end
 
       if params[:budget]
-        budget =  Adapi::Budget.create(params.delete(:budget).merge(:name => "#{campaign.name} - #{Time.now}"))
-
-        check_for_errors(budget)
+        if self.budget && self.budget[:budget_id]
+          budget =  Adapi::Budget.update(params.delete(:budget).reverse_merge(self.budget))
+        else
+          budget =  Adapi::Budget.create(params.delete(:budget).merge(:name => "#{params[:name] || self.name} - #{Time.now}"))
+        end
 
         params[:budget] = { :budget_id => budget.budget_id }
       end
-
 
       params[:id] = @id
 
@@ -413,7 +414,7 @@ module Adapi
       # retrieve Budget fields
       select_fields += %w{ Amount Period DeliveryMethod } 
       # retrieve BiddingStrategy fields
-      select_fields += %w{ BiddingStrategy BidCeiling EnhancedCpcEnabled }
+      select_fields += %w{ BudgetId IsBudgetExplicitlyShared BiddingStrategy BidCeiling EnhancedCpcEnabled }
       # retrieve NetworkSetting fields
       select_fields += NETWORK_SETTING_KEYS.map { |k| k.to_s.camelize } 
 
